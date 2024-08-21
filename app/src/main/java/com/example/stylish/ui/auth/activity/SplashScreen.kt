@@ -1,4 +1,4 @@
-package com.example.stylish.ui.splash.activity
+package com.example.stylish.ui.auth.activity
 
 import android.content.Intent
 import android.os.Bundle
@@ -8,7 +8,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.example.stylish.R
-import com.example.stylish.activity.MainActivity
+import com.example.stylish.ui.home.activity.MainActivity
 
 class SplashScreen : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {

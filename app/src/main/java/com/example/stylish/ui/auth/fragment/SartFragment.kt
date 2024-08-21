@@ -1,4 +1,4 @@
-package com.example.stylish.fragment
+package com.example.stylish.ui.auth.fragment
 
 import android.content.Context
 import android.os.Bundle
@@ -7,7 +7,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.example.stylish.databinding.FragmentSartBinding
-import com.example.stylish.ui.login.LoginFragment
 
 class SartFragment : Fragment() {
 

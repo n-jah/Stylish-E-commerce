@@ -13,13 +13,13 @@
         android:theme="@style/Theme.Stylish"
         tools:targetApi="31">
         <activity
-            android:name=".activity.ItemActivity"
+            android:name=".ui.home.activity.ItemActivity"
             android:exported="false" />
         <activity
-            android:name=".activity.WellcomeScreen"
+            android:name=".ui.auth.activity.WellcomeScreen"
             android:exported="false"></activity>
         <activity
-            android:name=".ui.splash.activity.SplashScreen"
+            android:name=".ui.auth.activity.SplashScreen"
             android:exported="true"
             android:theme="@style/LaunchTheme">
             <intent-filter>
@@ -29,7 +29,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".activity.MainActivity"
+            android:name=".ui.home.activity.MainActivity"
             android:exported="false">
 
             <!-- <intent-filter> -->

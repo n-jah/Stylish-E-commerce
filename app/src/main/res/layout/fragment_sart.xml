@@ -6,7 +6,7 @@
     android:theme="@style/Theme.Stylish"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".fragment.SartFragment">
+    tools:context=".ui.auth.fragment.SartFragment">
 
     <com.example.stylish.assets.CapitalizeFirstTextView
         android:id="@+id/let_s_get_s"

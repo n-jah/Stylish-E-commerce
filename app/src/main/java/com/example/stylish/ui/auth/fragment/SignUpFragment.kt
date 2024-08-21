@@ -1,4 +1,4 @@
-package com.example.stylish.fragment
+package com.example.stylish.ui.auth.fragment
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment

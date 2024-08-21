@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/background_color_light"
-    tools:context=".activity.MainActivity">
+    tools:context=".ui.home.activity.MainActivity">
 
     <androidx.appcompat.widget.AppCompatImageButton
         android:id="@+id/floating_slide_icon"

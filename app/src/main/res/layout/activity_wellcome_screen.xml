@@ -7,7 +7,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:theme="@style/Base.Theme.Stylish"
-    tools:context=".activity.WellcomeScreen">
+    tools:context=".ui.auth.activity.WellcomeScreen">
 
 
     <androidx.fragment.app.FragmentContainerView

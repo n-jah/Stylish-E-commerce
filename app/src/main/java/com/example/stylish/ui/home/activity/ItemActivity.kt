@@ -1,4 +1,4 @@
-package com.example.stylish.activity
+package com.example.stylish.ui.home.activity
 
 import android.os.Bundle
 import androidx.activity.enableEdgeToEdge

@@ -5,7 +5,7 @@
     android:id="@+id/main_splash"
     xmlns:tools="http://schemas.android.com/tools"
     android:background="@color/launch_background_color"
-    tools:context=".ui.splash.activity.SplashScreen">
+    tools:context=".ui.auth.activity.SplashScreen">
 
     <ImageView
         android:id="@+id/splash_image"

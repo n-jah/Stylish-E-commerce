@@ -1,4 +1,4 @@
-package com.example.stylish.activity
+package com.example.stylish.ui.auth.activity
 
 import android.os.Bundle
 import android.widget.Button
@@ -11,13 +11,13 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentContainerView
-import com.example.stylish.fragment.FragmentChangeListener
+import com.example.stylish.ui.auth.fragment.FragmentChangeListener
 import com.example.stylish.R
-import com.example.stylish.fragment.SartFragment
-import com.example.stylish.fragment.SignUpFragment
+import com.example.stylish.ui.auth.fragment.SartFragment
 import com.example.stylish.databinding.ActivityWellcomeScreenBinding
 import com.example.stylish.databinding.FragmentSartBinding
-import com.example.stylish.ui.login.LoginFragment
+import com.example.stylish.ui.auth.fragment.LoginFragment
+import com.example.stylish.ui.auth.fragment.SignUpFragment
 
 class WellcomeScreen : AppCompatActivity() , FragmentChangeListener {
 

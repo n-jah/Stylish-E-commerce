@@ -1,4 +1,4 @@
-package com.example.stylish.activity
+package com.example.stylish.ui.home.activity
 
 import android.graphics.Color
 import android.os.Bundle
