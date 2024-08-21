@@ -1,0 +1,427 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:id="@+id/main_item"
+    android:orientation="vertical">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        >
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="320dp"
+            android:background="#F2F2F2"
+
+            >
+
+            <androidx.appcompat.widget.AppCompatImageButton
+                android:id="@+id/back_button"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:src="@drawable/arrow_black"
+                android:background="@drawable/circle"
+                android:layout_gravity="start"
+                android:layout_margin="20dp"
+                />
+            <androidx.appcompat.widget.AppCompatImageButton
+                android:id="@+id/cart_button"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:src="@drawable/cart"
+                android:background="@drawable/circle"
+                android:layout_gravity="end"
+                android:layout_margin="20dp"
+                />
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:src="@drawable/hoodie_image1"
+
+                />
+
+        </FrameLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="15dp"
+            >
+
+
+        <!-- Product Title and Price -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="center">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_weight="3"
+                >
+                <TextView
+                    android:layout_weight="2"
+                    android:id="@+id/men_s_print"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/men_s_print"
+                    android:textAppearance="@style/men_s_print"
+                    android:gravity="start"
+                    android:textSize="13sp"
+
+                    />
+                <TextView
+                    android:layout_weight="1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Price"
+                    android:textSize="13sp"
+                    android:textAppearance="@style/men_s_print"
+                    android:gravity="end"
+                    android:layout_gravity="end"
+                    />
+
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                >
+                <TextView
+                    android:id="@+id/product_title"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Nike Club Fleece"
+                    android:textSize="24sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/product_price"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="$99"
+                    android:textSize="20sp"
+                    android:textColor="@android:color/holo_green_dark" />
+
+
+            </LinearLayout>
+                   </LinearLayout>
+
+        <!-- Images Carousel -->
+        <HorizontalScrollView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingTop="16dp"
+            android:scrollbars="none">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:layout_width="100dp"
+                    android:layout_height="100dp"
+                    android:src="@drawable/hoodie_image1"
+                    android:scaleType="centerCrop"
+                    android:layout_marginEnd="8dp" />
+
+                <ImageView
+                    android:layout_width="100dp"
+                    android:layout_height="100dp"
+                    android:src="@drawable/hoodie_image1"
+                    android:scaleType="centerCrop"
+                    android:layout_marginEnd="8dp" />
+
+                <ImageView
+                    android:layout_width="100dp"
+                    android:layout_height="100dp"
+                    android:src="@drawable/hoodie_image1"
+                    android:scaleType="centerCrop"
+                    android:layout_marginEnd="8dp" />
+
+                <ImageView
+                    android:layout_width="100dp"
+                    android:layout_height="100dp"
+                    android:src="@drawable/hoodie_image1"
+                    android:scaleType="centerCrop" />
+            </LinearLayout>
+        </HorizontalScrollView>
+
+        <!-- Size Options -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="Size"
+                android:textAppearance="@style/head2black"
+                />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:layout_width="55dp"
+                android:layout_height="60dp"
+                android:layout_margin="8dp"
+                android:background="@drawable/size_button"
+                android:outlineAmbientShadowColor="@color/field_color_light"
+                android:outlineSpotShadowColor="@color/field_color_light"
+                android:shadowColor="@color/field_color_light"
+                android:text="S"
+                android:textSize="19sp" />
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:background="@drawable/size_button"
+                android:text="m"
+                android:textSize="19sp"
+                android:layout_margin="8dp"
+                android:shadowColor="@color/field_color_light"
+                android:outlineAmbientShadowColor="@color/field_color_light"
+                android:outlineSpotShadowColor="@color/field_color_light"
+                />
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:background="@drawable/size_button"
+                android:text="l"
+                android:textSize="19sp"
+                android:layout_margin="8dp"
+                android:shadowColor="@color/field_color_light"
+                android:outlineAmbientShadowColor="@color/field_color_light"
+                android:outlineSpotShadowColor="@color/field_color_light"
+                />
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:background="@drawable/size_button"
+                android:text="xl"
+                android:textSize="19sp"
+                android:layout_margin="8dp"
+                android:shadowColor="@color/field_color_light"
+                android:outlineAmbientShadowColor="@color/field_color_light"
+                android:outlineSpotShadowColor="@color/field_color_light"
+                />
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:background="@drawable/size_button"
+                android:text="2xl"
+                android:textSize="19sp"
+                android:layout_margin="8dp"
+                android:shadowColor="@color/field_color_light"
+                android:outlineAmbientShadowColor="@color/field_color_light"
+                android:outlineSpotShadowColor="@color/field_color_light"
+                />
+
+        </LinearLayout>
+
+        <!-- Description -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="Description"
+            android:textSize="16sp"
+            android:textAppearance="@style/head2black"
+            android:textStyle="bold" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="The Nike Throwback Pullover Hoodie is made from premium French terry fabric that blends a performance feel with Read More.."
+            android:textSize="14sp" />
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:id="@+id/reviewsBox"
+                >
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_weight="3"
+                    >
+                    <TextView
+                        android:id="@+id/reviews"
+                        android:layout_weight="2"
+                        android:text="@string/reviews"
+                        android:textAppearance="@style/head2black"
+                        android:lineSpacingExtra="-2sp"
+                        android:gravity="top"
+                         android:layout_height="wrap_content"
+                        android:layout_width="wrap_content"/>
+
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/view_all"
+                        android:text="@string/view_all"
+                        android:textSize="13sp"
+                        android:fontFamily="@font/inter"
+                        android:lineSpacingExtra="-1sp"
+                        android:gravity="end"
+                        />
+
+                </LinearLayout>
+
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginTop="16dp">
+
+                    <ImageView
+                        android:id="@+id/img_of_reviewar"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:src="@drawable/ic_profile_pic"
+                        android:layout_marginEnd="8dp"
+                        android:scaleType="centerCrop" />
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Ronald Richards"
+                            android:id="@+id/name_of_the_reviewar"
+                            android:textSize="14sp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:id="@+id/date_of_rev"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="13 Sep, 2020"
+                            android:textSize="12sp"
+                            android:textColor="@android:color/darker_gray" />
+                    </LinearLayout>
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        >
+
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:layout_weight="2"
+                            >
+
+                            <TextView
+                                android:layout_weight="1"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="4.8"
+                                android:textColor="@android:color/holo_orange_dark"
+                                android:textSize="14sp"
+                                android:textStyle="bold"
+                                android:layout_margin="5dp"
+                                android:id="@+id/rating_number"
+                                />
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@string/rating"
+                                android:textColor="@android:color/holo_orange_dark"
+                                android:textSize="14sp"
+                                android:layout_margin="5dp"/>
+
+                        </LinearLayout>
+
+                        <RatingBar
+                            android:id="@+id/rating_stars"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            style="?android:attr/ratingBarStyleSmall"
+                            android:numStars="5"
+                            android:stepSize="0.1"
+                            android:isIndicator="true"
+                            android:rating="4.5"
+                            />
+
+                    </LinearLayout>
+
+
+                </LinearLayout>
+
+                <!-- Total Price -->
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:text="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque malesuada eget vitae amet..."
+                    android:textSize="14sp" />
+
+
+            </LinearLayout>
+
+            <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="Total Price"
+            android:textSize="16sp"
+            android:textStyle="bold" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="with VAT, SD"
+                    android:layout_weight="1"
+                    android:textSize="16sp"
+                    android:gravity="start"
+                    android:textColor="@android:color/holo_red_dark" />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="150$"
+                    android:textAppearance="@style/head2black"/>
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <!-- Add to Cart Button -->
+        <androidx.appcompat.widget.AppCompatButton
+            android:layout_width="match_parent"
+            android:layout_height="80dp"
+            android:backgroundTint="@color/primary_color"
+            android:text="@string/add_to_cart"
+            android:background="@drawable/buttonbase"
+            android:textColor="@android:color/white"
+            android:textAppearance="@style/head2" />
+    </LinearLayout>
+
+</ScrollView>

@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "268886359428",
+    "project_id": "stylish-dc0d1",
+    "storage_bucket": "stylish-dc0d1.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:268886359428:android:7c8f5dae0c919ce85af1d1",
+        "android_client_info": {
+          "package_name": "com.example.stylish"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC90bOt70-aDa2jid4MtLzwyesqFSTvBvw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

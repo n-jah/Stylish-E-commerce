@@ -1,0 +1,14 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <!-- Base application theme. -->
+    <style name="Base.Theme.Stylish" parent="Theme.Material3.DayNight.NoActionBar">
+            <item name="android:colorPrimary">@color/primary_color</item>
+            <item name="colorOnPrimary">@color/white</item>
+            <item name="colorBackgroundFloating">@color/field_color_light</item>
+            <item name="android:colorBackground">@color/background_color_light</item>
+
+
+
+    </style>
+
+    <style name="Theme.Stylish" parent="Base.Theme.Stylish" />
+</resources>

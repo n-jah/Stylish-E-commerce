@@ -1,0 +1,40 @@
+<resources>
+    <string name="app_name">Stylish</string>
+    <string name="title_activity_splash_scren">SplashScren</string>
+    <string name="let_s_get_s">Let\'s Get Started</string>
+    <string name="facebook">Facebook</string>
+    <string name="twitter">Twitter</string>
+    <string name="google">Google</string>
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="sign_up">Sign Up</string>
+    <string name="username">Username</string>
+    <string name="password">Password</string>
+    <string name="email_address">Email Address</string>
+    <string name="remember_me">Remember me</string>
+    <string name="default_text">BaseTextButton\n</string>
+    <string name="prompt_email">Email</string>
+    <string name="prompt_password">Password</string>
+    <string name="action_sign_in">Sign in or register</string>
+    <string name="action_sign_in_short">Sign in</string>
+    <string name="welcome">"Welcome!"</string>
+    <string name="invalid_username">Not a valid username</string>
+    <string name="invalid_password">Password must be >5 characters</string>
+    <string name="login_failed">"Login failed"</string>
+    <string name="create_an_account">Create An Account</string>
+    <string name="sign_in">Login</string>
+    <string name="forgot_pass">Forgot password?</string>
+    <string name="by_connecti">By connecting your account confirm that you agree with our Term and Condition</string>
+    <string name="title_home">home</string>
+    <string name="title_favorites">favorites</string>
+    <string name="title_cart">cart</string>
+    <string name="title_wallet">wallet</string>
+    <string name="voice_search_icon">voicesearch</string>
+    <string name="men_s_print">Men\'s Printed Pullover Hoodie            </string>
+    <string name="add_to_cart">Add to Cart</string>
+    <string name="reviews">Reviews</string>
+    <string name="view_all">View all</string>
+    <string name="rating">rating</string>
+    <string name="adidas">Adidas</string>
+
+
+</resources>

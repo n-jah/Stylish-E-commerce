@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.facebook.shimmer.ShimmerFrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:padding="8dp"
+    android:id="@+id/shimmer_item_cloth"
+    app:shimmer_auto_start="true"
+    app:shimmer_duration="1500">
+
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:cardCornerRadius="8dp"
+        app:cardElevation="4dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="8dp">
+
+            <!-- Image placeholder -->
+            <View
+                android:layout_width="190dp"
+                android:layout_height="250dp"
+                android:background="@android:color/darker_gray"
+                android:layout_marginBottom="20dp"
+                />
+
+            <!-- Title placeholder -->
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="25dp"
+                android:layout_marginTop="8dp"
+                android:background="@android:color/darker_gray" />
+
+            <!-- Price placeholder -->
+            <View
+                android:layout_width="89dp"
+                android:layout_height="24dp"
+                android:layout_marginTop="4dp"
+                android:background="@android:color/darker_gray" />
+
+        </LinearLayout>
+    </androidx.cardview.widget.CardView>
+</com.facebook.shimmer.ShimmerFrameLayout>
