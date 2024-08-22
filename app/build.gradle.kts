@@ -50,9 +50,14 @@ dependencies {
     implementation(libs.androidx.lifecycle.viewmodel.ktx)
     implementation(libs.androidx.recyclerview)
     implementation(libs.firebase.database.ktx)
+    implementation(libs.common)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
+    implementation ("com.github.bumptech.glide:glide:4.15.0") // Latest stable version as of the last update
+    annotationProcessor ("com.github.bumptech.glide:compiler:4.15.0")
+
+
     implementation("com.facebook.shimmer:shimmer:0.5.0")
 
 }

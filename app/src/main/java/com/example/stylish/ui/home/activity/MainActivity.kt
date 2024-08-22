@@ -5,9 +5,11 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.stylish.R
+import com.example.stylish.ViewModel.MainViewModel
 import com.example.stylish.adapter.BrandAdapter
 import com.example.stylish.adapter.ItemAdapter
 import com.example.stylish.databinding.ActivityMainBinding
@@ -15,6 +17,8 @@ import com.example.stylish.model.Brand
 import com.example.stylish.model.Item
 
 class MainActivity : AppCompatActivity() {
+
+    private val viewModel = MainViewModel()
 
     lateinit var binding: ActivityMainBinding
 
@@ -41,20 +45,13 @@ class MainActivity : AppCompatActivity() {
         )
 
 
-        val items  = listOf(
-            Item("baseballjacket", "233"),
-            Item("baseballjacket", "53"),
-            Item("baseballjacket", "83"),
-            Item("baseballjacket", "2"),
-            Item("baseballjacket", "99"),
-            Item("baseballjacket", "25"),
-            Item("baseballjacket", "77")
-        )
+
+        itemsinti()
 //new arrival items
         val itemRV = binding.newArrivalRecyclerView
 
         itemRV.layoutManager = GridLayoutManager(this, 2)
-        itemRV.adapter = ItemAdapter(items, isLoading = true)
+        // itemRV.adapter = ItemAdapter(items, isLoading = true)
 
 // brand items
         val brandRV = binding.brandsRecyclerView
@@ -67,9 +64,26 @@ class MainActivity : AppCompatActivity() {
         brandRV.postDelayed({
             // After the delay, update the adapter with the real data and `isLoading = false`
             brandRV.adapter = BrandAdapter(brandList, isLoading = false)
-            itemRV.adapter = ItemAdapter(items, isLoading = false)
+//            itemRV.adapter = ItemAdapter(items, isLoading = false)
         }, 500)
 
+
+    }
+
+    private fun itemsinti() {
+        viewModel.items.observe(this, Observer { items ->
+            itemsimg(items)
+            binding.newArrivalRecyclerView.adapter = ItemAdapter(items, isLoading = false)
+
+
+
+
+        })
+        viewModel.loadItems()
+
+    }
+    private fun itemsimg(items: List<Item>){
+        binding.newArrivalRecyclerView.adapter = ItemAdapter(items, isLoading = false)
 
     }
 }
