@@ -2,12 +2,14 @@ package com.example.stylish.ui.home.activity
 
 import android.graphics.Color
 import android.os.Bundle
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.example.stylish.R
 import com.example.stylish.ViewModel.MainViewModel
 import com.example.stylish.adapter.BrandAdapter
@@ -15,12 +17,17 @@ import com.example.stylish.adapter.ItemAdapter
 import com.example.stylish.databinding.ActivityMainBinding
 import com.example.stylish.model.Brand
 import com.example.stylish.model.Item
+import com.example.stylish.repository.FirebaseItemRepository
 
 class MainActivity : AppCompatActivity() {
 
-    private val viewModel = MainViewModel()
-
     lateinit var binding: ActivityMainBinding
+
+    private lateinit var  itemRV : RecyclerView
+
+    private val viewModel: MainViewModel by viewModels {
+        MainViewModelFactory(FirebaseItemRepository())
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -44,16 +51,14 @@ class MainActivity : AppCompatActivity() {
             Brand("sutra")
         )
 
-
-
         itemsinti()
-//new arrival items
-        val itemRV = binding.newArrivalRecyclerView
+// items
 
-        itemRV.layoutManager = GridLayoutManager(this, 2)
+
         // itemRV.adapter = ItemAdapter(items, isLoading = true)
 
-// brand items
+// brands
+
         val brandRV = binding.brandsRecyclerView
         brandRV.layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
 
@@ -71,19 +76,23 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun itemsinti() {
+
+
+
+
+        itemRV = binding.newArrivalRecyclerView
+        itemRV.layoutManager = GridLayoutManager(this, 2)
+        itemRV.adapter = ItemAdapter(isLoading = true)
+
         viewModel.items.observe(this, Observer { items ->
-            itemsimg(items)
-            binding.newArrivalRecyclerView.adapter = ItemAdapter(items, isLoading = false)
+            if (items != null){
+                itemRV.adapter = ItemAdapter(items, isLoading = false)
 
-
-
+            }
 
         })
         viewModel.loadItems()
 
     }
-    private fun itemsimg(items: List<Item>){
-        binding.newArrivalRecyclerView.adapter = ItemAdapter(items, isLoading = false)
 
-    }
 }

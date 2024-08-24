@@ -23,6 +23,7 @@
 
             <!-- Image placeholder -->
             <View
+                android:id="@+id/img_placholder"
                 android:layout_width="190dp"
                 android:layout_height="250dp"
                 android:background="@android:color/darker_gray"
