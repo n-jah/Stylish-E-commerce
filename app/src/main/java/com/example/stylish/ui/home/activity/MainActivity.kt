@@ -7,6 +7,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -17,17 +18,17 @@ import com.example.stylish.adapter.ItemAdapter
 import com.example.stylish.databinding.ActivityMainBinding
 import com.example.stylish.model.Brand
 import com.example.stylish.model.Item
+import com.example.stylish.repository.FirebaseBrandRepositry
 import com.example.stylish.repository.FirebaseItemRepository
+import com.example.stylish.repository.MianViewModelFactory
 
 class MainActivity : AppCompatActivity() {
 
     lateinit var binding: ActivityMainBinding
 
     private lateinit var  itemRV : RecyclerView
+    private lateinit var viewModel: MainViewModel
 
-    private val viewModel: MainViewModel by viewModels {
-        MainViewModelFactory(FirebaseItemRepository())
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -42,43 +43,36 @@ class MainActivity : AppCompatActivity() {
             insets
         }
 
-        val brandList = listOf(
-            Brand("nike"),
-            Brand("adidas"),
-            Brand("puma"),
-            Brand("zzz"),
-            Brand("nagah"),
-            Brand("sutra")
-        )
+
+        viewModel = ViewModelProvider(this, MianViewModelFactory(FirebaseItemRepository(),FirebaseBrandRepositry()))
+            .get(MainViewModel::class.java)
+
+
+        brandsinti()
 
         itemsinti()
-// items
-
-
-        // itemRV.adapter = ItemAdapter(items, isLoading = true)
 
 // brands
 
         val brandRV = binding.brandsRecyclerView
         brandRV.layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
 
-        // Initialize the adapter with `isLoading = true` initially
-        val adapter = BrandAdapter(brandList, isLoading = true)
-        brandRV.adapter = adapter
-
-        brandRV.postDelayed({
-            // After the delay, update the adapter with the real data and `isLoading = false`
-            brandRV.adapter = BrandAdapter(brandList, isLoading = false)
-//            itemRV.adapter = ItemAdapter(items, isLoading = false)
-        }, 500)
 
 
     }
 
+    private fun brandsinti() {
+        val brandRV = binding.brandsRecyclerView
+        brandRV.layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
+        brandRV.adapter = BrandAdapter(isLoading = true)
+        viewModel.brands.observe(this, Observer { brands ->
+            if (brands != null){
+                brandRV.adapter = BrandAdapter(brands, isLoading = false)
+                }
+        })
+    }
+
     private fun itemsinti() {
-
-
-
 
         itemRV = binding.newArrivalRecyclerView
         itemRV.layoutManager = GridLayoutManager(this, 2)
@@ -91,7 +85,7 @@ class MainActivity : AppCompatActivity() {
             }
 
         })
-        viewModel.loadItems()
+
 
     }
 

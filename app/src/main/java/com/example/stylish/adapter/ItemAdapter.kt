@@ -38,16 +38,12 @@ class ItemAdapter(
             itemPrice.text = itemModel.price
 
             val requestOptions = RequestOptions().transforms(CenterInside())
-            if (itemModel.imgURl.isNotEmpty()) {
                 Glide.with(context)
                     .load(itemModel.imgURl)
+                    .placeholder(R.drawable.placeholder)
                     .apply(requestOptions)
                     .into(itemImage)
-            } else {
-                // Handle the case when imageUrl is empty or null
-                itemImage.setImageResource(R.drawable.placeholder) // Set a placeholder image
-                Log.e("ItemAdapter", "Image URL is empty for item: ${itemModel.description}")
-            }
+
 
 
 

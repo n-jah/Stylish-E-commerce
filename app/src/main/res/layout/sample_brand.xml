@@ -20,17 +20,35 @@ app:strokeWidth="0dp"
     android:padding="5dp"
 
     >
-    <androidx.appcompat.widget.AppCompatImageButton
-        android:id="@+id/brand_img"
+
+    <RelativeLayout
         android:layout_width="40dp"
         android:layout_height="40dp"
-        android:src="@drawable/adidas"
         android:layout_gravity="center_vertical"
         android:background="@drawable/button_brand"
         android:layout_marginEnd="10dp"
         android:focusable="false"
         android:clickable="false"
-        />
+
+        >
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:id="@+id/brand_img_icon"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentBottom="true"
+            android:layout_marginStart="7dp"
+            android:layout_marginTop="7dp"
+            android:layout_marginEnd="7dp"
+            android:layout_marginBottom="7dp"
+            android:src="@drawable/adidas" />
+
+
+    </RelativeLayout>
+
     <TextView
         android:id="@+id/brand_name"
         android:layout_width="wrap_content"

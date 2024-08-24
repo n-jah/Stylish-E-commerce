@@ -5,9 +5,13 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.resource.bitmap.CenterInside
+import com.bumptech.glide.request.RequestOptions
 import com.example.stylish.R
 import com.example.stylish.model.Brand
 import com.facebook.shimmer.ShimmerFrameLayout
@@ -15,8 +19,8 @@ import kotlin.math.log
 
 @Suppress("DEPRECATION")
 class BrandAdapter(
-    private val brandList: List<Brand>,
-    private val isLoading: Boolean
+    private val brandList: List<Brand> = emptyList(),
+    private val isLoading: Boolean = true
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     private var selectedPosition = RecyclerView.NO_POSITION
 
@@ -25,6 +29,8 @@ class BrandAdapter(
     private val VIEW_TYPE_SHIMMER = 1
 
     inner class BrandViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+
+        val brandIcon: ImageView = itemView.findViewById(R.id.brand_img_icon)
         val brandName: TextView = itemView.findViewById(R.id.brand_name)
     }
 
@@ -49,6 +55,13 @@ class BrandAdapter(
             val currentItem = brandList[position]
             val brandViewHolder = holder as BrandViewHolder
             brandViewHolder.brandName.text = currentItem.brandName
+
+            val requestOptions = RequestOptions().transforms(CenterInside())
+                Glide.with(holder.itemView.context)
+                    .load(currentItem.imgIcon)
+                    .placeholder(R.drawable.adidas)
+                    .apply(requestOptions)
+                    .into(brandViewHolder.brandIcon)
 
             // Update UI for selected item
             if (position == selectedPosition) {
