@@ -20,7 +20,7 @@ import com.example.stylish.model.Brand
 import com.example.stylish.model.Item
 import com.example.stylish.repository.FirebaseBrandRepositry
 import com.example.stylish.repository.FirebaseItemRepository
-import com.example.stylish.repository.MianViewModelFactory
+import com.example.stylish.repository.MainViewModelFactory
 
 class MainActivity : AppCompatActivity() {
 
@@ -44,7 +44,7 @@ class MainActivity : AppCompatActivity() {
         }
 
 
-        viewModel = ViewModelProvider(this, MianViewModelFactory(FirebaseItemRepository(),FirebaseBrandRepositry()))
+        viewModel = ViewModelProvider(this, MainViewModelFactory(FirebaseItemRepository(),FirebaseBrandRepositry()))
             .get(MainViewModel::class.java)
 
 

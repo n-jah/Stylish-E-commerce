@@ -1,7 +1,5 @@
 package com.example.stylish.adapter
 
-import android.graphics.Color
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -15,23 +13,32 @@ import com.bumptech.glide.request.RequestOptions
 import com.example.stylish.R
 import com.example.stylish.model.Brand
 import com.facebook.shimmer.ShimmerFrameLayout
-import kotlin.math.log
 
 @Suppress("DEPRECATION")
 class BrandAdapter(
-    private val brandList: List<Brand> = emptyList(),
-    private val isLoading: Boolean = true
+    private var brandList: List<Brand> = emptyList(),
+    private var isLoading: Boolean = true
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
-    private var selectedPosition = RecyclerView.NO_POSITION
 
+    private var selectedPosition = RecyclerView.NO_POSITION
 
     private val VIEW_TYPE_ITEM = 0
     private val VIEW_TYPE_SHIMMER = 1
 
     inner class BrandViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-
         val brandIcon: ImageView = itemView.findViewById(R.id.brand_img_icon)
         val brandName: TextView = itemView.findViewById(R.id.brand_name)
+
+        init {
+            itemView.setOnClickListener {
+                val previousPosition = selectedPosition
+                selectedPosition = adapterPosition
+
+                // Notify changes for re-rendering
+                notifyItemChanged(previousPosition)
+                notifyItemChanged(selectedPosition)
+            }
+        }
     }
 
     inner class ShimmerViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -57,43 +64,37 @@ class BrandAdapter(
             brandViewHolder.brandName.text = currentItem.brandName
 
             val requestOptions = RequestOptions().transforms(CenterInside())
-                Glide.with(holder.itemView.context)
-                    .load(currentItem.imgIcon)
-                    .placeholder(R.drawable.adidas)
-                    .apply(requestOptions)
-                    .into(brandViewHolder.brandIcon)
+            Glide.with(holder.itemView.context)
+                .load(currentItem.imgIcon)
+                .placeholder(R.drawable.adidas)
+                .apply(requestOptions)
+                .into(brandViewHolder.brandIcon)
 
             // Update UI for selected item
             if (position == selectedPosition) {
                 holder.itemView.setBackgroundResource(R.drawable.selected_item_background)
-                holder.brandName.setTextColor(ContextCompat.getColor(holder.itemView.context, R.color.text_color_dark))
+                brandViewHolder.brandName.setTextColor(
+                    ContextCompat.getColor(holder.itemView.context, R.color.text_color_dark)
+                )
             } else {
                 holder.itemView.setBackgroundResource(R.drawable.default_item_background)
-                holder.brandName.setTextColor(ContextCompat.getColor(holder.itemView.context, R.color.text_color_light))
-
+                brandViewHolder.brandName.setTextColor(
+                    ContextCompat.getColor(holder.itemView.context, R.color.text_color_light)
+                )
             }
-
-            // Handle item click
-            holder.itemView.setOnClickListener {
-                val previousPosition = selectedPosition
-                selectedPosition = holder.adapterPosition
-
-                // Notify changes for re-rendering
-                notifyItemChanged(previousPosition)
-                notifyItemChanged(selectedPosition)
-            }
-
 
         } else {
             val shimmerViewHolder = holder as ShimmerViewHolder
-            shimmerViewHolder.shimmerFrameLayout.startShimmer()
+            if (isLoading) {
+                shimmerViewHolder.shimmerFrameLayout.startShimmer()
+            } else {
+                shimmerViewHolder.shimmerFrameLayout.stopShimmer()
+            }
         }
     }
 
-
-
     override fun getItemViewType(position: Int): Int {
-        return if (isLoading) VIEW_TYPE_SHIMMER else VIEW_TYPE_ITEM
+        return if (isLoading || position >= brandList.size) VIEW_TYPE_SHIMMER else VIEW_TYPE_ITEM
     }
 
     override fun getItemCount(): Int {
@@ -102,5 +103,12 @@ class BrandAdapter(
         } else {
             brandList.size
         }
+    }
+
+    // Method to update the adapter data
+    fun updateBrands(newBrandList: List<Brand>, loading: Boolean) {
+        this.brandList = newBrandList
+        this.isLoading = loading
+        notifyDataSetChanged()
     }
 }

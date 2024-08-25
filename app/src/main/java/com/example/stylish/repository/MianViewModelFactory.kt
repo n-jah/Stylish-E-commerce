@@ -3,7 +3,6 @@ package com.example.stylish.repository
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.example.stylish.ViewModel.MainViewModel
-import com.example.stylish.viewmodel.MainViewModel
 
 class MainViewModelFactory(
     private val itemRepository: ItemRepsitory,
