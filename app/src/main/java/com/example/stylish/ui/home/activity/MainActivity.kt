@@ -1,5 +1,6 @@
 package com.example.stylish.ui.home.activity
 
+import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
 import androidx.activity.viewModels
@@ -51,6 +52,11 @@ class MainActivity : AppCompatActivity() {
         brandsinti()
 
         itemsinti()
+
+
+        binding.floatCartButton.setOnClickListener{
+            startActivity(Intent(this, CartActivity::class.java))
+        }
 
 // brands
 

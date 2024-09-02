@@ -35,6 +35,21 @@
     <string name="view_all">View all</string>
     <string name="rating">rating</string>
     <string name="adidas">Adidas</string>
+    <string name="small_size">S</string>
+    <string name="cart">Cart</string>
+    <string name="delivery_address">Delivery address</string>
+    <string name="address">43, Electronics City Phase 1,\nElectronic City</string>
+    <string name="payment_method">Payment Method</string>
+    <string name="name_of_card">Visa Classic</string>
+    <string name="card_number_last_numbs">**** 7690</string>
+    <string name="order_info">Order Info</string>
+    <string name="subtotal">Subtotal</string>
+    <string name="_110">$110</string>
+    <string name="delivery_charge">Delivery Charge</string>
+    <string name="total">Total</string>
+    <string name="checkout">Checkout</string>
+    <string name="tax">4.00</string>
+    <string name="decrease_quantity">decress\n</string>
 
 
 </resources>

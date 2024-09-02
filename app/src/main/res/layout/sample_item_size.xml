@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/item_size"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_margin="5dp"
+    android:background="@drawable/size_button"
+    >
+    <LinearLayout
+        android:layout_width="70dp"
+        android:layout_height="70dp"
+
+        android:gravity="center"
+        android:shadowColor="@color/field_color_light"
+
+        >
+
+    <TextView
+        android:id="@+id/size_text_id"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAllCaps="true"
+        android:text="@string/small_size"
+        android:textSize="19sp"
+        android:textAppearance="@style/head1"
+        android:layout_gravity="center"/>
+</LinearLayout>
+
+
+</LinearLayout>

@@ -1,5 +1,6 @@
 package com.example.stylish.adapter
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.util.Log
@@ -33,13 +34,15 @@ class ItemAdapter(
         val itemName: TextView = itemView.findViewById(R.id.itemNameCard)
         val itemPrice: TextView = itemView.findViewById(R.id.itemPrice_incard)
 
+        @SuppressLint("SuspiciousIndentation")
         fun bind(itemModel: Item, context: Context) {
-            itemName.text = itemModel.description
-            itemPrice.text = itemModel.price
+            itemName.text = itemModel.title
+            itemPrice.text = itemModel.price.toString()
+
 
             val requestOptions = RequestOptions().transforms(CenterInside())
                 Glide.with(context)
-                    .load(itemModel.imgURl)
+                    .load(itemModel.imgUrl[0].toString())
                     .placeholder(R.drawable.placeholder)
                     .apply(requestOptions)
                     .into(itemImage)
@@ -74,15 +77,13 @@ class ItemAdapter(
             val currentItem = itemList[position]
             itemViewHolder.bind(currentItem, holder.itemView.context)
 
+            itemViewHolder.itemView.setOnClickListener {
+                // Handle item click here
+                val intent = Intent(holder.itemView.context, ItemActivity::class.java)
 
-//            itemViewHolder.itemView.setOnClickListener {
-//                // Handle item click here
-//                val intent = Intent(holder.itemView.context, ItemActivity::class.java)
-//                intent.putExtra("item_name", currentItem.description)
-//                intent.putExtra("item_price", currentItem.price)
-//                intent.putExtra("item_image", currentItem.imageUrl)
-//                holder.itemView.context.startActivity(intent)
-//            }
+                intent.putExtra("object",itemList[position])
+                holder.itemView.context.startActivity(intent)
+            }
 
         } else {
             val shimmerViewHolder = holder as ShimmerViewHolder

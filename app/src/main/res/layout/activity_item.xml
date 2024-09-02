@@ -2,8 +2,12 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/main_item"
     android:orientation="vertical">
+
+
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -36,6 +40,8 @@
                 android:layout_margin="20dp"
                 />
             <ImageView
+                android:id="@+id/itemImage"
+
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:src="@drawable/hoodie_image1"
@@ -100,59 +106,52 @@
                     android:text="Nike Club Fleece"
                     android:textSize="24sp"
                     android:textStyle="bold" />
-
-                <TextView
-                    android:id="@+id/product_price"
+                <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="$99"
-                    android:textSize="20sp"
-                    android:textColor="@android:color/holo_green_dark" />
+                    android:orientation="horizontal"
+                    android:gravity="center"
+                    android:layout_marginEnd="-1dp"
+                    >
 
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="$"
+                        android:textSize="20sp"
+                        android:layout_gravity="center_vertical"
+                        android:textColor="@android:color/holo_green_dark" />
+
+                    <TextView
+                        android:layout_gravity="bottom"
+                        android:id="@+id/product_price"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="99"
+                        android:textSize="20sp"
+                        android:textAllCaps="true"
+                        android:textStyle="bold"
+                        android:textColor="@android:color/holo_green_dark" />
+
+
+                </LinearLayout>
 
             </LinearLayout>
                    </LinearLayout>
 
         <!-- Images Carousel -->
-        <HorizontalScrollView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:paddingTop="16dp"
-            android:scrollbars="none">
 
-            <LinearLayout
-                android:layout_width="wrap_content"
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/item_images_rv"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal">
+                android:orientation="horizontal"
+                android:paddingTop="8dp"
 
-                <ImageView
-                    android:layout_width="100dp"
-                    android:layout_height="100dp"
-                    android:src="@drawable/hoodie_image1"
-                    android:scaleType="centerCrop"
-                    android:layout_marginEnd="8dp" />
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
 
-                <ImageView
-                    android:layout_width="100dp"
-                    android:layout_height="100dp"
-                    android:src="@drawable/hoodie_image1"
-                    android:scaleType="centerCrop"
-                    android:layout_marginEnd="8dp" />
 
-                <ImageView
-                    android:layout_width="100dp"
-                    android:layout_height="100dp"
-                    android:src="@drawable/hoodie_image1"
-                    android:scaleType="centerCrop"
-                    android:layout_marginEnd="8dp" />
-
-                <ImageView
-                    android:layout_width="100dp"
-                    android:layout_height="100dp"
-                    android:src="@drawable/hoodie_image1"
-                    android:scaleType="centerCrop" />
-            </LinearLayout>
-        </HorizontalScrollView>
 
         <!-- Size Options -->
             <TextView
@@ -163,71 +162,13 @@
                 android:textAppearance="@style/head2black"
                 />
 
-        <LinearLayout
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/item_sizes_rv"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
-
-            <androidx.appcompat.widget.AppCompatButton
-                android:layout_width="55dp"
-                android:layout_height="60dp"
-                android:layout_margin="8dp"
-                android:background="@drawable/size_button"
-                android:outlineAmbientShadowColor="@color/field_color_light"
-                android:outlineSpotShadowColor="@color/field_color_light"
-                android:shadowColor="@color/field_color_light"
-                android:text="S"
-                android:textSize="19sp" />
-
-            <androidx.appcompat.widget.AppCompatButton
-                android:layout_width="60dp"
-                android:layout_height="60dp"
-                android:background="@drawable/size_button"
-                android:text="m"
-                android:textSize="19sp"
-                android:layout_margin="8dp"
-                android:shadowColor="@color/field_color_light"
-                android:outlineAmbientShadowColor="@color/field_color_light"
-                android:outlineSpotShadowColor="@color/field_color_light"
-                />
-
-            <androidx.appcompat.widget.AppCompatButton
-                android:layout_width="60dp"
-                android:layout_height="60dp"
-                android:background="@drawable/size_button"
-                android:text="l"
-                android:textSize="19sp"
-                android:layout_margin="8dp"
-                android:shadowColor="@color/field_color_light"
-                android:outlineAmbientShadowColor="@color/field_color_light"
-                android:outlineSpotShadowColor="@color/field_color_light"
-                />
-
-            <androidx.appcompat.widget.AppCompatButton
-                android:layout_width="60dp"
-                android:layout_height="60dp"
-                android:background="@drawable/size_button"
-                android:text="xl"
-                android:textSize="19sp"
-                android:layout_margin="8dp"
-                android:shadowColor="@color/field_color_light"
-                android:outlineAmbientShadowColor="@color/field_color_light"
-                android:outlineSpotShadowColor="@color/field_color_light"
-                />
-
-            <androidx.appcompat.widget.AppCompatButton
-                android:layout_width="60dp"
-                android:layout_height="60dp"
-                android:background="@drawable/size_button"
-                android:text="2xl"
-                android:textSize="19sp"
-                android:layout_margin="8dp"
-                android:shadowColor="@color/field_color_light"
-                android:outlineAmbientShadowColor="@color/field_color_light"
-                android:outlineSpotShadowColor="@color/field_color_light"
-                />
-
-        </LinearLayout>
+            android:orientation="horizontal"
+            android:paddingTop="8dp"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"/>
 
         <!-- Description -->
         <TextView
@@ -240,6 +181,7 @@
             android:textStyle="bold" />
 
         <TextView
+            android:id="@+id/description"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
@@ -334,16 +276,15 @@
                             >
 
                             <TextView
-                                android:layout_weight="1"
+                                android:id="@+id/rating_number"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
+                                android:layout_margin="5dp"
+                                android:layout_weight="1"
                                 android:text="4.8"
                                 android:textColor="@android:color/holo_orange_dark"
                                 android:textSize="14sp"
-                                android:textStyle="bold"
-                                android:layout_margin="5dp"
-                                android:id="@+id/rating_number"
-                                />
+                                android:textStyle="bold" />
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
@@ -363,6 +304,7 @@
                             android:stepSize="0.1"
                             android:isIndicator="true"
                             android:rating="4.5"
+
                             />
 
                     </LinearLayout>
@@ -403,11 +345,25 @@
                     android:textSize="16sp"
                     android:gravity="start"
                     android:textColor="@android:color/holo_red_dark" />
-                <TextView
+
+                <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="150$"
-                    android:textAppearance="@style/head2black"/>
+                    android:orientation="horizontal"
+                    >
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="$"
+                        android:textAppearance="@style/head2black"/>
+                    <TextView
+                        android:id="@+id/total_price"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="150"
+                        android:textAppearance="@style/head2black"/>
+
+                </LinearLayout>
 
             </LinearLayout>
 
@@ -419,6 +375,7 @@
             android:layout_height="80dp"
             android:backgroundTint="@color/primary_color"
             android:text="@string/add_to_cart"
+            android:textStyle="bold"
             android:background="@drawable/buttonbase"
             android:textColor="@android:color/white"
             android:textAppearance="@style/head2" />
