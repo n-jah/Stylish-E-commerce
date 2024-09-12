@@ -7,7 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import com.example.stylish.databinding.ActivityLoginBinding
 
-class LoginFragment : Fragment() {
+class SignInFragment : Fragment() {
 
     private var _binding: ActivityLoginBinding? = null
     private val binding get() = _binding!!
@@ -18,6 +18,9 @@ class LoginFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         _binding = ActivityLoginBinding.inflate(inflater, container, false)
+        binding.forgetPassId.setOnClickListener {
+            (activity as? FragmentChangeListener)?.replaceFragment(ForgotPassowrdFragment())
+        }
         return binding.root
     }
 

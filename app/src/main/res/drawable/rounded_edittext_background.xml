@@ -1,0 +1,21 @@
+<!-- res/drawable/rounded_edittext_background.xml -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+
+    <!-- Background color of the EditText -->
+    <solid android:color="#F5F5F5" />
+
+    <!-- Corner radius for rounded edges -->
+    <corners android:radius="12dp" />
+
+    <!-- Optional: Border around the EditText -->
+
+
+    <!-- Optional: Padding inside the EditText -->
+    <padding
+        android:left="8dp"
+        android:top="8dp"
+        android:right="8dp"
+        android:bottom="8dp" />
+
+</shape>

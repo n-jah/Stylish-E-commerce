@@ -36,7 +36,7 @@ class SartFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         val signInText = binding.signInText
         signInText.setOnClickListener {
-            fragmentChangeListener?.replaceFragment(LoginFragment())
+            fragmentChangeListener?.replaceFragment(SignInFragment())
         }
     }
     override fun onDetach() {

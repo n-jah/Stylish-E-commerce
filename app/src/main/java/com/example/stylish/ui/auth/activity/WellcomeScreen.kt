@@ -1,5 +1,7 @@
 package com.example.stylish.ui.auth.activity
 
+import android.content.Intent
+import android.graphics.Color
 import android.os.Bundle
 import android.widget.Button
 import android.widget.TextView
@@ -11,102 +13,72 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentContainerView
+import androidx.fragment.app.FragmentTransaction
 import com.example.stylish.ui.auth.fragment.FragmentChangeListener
 import com.example.stylish.R
+import com.example.stylish.databinding.ActivityLoginBinding
 import com.example.stylish.ui.auth.fragment.SartFragment
 import com.example.stylish.databinding.ActivityWellcomeScreenBinding
 import com.example.stylish.databinding.FragmentSartBinding
-import com.example.stylish.ui.auth.fragment.LoginFragment
+import com.example.stylish.databinding.FragmentSignUpBinding
+import com.example.stylish.ui.auth.fragment.ForgotPassowrdFragment
+import com.example.stylish.ui.auth.fragment.NewPassowordFragment
+import com.example.stylish.ui.auth.fragment.SignInFragment
 import com.example.stylish.ui.auth.fragment.SignUpFragment
-
-class WellcomeScreen : AppCompatActivity() , FragmentChangeListener {
+import com.example.stylish.ui.auth.fragment.VerificationFragment
+import com.example.stylish.ui.home.activity.MainActivity
+class WellcomeScreen : AppCompatActivity(), FragmentChangeListener {
 
     private lateinit var baseButton: Button
     private lateinit var binding: ActivityWellcomeScreenBinding
     private lateinit var fragmentContainerView: FragmentContainerView
-    private lateinit var signInText: TextView
     private lateinit var fab: AppCompatImageButton
-    private lateinit var fragmentBinding: FragmentSartBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
-        binding = ActivityWellcomeScreenBinding.inflate(layoutInflater)
-        fragmentBinding = FragmentSartBinding.inflate(layoutInflater)
+        window.statusBarColor = Color.TRANSPARENT
+
+        initVars()
+
         setContentView(binding.root)
 
-        baseButton = binding.buttonBase
-        fab = binding.fab
         fragmentContainerView = binding.fragmentContainerView
-        
-        
-        signInText = fragmentBinding.signInText
 
-        // Set up the FloatingActionButton to handle back navigation
-        fab.setOnClickListener {
-            if (supportFragmentManager.backStackEntryCount > 0) {
-                onBackPressedDispatcher.onBackPressed()
-                updateButtonState(baseButton)
-            }
-        }
+        initBaseButton()
 
         // Replace the initial fragment with animations if none is already added
         if (supportFragmentManager.findFragmentById(R.id.fragmentContainerView) == null) {
-            val initialTransaction = supportFragmentManager.beginTransaction()
-            initialTransaction.setCustomAnimations(
-                R.anim.fragment_enter,  // Enter animation
-                R.anim.fragment_exit,   // Exit animation
-                R.anim.fragment_pop_enter,  // Pop enter animation
-                R.anim.fragment_pop_exit  // Pop exit animation
-            )
-            initialTransaction.replace(R.id.fragmentContainerView, SartFragment())
-            initialTransaction.commit()
+            replaceFragmentWithAnimations(SartFragment())
         }
 
         // Set the button text and action based on the current fragment
         updateButtonState(baseButton)
+    }
 
+    private fun initBaseButton() {
+        baseButton = binding.buttonBase
         baseButton.setOnClickListener {
             val currentFragment = supportFragmentManager.findFragmentById(R.id.fragmentContainerView)
-            val newFragment = if (currentFragment is SartFragment) {
-                SignUpFragment()
+            val newFragment = when (currentFragment) {
+                is SartFragment -> SignUpFragment()
+                is SignUpFragment -> {
+                    Toast.makeText(this, "signup", Toast.LENGTH_SHORT).show()
+                    return@setOnClickListener
+                }
+                is SignInFragment -> {
+                    Toast.makeText(this, "login", Toast.LENGTH_SHORT).show()
+                    return@setOnClickListener
+                }
+                is VerificationFragment -> NewPassowordFragment()
+                is ForgotPassowrdFragment -> VerificationFragment()
 
-            } else if (currentFragment is SignUpFragment) {
-                // Handle specific action for SignUpFragment if needed
-                Toast.makeText(this, "signup", Toast.LENGTH_SHORT).show()
-
-                return@setOnClickListener
-            } else if (currentFragment is LoginFragment) {
-
-                // Handle specific action for LoginFragment if needed
-                Toast.makeText(this, "login", Toast.LENGTH_SHORT).show()
-                return@setOnClickListener
-
-            } else {
-                SartFragment() // Fallback fragment
+                else -> {
+                            startActivity(Intent(this,MainActivity::class.java))
+                            finish()
+                        return@setOnClickListener}
             }
-            // Replace the fragment with animations
-            val transaction = supportFragmentManager.beginTransaction()
-            transaction.setCustomAnimations(
-                R.anim.fragment_enter,  // Enter animation
-                R.anim.fragment_exit,   // Exit animation
-                R.anim.fragment_pop_enter,  // Pop enter animation
-                R.anim.fragment_pop_exit  // Pop exit animation
-            )
-            transaction.replace(R.id.fragmentContainerView, newFragment)
-            transaction.addToBackStack(null)
-            transaction.commit()
+            replaceFragmentWithAnimations(newFragment)
 
-            // Update button state after transaction is committed
-            supportFragmentManager.executePendingTransactions()
-            updateButtonState(baseButton)
-        }
-
-        // Handle window insets for edge-to-edge layout
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.wellcommain)) { v, insets ->
-            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
-            insets
         }
     }
 
@@ -115,25 +87,44 @@ class WellcomeScreen : AppCompatActivity() , FragmentChangeListener {
         button.text = when (currentFragment) {
             is SartFragment -> getString(R.string.create_an_account)
             is SignUpFragment -> getString(R.string.sign_up)
-            is LoginFragment -> getString(R.string.sign_in)
-            else -> getString(R.string.create_an_account) // Provide a default text if needed
+            is SignInFragment -> getString(R.string.sign_in)
+            is ForgotPassowrdFragment -> getString(R.string.confirm_email)
+            is VerificationFragment -> getString(R.string.confirm_code)
+            is NewPassowordFragment -> getString(R.string.confirm_password)
+            else -> getString(R.string.create_an_account)
         }
     }
 
     override fun replaceFragment(fragment: Fragment) {
+        replaceFragmentWithAnimations(fragment)
+    }
+
+    private fun replaceFragmentWithAnimations(fragment: Fragment) {
         val transaction = supportFragmentManager.beginTransaction()
         transaction.setCustomAnimations(
-            R.anim.fragment_enter,  // Enter animation
-            R.anim.fragment_exit,   // Exit animation
-            R.anim.fragment_pop_enter,  // Pop enter animation
-            R.anim.fragment_pop_exit  // Pop exit animation
+            R.anim.fragment_enter,
+            R.anim.fragment_exit,
+            R.anim.fragment_pop_enter,
+            R.anim.fragment_pop_exit
         )
         transaction.replace(R.id.fragmentContainerView, fragment)
         transaction.addToBackStack(null)
         transaction.commit()
 
-        // Update button state after transaction is committed
         supportFragmentManager.executePendingTransactions()
         updateButtonState(baseButton)
+    }
+
+    private fun initVars() {
+        binding = ActivityWellcomeScreenBinding.inflate(layoutInflater)
+
+        // FloatingActionButton for back navigation
+        fab = binding.fab
+        fab.setOnClickListener {
+            if (supportFragmentManager.backStackEntryCount > 0) {
+                onBackPressedDispatcher.onBackPressed()
+                updateButtonState(baseButton)
+            }
+        }
     }
 }

@@ -38,11 +38,12 @@
         android:background="@drawable/buttonbase"
         android:fontFamily="@font/inter"
         android:text="BaseButtonText"
-        android:textSize="20sp"
+        android:textColor="@color/white"
+        android:textStyle="bold"
+        android:textSize="17sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-
         />
 
 

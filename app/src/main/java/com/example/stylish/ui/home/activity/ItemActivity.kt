@@ -46,6 +46,9 @@ class ItemActivity : AppCompatActivity() {
         binding.cartButton.setOnClickListener{
             startActivity(Intent(this, CartActivity::class.java))
         }
+         binding.backButton.setOnClickListener{
+             onBackPressedDispatcher.onBackPressed()
+         }
 
 
 

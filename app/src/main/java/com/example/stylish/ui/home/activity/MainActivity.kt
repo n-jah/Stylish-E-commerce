@@ -3,10 +3,12 @@ package com.example.stylish.ui.home.activity
 import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
-import androidx.activity.viewModels
+import android.view.MenuItem
+import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.drawerlayout.widget.DrawerLayout
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.GridLayoutManager
@@ -17,11 +19,10 @@ import com.example.stylish.ViewModel.MainViewModel
 import com.example.stylish.adapter.BrandAdapter
 import com.example.stylish.adapter.ItemAdapter
 import com.example.stylish.databinding.ActivityMainBinding
-import com.example.stylish.model.Brand
-import com.example.stylish.model.Item
 import com.example.stylish.repository.FirebaseBrandRepositry
 import com.example.stylish.repository.FirebaseItemRepository
 import com.example.stylish.repository.MainViewModelFactory
+import com.google.android.material.navigation.NavigationView
 
 class MainActivity : AppCompatActivity() {
 
@@ -30,6 +31,8 @@ class MainActivity : AppCompatActivity() {
     private lateinit var  itemRV : RecyclerView
     private lateinit var viewModel: MainViewModel
 
+    private lateinit var drawerLayout: DrawerLayout
+    private lateinit var drawerToggle: ActionBarDrawerToggle
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -38,15 +41,21 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
         window.statusBarColor = Color.TRANSPARENT
 
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main_drawer)) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
 
-
         viewModel = ViewModelProvider(this, MainViewModelFactory(FirebaseItemRepository(),FirebaseBrandRepositry()))
             .get(MainViewModel::class.java)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+
+
+
+
+        //the drawer things
+        navInti()
 
 
         brandsinti()
@@ -62,6 +71,37 @@ class MainActivity : AppCompatActivity() {
 
         val brandRV = binding.brandsRecyclerView
         brandRV.layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
+
+
+
+    }
+
+    private fun navInti() {
+        drawerLayout = binding.mainDrawer
+        val navigationView: NavigationView = binding.navView
+
+        drawerToggle = ActionBarDrawerToggle(
+            this,drawerLayout, R.string.drawer_open , R.string.drawer_close)
+        binding.floatingSlideIcon.setOnClickListener {
+            drawerLayout.openDrawer(navigationView)
+        }
+
+        drawerToggle.syncState()
+
+        // Handle navigation item clicks
+        navigationView.setNavigationItemSelectedListener { menuItem ->
+            when (menuItem.itemId) {
+                R.id.nav_account_info -> {
+                    // Open Account Information
+                }
+                R.id.nav_dark_mode -> {
+                    // Toggle Dark Mode
+                }
+                // Handle other menu items
+            }
+            drawerLayout.closeDrawers() // Close the drawer after selecting an item
+            true
+        }
 
 
 
@@ -95,4 +135,10 @@ class MainActivity : AppCompatActivity() {
 
     }
 
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        // Pass the event to ActionBarDrawerToggle to handle the toggle button
+        if (drawerToggle.onOptionsItemSelected(item)) {
+            return true
+        }
+        return super.onOptionsItemSelected(item)    }
 }

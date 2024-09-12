@@ -1,0 +1,34 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/nav_account_info"
+        android:title="Account Information"
+         />
+
+    <item
+        android:id="@+id/nav_dark_mode"
+        android:title="Dark Mode"
+      />
+
+    <item
+        android:id="@+id/nav_password"
+        android:title="Password"
+        android:icon="@drawable/baseline_lock_outline_24" />
+
+    <item
+        android:id="@+id/nav_orders"
+        android:title="Orders"
+        android:icon="@drawable/cart" />
+   <item
+        android:id="@+id/nav_cards"
+        android:title="My Cards"
+        android:icon="@drawable/outline_account_balance_wallet_24" />
+   <item
+        android:id="@+id/nav_wish_list"
+        android:title="WishList"
+        android:icon="@drawable/favorites_black" />
+    <item
+        android:id="@+id/nav_settings"
+        android:title="Settings"
+        android:icon="@drawable/outline_settings_24" />
+
+</menu>

@@ -22,6 +22,8 @@
     <string name="login_failed">"Login failed"</string>
     <string name="create_an_account">Create An Account</string>
     <string name="sign_in">Login</string>
+    <string name="confirm_email">Confirm Email</string>
+    <string name="confirm_code">Confirm Code</string>
     <string name="forgot_pass">Forgot password?</string>
     <string name="by_connecti">By connecting your account confirm that you agree with our Term and Condition</string>
     <string name="title_home">home</string>
@@ -50,6 +52,15 @@
     <string name="checkout">Checkout</string>
     <string name="tax">4.00</string>
     <string name="decrease_quantity">decress\n</string>
+    <string name="forget_password">"Forgot Password? "</string>
+    <string name="forgot_password">Forgot Password</string>
+    <string name="hintforget">Please write your email to receive a confirmation \n code to set a new password.</string>
+    <string name="verification_code">Verification Code</string>
+    <string name="new_password">New Password</string>
+    <string name="confirm_password">Confirm Password</string>
+    <string name="reset_password">Reset Password</string>
+    <string name="drawer_close">Colse Drawer</string>
+    <string name="drawer_open">Open Drawer</string>
 
 
 </resources>

@@ -6,9 +6,8 @@
 
     android:layout_height="match_parent"
     android:layout_width="match_parent"
-    tools:context=".ui.auth.fragment.LoginFragment"
+    tools:context=".ui.auth.fragment.SignInFragment"
     >
-
 
 
     <com.example.stylish.assets.CapitalizeFirstTextView
@@ -17,13 +16,23 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:gravity="center"
-        android:text="@string/sign_in"
+        android:text="Welcome"
         android:textAppearance="@style/head1"
         android:layout_margin="60dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         />
+
+    <com.example.stylish.assets.CapitalizeFirstTextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Please enter your data to continue"
+        android:textAppearance="@style/men_s_tie_d"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:textColor="@color/secondrey_text_color_light"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/signUpTitle" />
 
 
     <!-- Username Input -->
@@ -86,24 +95,24 @@
 
     <!-- Remember Me Switch -->
     <LinearLayout
+        android:id="@+id/linearLayout5"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
         android:gravity="center_vertical"
         android:orientation="horizontal"
+
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/emailLayout"
-
-        android:layout_marginRight="20dp"
-        android:layout_marginLeft="20dp"
-        >
+        app:layout_constraintTop_toBottomOf="@+id/emailLayout">
 
         <TextView
             android:id="@+id/rememberMeText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/remember_me"
             android:layout_weight="3"
+            android:text="@string/remember_me"
             android:textSize="16sp" />
 
         <com.google.android.material.switchmaterial.SwitchMaterial
@@ -111,9 +120,24 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            />
+            android:checked="true"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar"
+            android:thumbTint="@android:color/holo_green_dark"
+            android:trackTint="@android:color/holo_green_dark" />
 
 
     </LinearLayout>
+
+    <TextView
+        android:id="@+id/forget_pass_id"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/forget_password"
+        android:layout_margin="30dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/linearLayout5"
+        android:textColor="#EA4335"
+        />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>
