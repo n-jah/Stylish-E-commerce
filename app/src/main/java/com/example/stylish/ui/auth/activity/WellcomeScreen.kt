@@ -14,13 +14,19 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentContainerView
 import androidx.fragment.app.FragmentTransaction
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import com.example.stylish.ui.auth.fragment.FragmentChangeListener
 import com.example.stylish.R
+import com.example.stylish.ViewModel.AuthViewModel
 import com.example.stylish.databinding.ActivityLoginBinding
 import com.example.stylish.ui.auth.fragment.SartFragment
 import com.example.stylish.databinding.ActivityWellcomeScreenBinding
 import com.example.stylish.databinding.FragmentSartBinding
 import com.example.stylish.databinding.FragmentSignUpBinding
+import com.example.stylish.repository.AuthRepositoryImpl
+import com.example.stylish.repository.AuthRepositoryInterface
+import com.example.stylish.repository.AuthViewModelFactory
 import com.example.stylish.ui.auth.fragment.ForgotPassowrdFragment
 import com.example.stylish.ui.auth.fragment.NewPassowordFragment
 import com.example.stylish.ui.auth.fragment.SignInFragment
@@ -33,6 +39,13 @@ class WellcomeScreen : AppCompatActivity(), FragmentChangeListener {
     private lateinit var binding: ActivityWellcomeScreenBinding
     private lateinit var fragmentContainerView: FragmentContainerView
     private lateinit var fab: AppCompatImageButton
+
+    private val authRepository: AuthRepositoryInterface = AuthRepositoryImpl()
+    private val authViewModel: AuthViewModel by lazy {
+        ViewModelProvider(this, AuthViewModelFactory(authRepository)).get(AuthViewModel::class.java)
+
+    }
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -53,6 +66,32 @@ class WellcomeScreen : AppCompatActivity(), FragmentChangeListener {
 
         // Set the button text and action based on the current fragment
         updateButtonState(baseButton)
+
+
+
+        // Observe signUpResult LiveData
+        authViewModel.signUpResult.observe(this, Observer { success ->
+            if (success) {
+                Toast.makeText(this, "Sign up successful!", Toast.LENGTH_SHORT).show()
+                startActivity(Intent(this, MainActivity::class.java))
+                finish() // Finish the current activity
+            } else {
+                Toast.makeText(this, "Sign up failed!", Toast.LENGTH_SHORT).show()
+            }
+        })
+        // Observe signInResult LiveData
+        authViewModel.signInResult.observe(this,Observer{ success->
+            if (success){
+                Toast.makeText(this, "Sign In successful!", Toast.LENGTH_SHORT).show()
+                startActivity(Intent(this, MainActivity::class.java))
+                finish() // Finish the current activity
+            }else{
+                Toast.makeText(this, "Sign In failed!", Toast.LENGTH_SHORT).show()
+            }
+
+        })
+
+
     }
 
     private fun initBaseButton() {
@@ -62,11 +101,29 @@ class WellcomeScreen : AppCompatActivity(), FragmentChangeListener {
             val newFragment = when (currentFragment) {
                 is SartFragment -> SignUpFragment()
                 is SignUpFragment -> {
-                    Toast.makeText(this, "signup", Toast.LENGTH_SHORT).show()
+                    val fragment = currentFragment
+                    val userInput = fragment.getUserInput()
+                    if (userInput != null) {
+                        val (email, password, username) = userInput
+                        authViewModel.signUpUser(email, password, username)
+                        Toast.makeText(this, "Attempting to sign up", Toast.LENGTH_SHORT).show()
+                    } else {
+                        Toast.makeText(this, "Please fill in all fields", Toast.LENGTH_SHORT).show()
+                    }
+
                     return@setOnClickListener
                 }
                 is SignInFragment -> {
-                    Toast.makeText(this, "login", Toast.LENGTH_SHORT).show()
+                        val fragment = currentFragment
+                        val userInput = fragment.getUserInput()
+                    if (userInput != null) {
+                        val (email, password) = userInput
+                        authViewModel.signInUser(email, password)
+                        Toast.makeText(this, "Attempting to sign in", Toast.LENGTH_SHORT).show()
+                    }else{
+                        Toast.makeText(this, "Please fill in all fields", Toast.LENGTH_SHORT).show()
+                    }
+
                     return@setOnClickListener
                 }
                 is VerificationFragment -> NewPassowordFragment()

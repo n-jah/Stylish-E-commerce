@@ -1,3 +1,4 @@
+// SignUpFragment.kt
 package com.example.stylish.ui.auth.fragment
 
 import android.os.Bundle
@@ -5,14 +6,62 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import com.example.stylish.R
+import com.example.stylish.ViewModel.AuthViewModel
+import com.example.stylish.databinding.FragmentSignUpBinding
+import com.example.stylish.repository.AuthRepositoryImpl
+import com.example.stylish.repository.AuthRepositoryInterface
+import com.example.stylish.repository.AuthViewModelFactory
 
 class SignUpFragment : Fragment() {
 
+    private lateinit var binding: FragmentSignUpBinding
+    private lateinit var viewModel: AuthViewModel
+    private val authRepository: AuthRepositoryInterface = AuthRepositoryImpl()
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
-                              savedInstanceState: Bundle?): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_sign_up, container, false)
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        binding = FragmentSignUpBinding.inflate(inflater, container, false)
+        return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        val factory = AuthViewModelFactory(authRepository)
+        viewModel = ViewModelProvider(this, factory).get(AuthViewModel::class.java)
+
+        viewModel.signUpResult.observe(viewLifecycleOwner, Observer { success ->
+            if (success) {
+                Toast.makeText(requireContext(), "Sign up successful!", Toast.LENGTH_SHORT).show()
+            } else {
+                Toast.makeText(requireContext(), "Sign up failed!", Toast.LENGTH_SHORT).show()
+            }
+        })
+
+        // Handle other view logic
+    }
+
+    fun getUserInput(): Triple<String, String, String>? {
+        val email = binding.emailInput.text.toString()
+        val password = binding.passwordInput.text.toString()
+        val username = binding.usernameInput.text.toString()
+
+        return if (email.isNotBlank() && password.isNotBlank() && username.isNotBlank()) {
+            Triple(email, password, username)
+        } else {
+            null
+        }
+    }
+
+    fun checkToRememberMe(): Boolean {
+        return binding.rememberMeSwitch.isChecked
+
     }
 }

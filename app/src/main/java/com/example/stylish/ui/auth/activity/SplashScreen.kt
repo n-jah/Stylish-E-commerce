@@ -28,7 +28,7 @@ class SplashScreen : AppCompatActivity() {
                 startActivity(Intent(this, MainActivity::class.java))
             } else {
                 // If not signed in, navigate to the sign-in or sign-up activity
-                startActivity(Intent(this, WellcomeScreen   ::class.java))
+                startActivity(Intent(this, WellcomeScreen::class.java))
             }
             finish()
         }, 500)

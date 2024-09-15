@@ -1,6 +1,150 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:gravity="start"
+    android:orientation="vertical"
+    android:background="@color/background_color_light"
+    android:padding="16dp">
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+    <!-- Profile Section -->
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginTop="20dp"
+        android:id="@+id/header_title_layout"
+        >
+
+        <!-- Profile Image -->
+        <ImageView
+            android:id="@+id/nav_header_image"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:background="@drawable/circle"
+            android:scaleType="centerCrop"
+            android:src="@drawable/circle_outline"
+            app:layout_constraintStart_toStartOf="@+id/header_title_layout"
+            app:layout_constraintTop_toTopOf="@+id/header_title_layout"
+            app:layout_constraintBottom_toBottomOf="@+id/header_title_layout"
+            />
+
+        <!-- Username and Verified Status -->
+        <LinearLayout
+            android:id="@+id/textverf_id"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:gravity="center_vertical"
+            android:orientation="vertical"
+            app:layout_constraintBottom_toBottomOf="@+id/header_title_layout"
+            app:layout_constraintEnd_toStartOf="@+id/tv_orders_count"
+            app:layout_constraintStart_toEndOf="@+id/nav_header_image"
+
+            app:layout_constraintTop_toTopOf="@+id/header_title_layout">
+
+            <!-- User Name -->
+            <TextView
+                android:id="@+id/nav_header_username"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingTop="8dp"
+                android:text="Hemendra"
+                android:textColor="@android:color/black"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="bottom"
+
+                android:orientation="horizontal"
+
+                >
+                <!-- Verified Status -->
+                <TextView
+                    android:id="@+id/nav_header_status"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:drawablePadding="4dp"
+                    android:paddingBottom="8dp"
+                    android:text="Verified Profile"
+                    android:textColor="#8F959E"
+                    android:layout_gravity="bottom"
+                    android:textSize="12sp"
+                    />
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/verfic_ic"
+                    android:layout_gravity="top"
+                    />
+            </LinearLayout>
+
+
+        </LinearLayout>
+
+        <!-- Orders Information -->
+        <LinearLayout
+            android:id="@+id/tv_orders_count"
+            android:layout_width="80dp"
+            android:layout_height="40dp"
+            android:background="@drawable/default_item_background"
+            android:gravity="center_vertical"
+            app:layout_constraintBottom_toBottomOf="@id/textverf_id"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@id/textverf_id">
+
+            <TextView
+
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="18dp"
+                android:text="3 Orders"
+                android:textColor="#8F959E"
+                android:textSize="12sp" />
+
+        </LinearLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:layout_gravity="bottom"
+        android:layout_marginBottom="-20dp"
+        android:padding="8dp">
+
+        <!-- Menu Icon -->
+        <ImageView
+            android:id="@+id/icon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/outline_wb_sunny_24"
+            android:layout_marginEnd="10dp"
+            />
+
+        <!-- Menu Title -->
+        <TextView
+            android:id="@+id/title"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Dark Mode"
+            android:textAppearance="?android:attr/textAppearanceListItem" />
+
+        <!-- Switch -->
+        <androidx.appcompat.widget.SwitchCompat
+        android:id="@+id/nav_switch"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:switchMinWidth="50dp"
+         />
+    </LinearLayout>
+
+
+</LinearLayout>

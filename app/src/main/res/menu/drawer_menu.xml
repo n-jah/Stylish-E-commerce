@@ -1,13 +1,10 @@
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
         android:id="@+id/nav_account_info"
         android:title="Account Information"
-         />
-
-    <item
-        android:id="@+id/nav_dark_mode"
-        android:title="Dark Mode"
-      />
+        android:icon="@drawable/accout_info_ic"
+        />
 
     <item
         android:id="@+id/nav_password"
@@ -18,17 +15,19 @@
         android:id="@+id/nav_orders"
         android:title="Orders"
         android:icon="@drawable/cart" />
-   <item
+
+    <item
         android:id="@+id/nav_cards"
         android:title="My Cards"
         android:icon="@drawable/outline_account_balance_wallet_24" />
-   <item
+
+    <item
         android:id="@+id/nav_wish_list"
         android:title="WishList"
         android:icon="@drawable/favorites_black" />
+
     <item
         android:id="@+id/nav_settings"
         android:title="Settings"
         android:icon="@drawable/outline_settings_24" />
-
 </menu>

@@ -4,8 +4,10 @@ import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
 import android.view.MenuItem
+import android.widget.Toast
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.SwitchCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.drawerlayout.widget.DrawerLayout
@@ -52,8 +54,6 @@ class MainActivity : AppCompatActivity() {
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
 
-
-
         //the drawer things
         navInti()
 
@@ -81,12 +81,29 @@ class MainActivity : AppCompatActivity() {
         val navigationView: NavigationView = binding.navView
 
         drawerToggle = ActionBarDrawerToggle(
-            this,drawerLayout, R.string.drawer_open , R.string.drawer_close)
+            this, drawerLayout, R.string.drawer_open, R.string.drawer_close
+        )
         binding.floatingSlideIcon.setOnClickListener {
             drawerLayout.openDrawer(navigationView)
         }
 
         drawerToggle.syncState()
+
+        // Inflate the header view
+        val headerView = navigationView.getHeaderView(0)
+
+        // Access the SwitchCompat from the header view
+        val switchView = headerView.findViewById<SwitchCompat>(R.id.nav_switch)
+
+        switchView?.setOnCheckedChangeListener { _, isChecked ->
+            if (isChecked) {
+                // Dark mode enabled
+                Toast.makeText(this, "Dark mode enabled", Toast.LENGTH_SHORT).show()
+            } else {
+                // Dark mode disabled
+                Toast.makeText(this, "Dark mode disabled", Toast.LENGTH_SHORT).show()
+            }
+        }
 
         // Handle navigation item clicks
         navigationView.setNavigationItemSelectedListener { menuItem ->
@@ -94,17 +111,10 @@ class MainActivity : AppCompatActivity() {
                 R.id.nav_account_info -> {
                     // Open Account Information
                 }
-                R.id.nav_dark_mode -> {
-                    // Toggle Dark Mode
-                }
                 // Handle other menu items
             }
-            drawerLayout.closeDrawers() // Close the drawer after selecting an item
             true
         }
-
-
-
     }
 
     private fun brandsinti() {
