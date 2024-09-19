@@ -1,6 +1,7 @@
 // SignUpFragment.kt
 package com.example.stylish.ui.auth.fragment
 
+import android.content.Context
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -15,6 +16,9 @@ import com.example.stylish.databinding.FragmentSignUpBinding
 import com.example.stylish.repository.AuthRepositoryImpl
 import com.example.stylish.repository.AuthRepositoryInterface
 import com.example.stylish.repository.AuthViewModelFactory
+import com.example.stylish.ui.auth.activity.SplashScreen.Companion.PREFS_NAME
+import com.example.stylish.ui.auth.activity.SplashScreen.Companion.REMEMBER_ME_KEY
+import com.google.firebase.auth.FirebaseAuth
 
 class SignUpFragment : Fragment() {
 
@@ -34,14 +38,23 @@ class SignUpFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+
+
+        // Initialize Firebase Auth
+        val firebaseAuth = FirebaseAuth.getInstance()
+
+        // Create repository with FirebaseAuth instance
+        val authRepository: AuthRepositoryInterface = AuthRepositoryImpl()
+
         val factory = AuthViewModelFactory(authRepository)
         viewModel = ViewModelProvider(this, factory).get(AuthViewModel::class.java)
 
-        viewModel.signUpResult.observe(viewLifecycleOwner, Observer { success ->
-            if (success) {
+        viewModel.signUpResult.observe(viewLifecycleOwner, Observer { result ->
+            result.onSuccess {
+                saveRememberMePreference(checkToRememberMe())
                 Toast.makeText(requireContext(), "Sign up successful!", Toast.LENGTH_SHORT).show()
-            } else {
-                Toast.makeText(requireContext(), "Sign up failed!", Toast.LENGTH_SHORT).show()
+            }.onFailure {
+                Toast.makeText(requireContext(), "Sign up failed: ${it.message}", Toast.LENGTH_SHORT).show()
             }
         })
 
@@ -63,5 +76,13 @@ class SignUpFragment : Fragment() {
     fun checkToRememberMe(): Boolean {
         return binding.rememberMeSwitch.isChecked
 
+    }
+
+    // Save the "Remember Me" preference to SharedPreferences
+    private fun saveRememberMePreference(keepSignedIn: Boolean) {
+        val sharedPreferences = requireActivity().getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+        val editor = sharedPreferences.edit()
+        editor.putBoolean(REMEMBER_ME_KEY, keepSignedIn)
+        editor.apply()  // Commit the changes
     }
 }

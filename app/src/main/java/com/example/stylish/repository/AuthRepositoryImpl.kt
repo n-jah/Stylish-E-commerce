@@ -1,58 +1,59 @@
 package com.example.stylish.repository
 
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseAuthUserCollisionException
+import com.google.firebase.auth.FirebaseAuthWeakPasswordException
 import com.google.firebase.database.FirebaseDatabase
+import kotlinx.coroutines.tasks.await
 
-class AuthRepositoryImpl: AuthRepositoryInterface  {
-    override fun signUp(
-        email: String,
-        password: String,
-        username: String,
-        callback: (Boolean) -> Unit
-    ) {
-        FirebaseAuth.getInstance().createUserWithEmailAndPassword(email, password)
-            .addOnCompleteListener { task ->
-                if (task.isSuccessful) {
-                    val userId = FirebaseAuth.getInstance().currentUser?.uid
-                    val userMap = mapOf(
-                        "username" to username,
-                        "email" to email
-                    )
+class AuthRepositoryImpl : AuthRepositoryInterface {
 
-                    // Storing user info in Firebase Realtime Database
-                    FirebaseDatabase.getInstance().getReference("users").child(userId!!)
-                        .setValue(userMap)
-                        .addOnSuccessListener {
-                            callback(true)
-                        }.addOnFailureListener {
-                            callback(false)
-                        }
-                } else {
-                    callback(false)
-                }
-            }
-    }
+    override suspend fun signUp(email: String, password: String, username: String): Result<String> {
+        return try {
+            val authResult = FirebaseAuth.getInstance()
+                .createUserWithEmailAndPassword(email, password)
+                .await()
 
-    override fun signIn(email: String,
-                        password: String,
-                        callback: (Boolean) -> Unit
-    ) {
-        FirebaseAuth.getInstance().signInWithEmailAndPassword(email, password).addOnCompleteListener { task ->
-            if (task.isSuccessful) {
-                callback(true)
+            val userId = authResult.user?.uid ?: throw Exception("User ID is null")
 
+            val userMap = mapOf("username" to username, "email" to email)
 
-            } else {
-                callback(false)
+            FirebaseDatabase.getInstance().getReference("users")
+                .child(userId)
+                .setValue(userMap)
+                .await()
 
+            Result.success("Sign-up successful")
+        } catch (e: Exception) {
+            when (e) {
+                is FirebaseAuthUserCollisionException -> Result.failure(Exception("Email already in use"))
+                is FirebaseAuthWeakPasswordException -> Result.failure(Exception("Weak password"))
+                else -> Result.failure(e)
             }
         }
-
-     }
-
-    override fun signOut(callback: (Boolean) -> Unit)
-    {
-        FirebaseAuth.getInstance().signOut()
-        callback(true)
     }
+
+    override suspend fun signIn(email: String, password: String): Result<String> {
+        return try {
+            FirebaseAuth.getInstance()
+                .signInWithEmailAndPassword(email, password)
+                .await()
+
+            Result.success("Sign-in successful")
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
+    override fun signOut(): Boolean {
+        return try {
+            FirebaseAuth.getInstance().signOut()
+            true
+        } catch (e: Exception) {
+            false
+        }
+    }
+
+
+
 }

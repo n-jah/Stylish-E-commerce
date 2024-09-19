@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.example.stylish.ViewModel.AuthViewModel
@@ -37,13 +38,14 @@ class SignInFragment : Fragment() {
         val factory = AuthViewModelFactory(authRepository)
         viewModel = ViewModelProvider(this, factory).get(AuthViewModel::class.java)
 
-        viewModel.signInResult.observe(viewLifecycleOwner, Observer { success ->
-            if (success) {
+        viewModel.signInResult.observe(viewLifecycleOwner, Observer { result ->
+            result.onSuccess {
                 // Handle successful sign-in
-            } else {
+                Toast.makeText(requireContext(), "Sign-in successful!", Toast.LENGTH_SHORT).show()
+            }.onFailure {
                 // Handle sign-in failure
+                Toast.makeText(requireContext(), "Sign-in failed: ${it.message}", Toast.LENGTH_SHORT).show()
             }
-
         })
 
 

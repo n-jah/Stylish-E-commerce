@@ -1,16 +1,25 @@
 package com.example.stylish.ui.auth.activity
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
+import android.util.Log
+import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.example.stylish.R
 import com.example.stylish.ui.home.activity.MainActivity
+import com.google.firebase.auth.FirebaseAuth
 
 class SplashScreen : AppCompatActivity() {
+    companion object {
+        const val PREFS_NAME = "userPrefs"
+        const val REMEMBER_ME_KEY = "keepSignedIn"
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -35,8 +44,25 @@ class SplashScreen : AppCompatActivity() {
     }
 
     private fun isUserSignedIn(): Boolean {
-        // Implement your logic to check if the user is signed in
-        // Return true if the user is signed in, false otherwise
-        return false
+        val sharedPreferences = getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+        val rememberMe = sharedPreferences.getBoolean(REMEMBER_ME_KEY, false)
+        return rememberMe && isFirebaseUserAuthenticated()
+
+
     }
+
+    // Helper function to check if Firebase user is signed in (implement as per your auth logic)
+    private fun isFirebaseUserAuthenticated(): Boolean {
+        val currentUser = FirebaseAuth.getInstance().currentUser
+        if (currentUser != null) {
+            Log.d("SplashScreen", "User is signed in: $currentUser")
+            Toast.makeText(this, "User is signed in: ${currentUser.email}", Toast.LENGTH_SHORT).show()
+        } else {
+            Log.d("SplashScreen", "No user is signed in.")
+            Toast.makeText(this, "No user is signed in.", Toast.LENGTH_SHORT).show()
+        }
+        return currentUser != null
     }
+
+
+}

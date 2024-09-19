@@ -1,38 +1,35 @@
 package com.example.stylish.ui.auth.activity
 
+import android.content.Context
 import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
 import android.widget.Button
-import android.widget.TextView
 import android.widget.Toast
-import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.AppCompatImageButton
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentContainerView
-import androidx.fragment.app.FragmentTransaction
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.example.stylish.ui.auth.fragment.FragmentChangeListener
 import com.example.stylish.R
 import com.example.stylish.ViewModel.AuthViewModel
-import com.example.stylish.databinding.ActivityLoginBinding
 import com.example.stylish.ui.auth.fragment.SartFragment
 import com.example.stylish.databinding.ActivityWellcomeScreenBinding
-import com.example.stylish.databinding.FragmentSartBinding
-import com.example.stylish.databinding.FragmentSignUpBinding
 import com.example.stylish.repository.AuthRepositoryImpl
 import com.example.stylish.repository.AuthRepositoryInterface
 import com.example.stylish.repository.AuthViewModelFactory
+import com.example.stylish.ui.auth.activity.SplashScreen.Companion.PREFS_NAME
+import com.example.stylish.ui.auth.activity.SplashScreen.Companion.REMEMBER_ME_KEY
 import com.example.stylish.ui.auth.fragment.ForgotPassowrdFragment
 import com.example.stylish.ui.auth.fragment.NewPassowordFragment
 import com.example.stylish.ui.auth.fragment.SignInFragment
 import com.example.stylish.ui.auth.fragment.SignUpFragment
 import com.example.stylish.ui.auth.fragment.VerificationFragment
 import com.example.stylish.ui.home.activity.MainActivity
+import com.google.firebase.auth.FirebaseAuth
+
 class WellcomeScreen : AppCompatActivity(), FragmentChangeListener {
 
     private lateinit var baseButton: Button
@@ -69,26 +66,24 @@ class WellcomeScreen : AppCompatActivity(), FragmentChangeListener {
 
 
 
-        // Observe signUpResult LiveData
-        authViewModel.signUpResult.observe(this, Observer { success ->
-            if (success) {
+        authViewModel.signUpResult.observe(this, Observer { result ->
+            result.onSuccess {
                 Toast.makeText(this, "Sign up successful!", Toast.LENGTH_SHORT).show()
                 startActivity(Intent(this, MainActivity::class.java))
-                finish() // Finish the current activity
-            } else {
-                Toast.makeText(this, "Sign up failed!", Toast.LENGTH_SHORT).show()
+                finish()
+            }.onFailure {
+                Toast.makeText(this, "Sign up failed: ${it.message}", Toast.LENGTH_SHORT).show()
             }
         })
         // Observe signInResult LiveData
-        authViewModel.signInResult.observe(this,Observer{ success->
-            if (success){
+        authViewModel.signInResult.observe(this, Observer { result ->
+            result.onSuccess {
                 Toast.makeText(this, "Sign In successful!", Toast.LENGTH_SHORT).show()
                 startActivity(Intent(this, MainActivity::class.java))
-                finish() // Finish the current activity
-            }else{
-                Toast.makeText(this, "Sign In failed!", Toast.LENGTH_SHORT).show()
+                finish()
+            }.onFailure {
+                Toast.makeText(this, "Sign In failed: ${it.message}", Toast.LENGTH_SHORT).show()
             }
-
         })
 
 
@@ -106,7 +101,10 @@ class WellcomeScreen : AppCompatActivity(), FragmentChangeListener {
                     if (userInput != null) {
                         val (email, password, username) = userInput
                         authViewModel.signUpUser(email, password, username)
+                        sharedPrefSwitcher(fragment.checkToRememberMe())
+
                         Toast.makeText(this, "Attempting to sign up", Toast.LENGTH_SHORT).show()
+
                     } else {
                         Toast.makeText(this, "Please fill in all fields", Toast.LENGTH_SHORT).show()
                     }
@@ -114,15 +112,18 @@ class WellcomeScreen : AppCompatActivity(), FragmentChangeListener {
                     return@setOnClickListener
                 }
                 is SignInFragment -> {
-                        val fragment = currentFragment
-                        val userInput = fragment.getUserInput()
+                    val fragment = currentFragment
+                    val userInput = fragment.getUserInput()
                     if (userInput != null) {
                         val (email, password) = userInput
                         authViewModel.signInUser(email, password)
+                        sharedPrefSwitcher(fragment.checkRememberMe())
+
                         Toast.makeText(this, "Attempting to sign in", Toast.LENGTH_SHORT).show()
                     }else{
                         Toast.makeText(this, "Please fill in all fields", Toast.LENGTH_SHORT).show()
                     }
+
 
                     return@setOnClickListener
                 }
@@ -130,9 +131,9 @@ class WellcomeScreen : AppCompatActivity(), FragmentChangeListener {
                 is ForgotPassowrdFragment -> VerificationFragment()
 
                 else -> {
-                            startActivity(Intent(this,MainActivity::class.java))
-                            finish()
-                        return@setOnClickListener}
+                    startActivity(Intent(this,MainActivity::class.java))
+                    finish()
+                    return@setOnClickListener}
             }
             replaceFragmentWithAnimations(newFragment)
 
@@ -184,4 +185,22 @@ class WellcomeScreen : AppCompatActivity(), FragmentChangeListener {
             }
         }
     }
+
+    private fun sharedPrefSwitcher(switchCase : Boolean){
+        val sharedPreferences = getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+        val editor = sharedPreferences.edit()
+        editor.putBoolean(REMEMBER_ME_KEY, switchCase)
+        editor.apply()
+    }
+
+
+
+    override fun onBackPressed() {
+        super.onBackPressed()
+        updateButtonState(baseButton)
+        if (supportFragmentManager.backStackEntryCount == 0) {
+            finish()
+        }
+    }
+
 }

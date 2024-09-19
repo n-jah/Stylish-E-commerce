@@ -1,5 +1,6 @@
 package com.example.stylish.ui.home.activity
 
+import android.content.Context
 import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
@@ -17,14 +18,21 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.stylish.R
+import com.example.stylish.ViewModel.AuthViewModel
 import com.example.stylish.ViewModel.MainViewModel
 import com.example.stylish.adapter.BrandAdapter
 import com.example.stylish.adapter.ItemAdapter
 import com.example.stylish.databinding.ActivityMainBinding
+import com.example.stylish.repository.AuthRepositoryImpl
+import com.example.stylish.repository.AuthViewModelFactory
 import com.example.stylish.repository.FirebaseBrandRepositry
 import com.example.stylish.repository.FirebaseItemRepository
 import com.example.stylish.repository.MainViewModelFactory
+import com.example.stylish.ui.auth.activity.SplashScreen.Companion.PREFS_NAME
+import com.example.stylish.ui.auth.activity.WellcomeScreen
+import com.example.stylish.ui.auth.fragment.SignUpFragment
 import com.google.android.material.navigation.NavigationView
+import com.google.firebase.auth.FirebaseAuth
 
 class MainActivity : AppCompatActivity() {
 
@@ -32,12 +40,15 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var  itemRV : RecyclerView
     private lateinit var viewModel: MainViewModel
-
     private lateinit var drawerLayout: DrawerLayout
     private lateinit var drawerToggle: ActionBarDrawerToggle
+    private lateinit var authViewModel: AuthViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+// linking the auth view model
+        val factory = AuthViewModelFactory(AuthRepositoryImpl())
+        authViewModel = ViewModelProvider(this, factory).get(AuthViewModel::class.java)
 
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
@@ -95,6 +106,23 @@ class MainActivity : AppCompatActivity() {
         // Access the SwitchCompat from the header view
         val switchView = headerView.findViewById<SwitchCompat>(R.id.nav_switch)
 
+        // logging out vie viewModel
+
+        binding.logoutLayout.setOnClickListener{
+            authViewModel.signOutUser()
+            navigateToLoginScreen()
+
+        }
+        authViewModel.signOutResult.observe(this, Observer { success ->
+            if (success) {
+                clearRememberMePreference()
+                Toast.makeText(this, "Logged out", Toast.LENGTH_SHORT).show()
+            }else{
+                Toast.makeText(this, "field to log out", Toast.LENGTH_SHORT).show()
+            }
+        })
+
+
         switchView?.setOnCheckedChangeListener { _, isChecked ->
             if (isChecked) {
                 // Dark mode enabled
@@ -117,6 +145,17 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    private fun navigateToLoginScreen() {
+        val intent = Intent(this, WellcomeScreen::class.java)
+        startActivity(intent)
+        finish()
+    }
+
+    private fun clearRememberMePreference() {
+        val sharedPreferences = getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+        sharedPreferences.edit().clear().apply()
+    }
+
     private fun brandsinti() {
         val brandRV = binding.brandsRecyclerView
         brandRV.layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
@@ -124,7 +163,7 @@ class MainActivity : AppCompatActivity() {
         viewModel.brands.observe(this, Observer { brands ->
             if (brands != null){
                 brandRV.adapter = BrandAdapter(brands, isLoading = false)
-                }
+            }
         })
     }
 
@@ -137,12 +176,8 @@ class MainActivity : AppCompatActivity() {
         viewModel.items.observe(this, Observer { items ->
             if (items != null){
                 itemRV.adapter = ItemAdapter(items, isLoading = false)
-
             }
-
         })
-
-
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
