@@ -3,6 +3,7 @@ package com.example.stylish.repository
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseAuthUserCollisionException
 import com.google.firebase.auth.FirebaseAuthWeakPasswordException
+import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.database.FirebaseDatabase
 import kotlinx.coroutines.tasks.await
 
@@ -54,6 +55,14 @@ class AuthRepositoryImpl : AuthRepositoryInterface {
         }
     }
 
-
+    override suspend fun firebaseAuthWithGoogle(idToken: String): Result<String> {
+        return try {
+            val credential = GoogleAuthProvider.getCredential(idToken, null)
+            val authResult = FirebaseAuth.getInstance().signInWithCredential(credential).await()
+            Result.success("Google Sign-In successful")
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
 
 }

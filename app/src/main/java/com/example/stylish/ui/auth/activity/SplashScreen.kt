@@ -40,14 +40,13 @@ class SplashScreen : AppCompatActivity() {
                 startActivity(Intent(this, WellcomeScreen::class.java))
             }
             finish()
-        }, 500)
+        }, 1000)
     }
 
     private fun isUserSignedIn(): Boolean {
         val sharedPreferences = getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
         val rememberMe = sharedPreferences.getBoolean(REMEMBER_ME_KEY, false)
         return rememberMe && isFirebaseUserAuthenticated()
-
 
     }
 

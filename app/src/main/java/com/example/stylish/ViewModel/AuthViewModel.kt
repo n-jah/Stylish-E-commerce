@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.stylish.model.User
 import com.example.stylish.repository.AuthRepositoryInterface
+import com.google.firebase.auth.AuthResult
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.launch
 
@@ -19,6 +20,11 @@ class AuthViewModel(private val authRepository: AuthRepositoryInterface):ViewMod
 
     private val _signOutResult = MutableLiveData<Boolean>()
     val signOutResult: LiveData<Boolean> get() = _signOutResult
+
+
+    private val _googleSignInResult = MutableLiveData<Result<String>>()
+    val googleSignInResult: LiveData<Result<String>> get() = _googleSignInResult
+
 
 
 
@@ -47,4 +53,21 @@ class AuthViewModel(private val authRepository: AuthRepositoryInterface):ViewMod
         val success = authRepository.signOut()
         _signOutResult.postValue(success)
     }
+    fun signInWithGoogle(idToken: String) {
+        viewModelScope.launch {
+            try {
+                val result = authRepository.firebaseAuthWithGoogle(idToken)
+                _googleSignInResult.postValue(result)
+            } catch (e: Exception) {
+                _googleSignInResult.postValue(Result.failure(e))
+            }
+        }
+    }
+
+
+
+
+
+
+
 }
