@@ -63,7 +63,11 @@ class SartFragment : Fragment() {
         binding.btnGoogle.setOnClickListener {
             authViewModel.initiateGoogleSignIn(this, RC_SIGN_IN)
         }
-
+        // Access views using the binding object
+        val signInText = binding.signInText
+        signInText.setOnClickListener {
+            fragmentChangeListener?.replaceFragment(SignInFragment())
+        }
         // Observe Google, Facebook, and Twitter sign-in results
         observeSignInResults()
 
