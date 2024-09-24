@@ -63,5 +63,12 @@
     <string name="drawer_open">Open Drawer</string>
     <string name="your_web_client_id">268886359428-s36v1vte90fuoul7i6l3treir9hsqlk3.apps.googleusercontent.com</string>
 
+    <string name="facebook_app_id">1400075447583863</string>
+    <string name="fb_login_protocol_scheme">fb6ead2d60b44448211aab819f0ab0edb5</string>
+    <string name="facebook_client_token">2156d3922742877c3362a7b62a087d04</string>
+    <string name="API_Key">RkHjQR5YtzD5CWPeR4xqORMoT</string>
+    <string name="API_secret">hflvunWw7T2ZMTnIp86XrSo4Q1JYYBIazo58nTK9zA32hjLlOx</string>
+
+
 
 </resources>

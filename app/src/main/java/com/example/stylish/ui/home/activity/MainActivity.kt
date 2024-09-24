@@ -113,15 +113,15 @@ class MainActivity : AppCompatActivity() {
             navigateToLoginScreen()
 
         }
-        authViewModel.signOutResult.observe(this, Observer { success ->
-            if (success) {
+        authViewModel.signOutResult.observe(this, Observer { result ->
+            result.onSuccess { isSuccess ->
                 clearRememberMePreference()
                 Toast.makeText(this, "Logged out", Toast.LENGTH_SHORT).show()
-            }else{
+
+             }.onFailure { exception ->
                 Toast.makeText(this, "field to log out", Toast.LENGTH_SHORT).show()
             }
         })
-
 
         switchView?.setOnCheckedChangeListener { _, isChecked ->
             if (isChecked) {

@@ -64,5 +64,7 @@ dependencies {
     implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.8.4")
     implementation("com.google.android.gms:play-services-auth:21.2.0")
     implementation("com.facebook.shimmer:shimmer:0.5.0")
+    implementation("com.facebook.android:facebook-android-sdk:15.1.0")
+
 
 }

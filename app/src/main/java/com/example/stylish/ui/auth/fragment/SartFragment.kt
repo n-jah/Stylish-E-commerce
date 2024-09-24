@@ -2,47 +2,41 @@ package com.example.stylish.ui.auth.fragment
 
 import android.content.Context
 import android.content.Intent
-import android.content.SharedPreferences
 import android.os.Bundle
-import android.util.Log
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import com.example.stylish.R
 import com.example.stylish.ViewModel.AuthViewModel
 import com.example.stylish.databinding.FragmentSartBinding
-import com.example.stylish.model.User
 import com.example.stylish.repository.AuthRepositoryImpl
 import com.example.stylish.repository.AuthRepositoryInterface
 import com.example.stylish.repository.AuthViewModelFactory
 import com.example.stylish.ui.auth.activity.SplashScreen.Companion.PREFS_NAME
 import com.example.stylish.ui.auth.activity.SplashScreen.Companion.REMEMBER_ME_KEY
 import com.example.stylish.ui.home.activity.MainActivity
-import com.google.android.gms.auth.api.identity.BeginSignInRequest
-import com.google.android.gms.auth.api.signin.GoogleSignIn
-import com.google.android.gms.auth.api.signin.GoogleSignInAccount
-import com.google.android.gms.auth.api.signin.GoogleSignInClient
-import com.google.android.gms.auth.api.signin.GoogleSignInOptions
-import com.google.android.gms.common.api.ApiException
+import com.facebook.CallbackManager
+import com.facebook.FacebookCallback
+import com.facebook.FacebookException
+import com.facebook.login.LoginManager
+import com.facebook.login.LoginResult
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.GoogleAuthProvider
-import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.auth.OAuthProvider
+import com.google.firebase.auth.FirebaseAuthUserCollisionException
 
 class SartFragment : Fragment() {
 
     private var fragmentChangeListener: FragmentChangeListener? = null
     private lateinit var binding: FragmentSartBinding
-    private lateinit var googleSignInClient: GoogleSignInClient
-    private lateinit var auth: FirebaseAuth
+    private lateinit var callbackManager: CallbackManager
     private lateinit var authViewModel: AuthViewModel
     private val authRepository: AuthRepositoryInterface = AuthRepositoryImpl()
 
     companion object {
-        const val RC_SIGN_IN = 123
+        const val RC_SIGN_IN = 123  // For Google Sign-In
     }
 
     override fun onAttach(context: Context) {
@@ -57,117 +51,121 @@ class SartFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        // Initialize binding here
+    ): View {
         binding = FragmentSartBinding.inflate(inflater, container, false)
-
-        // ViewModel initialization
         val factory = AuthViewModelFactory(authRepository)
         authViewModel = ViewModelProvider(this, factory).get(AuthViewModel::class.java)
 
-        // Initialize Google Sign-In client
-        val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-            .requestIdToken(getString(R.string.your_web_client_id))
-            .requestEmail()
-            .build()
+        callbackManager = CallbackManager.Factory.create()
+        setupFacebookLogin()
+        setupTwitterLogin()
 
-        googleSignInClient = GoogleSignIn.getClient(requireActivity(), gso)
-
-        // Set up the button listener after initializing the binding
         binding.btnGoogle.setOnClickListener {
-            signInWithGoogle()
+            authViewModel.initiateGoogleSignIn(this, RC_SIGN_IN)
         }
 
-        // Firebase initialization
-        auth = FirebaseAuth.getInstance()
-
-        // Observe Google Sign-In result
-        authViewModel.googleSignInResult.observe(viewLifecycleOwner, Observer { result ->
-            result.onSuccess {
-                // Navigate to MainActivity or wherever necessary
-                sharedPrefSwitcher(true)
-                startActivity(Intent(requireContext(), MainActivity::class.java))
-                requireActivity().finish()
-            }.onFailure {
-                Toast.makeText(requireContext(), "Google Sign-In failed: ${it.message}", Toast.LENGTH_SHORT).show()
-            }
-        })
+        // Observe Google, Facebook, and Twitter sign-in results
+        observeSignInResults()
 
         return binding.root
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
+    private fun observeSignInResults() {
+        authViewModel.googleSignInResult.observe(viewLifecycleOwner, Observer { result ->
+            result.onSuccess { handleSignInSuccess() }.onFailure { handleSignInFailure(it.message) }
+        })
 
-        // Access views using the binding object
-        val signInText = binding.signInText
-        signInText.setOnClickListener {
-            fragmentChangeListener?.replaceFragment(SignInFragment())
+        authViewModel.facebookSignInResult.observe(viewLifecycleOwner, Observer { result ->
+            result.onSuccess { handleSignInSuccess() }.onFailure { handleSignInFailure(it.message) }
+        })
+
+        authViewModel.twitterSignInResult.observe(viewLifecycleOwner, Observer { result ->
+            result.onSuccess { handleSignInSuccess() }.onFailure { handleSignInFailure(it.message) }
+        })
+    }
+
+    private fun setupFacebookLogin() {
+        binding.btnFacebook.setOnClickListener {
+            LoginManager.getInstance().logInWithReadPermissions(
+                this,
+                listOf("email", "public_profile")
+            )
         }
-    }
 
-    private fun signInWithGoogle() {
-        val signInIntent = googleSignInClient.signInIntent
-        startActivityForResult(signInIntent, RC_SIGN_IN)
-    }
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == RC_SIGN_IN) {
-            val task = GoogleSignIn.getSignedInAccountFromIntent(data)
-            try {
-                val account = task.getResult(ApiException::class.java)
-                account?.let {
-                    // Send the ID token to your ViewModel to handle sign-in with Firebase
-                    it.idToken?.let { idToken ->
-                        authViewModel.signInWithGoogle(idToken)
-                    }
-
-
-// Get the current user's UID from FirebaseAuth
-                    val currentUser = FirebaseAuth.getInstance().currentUser
-                    val uid = currentUser?.uid
-
-                    if (uid != null) {
-                        // Get displayName, email, and profilePicUrl from GoogleSignInAccount
-                        val displayName = currentUser.displayName ?: ""
-                        val email = currentUser.email ?: ""
-                        val profilePicUrl = currentUser.photoUrl?.toString() ?: ""
-
-                        // Create user object to save in Firebase Database
-                        val user = User(uid, displayName, email, profilePicUrl)
-
-                        // Write the user data to Firebase Realtime Database
-                        val database = FirebaseDatabase.getInstance()
-                        val usersRef = database.getReference("users").child(uid)
-                        usersRef.setValue(user)
-                            .addOnSuccessListener {
-                                Toast.makeText(requireContext(), "User data added to Firebase", Toast.LENGTH_SHORT).show()
-                                sharedPrefSwitcher(true)
-                            }
-                            .addOnFailureListener { e ->
-                                Toast.makeText(requireContext(), "Failed to add user data: ${e.message}", Toast.LENGTH_SHORT).show()
-                                Log.d("Firebase_add", "Failed to add user data: ${e.message}")
-                            }
-                    } else {
-                        Toast.makeText(requireContext(), "User ID is null", Toast.LENGTH_SHORT).show()
-                    }
-
-
-                    // Optionally, store this data in the ViewModel or SharedPreferences
-//                    authViewModel.setUserDetails(displayName, email, profilePicUrl)
+        LoginManager.getInstance().registerCallback(callbackManager,
+            object : FacebookCallback<LoginResult> {
+                override fun onSuccess(loginResult: LoginResult) {
+                    val token = loginResult.accessToken.token
+                    authViewModel.handleFacebookSignInResult(token)  // ViewModel handles token
                 }
-            } catch (e: ApiException) {
-                Toast.makeText(requireContext(), "Google Sign-In failed: ${e.message}", Toast.LENGTH_SHORT).show()
+
+                override fun onCancel() {
+                    Toast.makeText(context, "Facebook login canceled", Toast.LENGTH_SHORT).show()
+                }
+
+                override fun onError(error: FacebookException) {
+                    Toast.makeText(context, "Facebook login failed: ${error.message}", Toast.LENGTH_SHORT).show()
+                }
+            })
+    }
+
+    private fun setupTwitterLogin() {
+        binding.btnTwitter.setOnClickListener {
+            val provider = OAuthProvider.newBuilder("twitter.com")
+
+            val pendingResultTask = FirebaseAuth.getInstance().pendingAuthResult
+            if (pendingResultTask != null) {
+                pendingResultTask.addOnSuccessListener { authResult ->
+                    authViewModel.handleTwitterSignInResult(authResult)  // Use ViewModel
+                }.addOnFailureListener {
+                    handleSignInFailure(it.message)
+                }
+            } else {
+                FirebaseAuth.getInstance()
+                    .startActivityForSignInWithProvider(requireActivity(), provider.build())
+                    .addOnSuccessListener { authResult ->
+                        authViewModel.handleTwitterSignInResult(authResult)  // Use ViewModel
+                    }
+                    .addOnFailureListener { error ->
+                        handleError(error)
+                    }
             }
         }
     }
-    private fun sharedPrefSwitcher(switchCase : Boolean){
+
+    private fun handleError(error: Exception) {
+        if (error is FirebaseAuthUserCollisionException) {
+            Toast.makeText(requireContext(), "Account already linked with another provider", Toast.LENGTH_SHORT).show()
+        } else {
+            handleSignInFailure(error.message)
+        }
+    }
+
+    private fun handleSignInSuccess() {
+        sharedPrefSwitcher(true)
+        startActivity(Intent(requireContext(), MainActivity::class.java))
+        requireActivity().finish()
+    }
+
+    private fun handleSignInFailure(errorMessage: String?) {
+        Toast.makeText(requireContext(), "Sign-In failed: $errorMessage", Toast.LENGTH_SHORT).show()
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        callbackManager.onActivityResult(requestCode, resultCode, data)
+
+        if (requestCode == RC_SIGN_IN) {
+            authViewModel.handleGoogleSignInResult(data)
+        }
+    }
+
+    private fun sharedPrefSwitcher(switchCase: Boolean) {
         val sharedPreferences = requireContext().getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
         val editor = sharedPreferences.edit()
         editor.putBoolean(REMEMBER_ME_KEY, switchCase)
         editor.apply()
     }
-
 
     override fun onDetach() {
         super.onDetach()
