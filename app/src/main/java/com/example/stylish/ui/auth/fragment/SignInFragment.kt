@@ -25,7 +25,7 @@ class SignInFragment : Fragment() {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         _binding = ActivityLoginBinding.inflate(inflater, container, false)
         binding.forgetPassId.setOnClickListener {
             (activity as? FragmentChangeListener)?.replaceFragment(ForgotPassowrdFragment())
@@ -42,6 +42,8 @@ class SignInFragment : Fragment() {
             result.onSuccess {
                 // Handle successful sign-in
                 Toast.makeText(requireContext(), "Sign-in successful!", Toast.LENGTH_SHORT).show()
+
+
             }.onFailure {
                 // Handle sign-in failure
                 Toast.makeText(requireContext(), "Sign-in failed: ${it.message}", Toast.LENGTH_SHORT).show()

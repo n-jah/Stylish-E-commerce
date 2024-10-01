@@ -1,5 +1,6 @@
 package com.example.stylish.repository
 
+import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import com.example.stylish.MyApp
 import com.example.stylish.R
@@ -11,6 +12,7 @@ import com.google.firebase.auth.FacebookAuthProvider
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseAuthUserCollisionException
 import com.google.firebase.auth.FirebaseAuthWeakPasswordException
+import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.database.FirebaseDatabase
 import kotlinx.coroutines.tasks.await
@@ -99,4 +101,17 @@ class AuthRepositoryImpl : AuthRepositoryInterface {
             Result.failure(e)
         }
     }
+
+
+
+    override suspend fun restorePasswordWithEmail(email: String): Result<String> {
+        return try {
+            auth.sendPasswordResetEmail(email).await()
+            Result.success("Password reset email sent")
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+     }
+
+
 }

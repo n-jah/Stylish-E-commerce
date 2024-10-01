@@ -17,6 +17,13 @@ class AuthViewModel(private val authRepository: AuthRepositoryInterface) : ViewM
     private val _signUpResult = MutableLiveData<Result<String>>()
     val signUpResult: LiveData<Result<String>> get() = _signUpResult
 
+    private val _restPassword = MutableLiveData<Result<String>>()
+    val  restPassword: LiveData<Result<String>> get() = _restPassword
+
+    private val _isRegistered = MutableLiveData<Result<String>>()
+    val isRegistered: LiveData<Result<String>> get() = _isRegistered
+
+
     private val _signInResult = MutableLiveData<Result<String>>()
     val signInResult: LiveData<Result<String>> get() = _signInResult
 
@@ -31,6 +38,7 @@ class AuthViewModel(private val authRepository: AuthRepositoryInterface) : ViewM
 
     private val _twitterSignInResult = MutableLiveData<Result<AuthResult>>()
     val twitterSignInResult: LiveData<Result<AuthResult>> get() = _twitterSignInResult
+
 
     fun signUpUser(email: String, password: String, username: String) {
         viewModelScope.launch {
@@ -91,4 +99,20 @@ class AuthViewModel(private val authRepository: AuthRepositoryInterface) : ViewM
             _twitterSignInResult.postValue(Result.success(authResult))
         }
     }
+
+    fun restorePasswordWithEmail(email: String) {
+        viewModelScope.launch {
+            try {
+                val result = authRepository.restorePasswordWithEmail(email)
+                _restPassword.postValue(result)
+            } catch (e: Exception) {
+                _restPassword.postValue(Result.failure(e))
+
+            }
+        }
+
+    }
+
+
+
 }

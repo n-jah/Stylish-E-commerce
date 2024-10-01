@@ -23,12 +23,11 @@ import com.example.stylish.repository.AuthViewModelFactory
 import com.example.stylish.ui.auth.activity.SplashScreen.Companion.PREFS_NAME
 import com.example.stylish.ui.auth.activity.SplashScreen.Companion.REMEMBER_ME_KEY
 import com.example.stylish.ui.auth.fragment.ForgotPassowrdFragment
-import com.example.stylish.ui.auth.fragment.NewPassowordFragment
 import com.example.stylish.ui.auth.fragment.SignInFragment
 import com.example.stylish.ui.auth.fragment.SignUpFragment
-import com.example.stylish.ui.auth.fragment.VerificationFragment
 import com.example.stylish.ui.home.activity.MainActivity
 import com.google.firebase.auth.FirebaseAuth
+import kotlinx.coroutines.tasks.await
 
 class WellcomeScreen : AppCompatActivity(), FragmentChangeListener {
 
@@ -86,6 +85,16 @@ class WellcomeScreen : AppCompatActivity(), FragmentChangeListener {
             }
         })
 
+        authViewModel.restPassword.observe(this, Observer { result ->
+            result.onSuccess {
+                Toast.makeText(this, "Check your email !", Toast.LENGTH_SHORT).show()
+                replaceFragmentWithAnimations(SignInFragment())
+            }.onFailure {
+                Toast.makeText(this, "Failed: ${it.message}", Toast.LENGTH_SHORT).show()
+            }
+
+        })
+
 
     }
 
@@ -127,8 +136,19 @@ class WellcomeScreen : AppCompatActivity(), FragmentChangeListener {
 
                     return@setOnClickListener
                 }
-                is VerificationFragment -> NewPassowordFragment()
-                is ForgotPassowrdFragment -> VerificationFragment()
+                is ForgotPassowrdFragment -> {
+                    val fragment = currentFragment
+                    val email = fragment.getEmailOfUser()
+                    if (email != null) {
+
+                                authViewModel.restorePasswordWithEmail(email)
+
+                    } else {
+                        Toast.makeText(this, "Please fill in the email fields", Toast.LENGTH_SHORT).show()
+                    }
+                    return@setOnClickListener
+                }
+
 
                 else -> {
                     startActivity(Intent(this,MainActivity::class.java))
@@ -147,8 +167,6 @@ class WellcomeScreen : AppCompatActivity(), FragmentChangeListener {
             is SignUpFragment -> getString(R.string.sign_up)
             is SignInFragment -> getString(R.string.sign_in)
             is ForgotPassowrdFragment -> getString(R.string.confirm_email)
-            is VerificationFragment -> getString(R.string.confirm_code)
-            is NewPassowordFragment -> getString(R.string.confirm_password)
             else -> getString(R.string.create_an_account)
         }
     }
@@ -178,6 +196,7 @@ class WellcomeScreen : AppCompatActivity(), FragmentChangeListener {
 
         // FloatingActionButton for back navigation
         fab = binding.fab
+
         fab.setOnClickListener {
             if (supportFragmentManager.backStackEntryCount > 0) {
                 onBackPressedDispatcher.onBackPressed()
@@ -205,3 +224,4 @@ class WellcomeScreen : AppCompatActivity(), FragmentChangeListener {
 
 
 }
+
