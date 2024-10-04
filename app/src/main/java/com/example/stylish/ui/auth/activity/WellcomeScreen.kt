@@ -92,10 +92,7 @@ class WellcomeScreen : AppCompatActivity(), FragmentChangeListener {
             }.onFailure {
                 Toast.makeText(this, "Failed: ${it.message}", Toast.LENGTH_SHORT).show()
             }
-
         })
-
-
     }
 
     private fun initBaseButton() {
@@ -198,9 +195,17 @@ class WellcomeScreen : AppCompatActivity(), FragmentChangeListener {
         fab = binding.fab
 
         fab.setOnClickListener {
+            updateButtonState(baseButton)
             if (supportFragmentManager.backStackEntryCount > 0) {
                 onBackPressedDispatcher.onBackPressed()
-                updateButtonState(baseButton)
+                if (supportFragmentManager.backStackEntryCount == 0) {
+                    if (baseButton.text == getString(R.string.create_an_account)) {
+                        finish()
+                    } else {
+                        replaceFragmentWithAnimations(SartFragment())
+                    }
+                }
+
             }
         }
     }
@@ -218,7 +223,11 @@ class WellcomeScreen : AppCompatActivity(), FragmentChangeListener {
         super.onBackPressed()
         updateButtonState(baseButton)
         if (supportFragmentManager.backStackEntryCount == 0) {
-            finish()
+            if (baseButton.text == getString(R.string.create_an_account)) {
+                finish()
+            } else {
+                replaceFragmentWithAnimations(SartFragment())
+            }
         }
     }
 
