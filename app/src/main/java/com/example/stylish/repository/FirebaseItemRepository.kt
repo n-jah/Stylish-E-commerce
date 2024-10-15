@@ -8,6 +8,9 @@ import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.tasks.await
+import kotlinx.coroutines.withContext
 
 class FirebaseItemRepository : ItemRepsitory {
     private val firebaseDatabase = FirebaseDatabase.getInstance()
@@ -33,4 +36,8 @@ class FirebaseItemRepository : ItemRepsitory {
     }
 
 
+    override suspend fun getItemById(itemId: String): Item? = withContext(Dispatchers.IO) {
+        val itemSnapshot = itemsRef.child(itemId).get().await()
+        itemSnapshot.getValue(Item::class.java)
+    }
 }

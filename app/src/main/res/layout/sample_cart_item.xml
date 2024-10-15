@@ -66,20 +66,22 @@
                 android:textColor="@color/secondrey_text_color_light"
                 android:lineSpacingExtra="-1sp"
                 />
-            <TextView
-                android:id="@+id/productPrice"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="99"
-                android:textColor="@color/secondrey_text_color_light"
-                android:lineSpacingExtra="-1sp"
-                />
+
             <!-- Product   Tax -->
 
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/productPrice"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:lineSpacingExtra="-1sp"
+                    android:text="99"
+                    android:textColor="@color/secondrey_text_color_light" />
+
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -119,19 +121,20 @@
             >
 
             <!-- Decrease Quantity Button -->
+
+            <!-- Quantity Text -->
+
             <ImageButton
                 android:id="@+id/btnDecrease"
                 android:layout_width="40dp"
                 android:layout_height="40dp"
                 android:background="@drawable/circle_outline"
                 android:contentDescription="@string/decrease_quantity"
-                android:src="@drawable/baseline_keyboard_arrow_down_24"
                 android:scaleType="centerInside"
                 android:scaleX=".8"
                 android:scaleY=".8"
-                 />
+                android:src="@drawable/baseline_keyboard_arrow_down_24" />
 
-            <!-- Quantity Text -->
             <TextView
                 android:id="@+id/tvQuantity"
                 android:layout_width="wrap_content"
@@ -140,8 +143,8 @@
                 android:layout_marginHorizontal="8dp"
                 android:text="1"
                 android:textColor="@color/black"
-                android:textStyle="bold"
-                android:textSize="16sp" />
+                android:textSize="16sp"
+                android:textStyle="bold" />
 
             <!-- Increase Quantity Button -->
             <ImageButton

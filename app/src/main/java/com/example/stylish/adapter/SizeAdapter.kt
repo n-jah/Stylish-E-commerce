@@ -10,12 +10,15 @@ import com.example.stylish.R
 import com.example.stylish.model.Size
 
 class SizeAdapter(
-    private val sizes: List<Size>
+    private val sizes: List<Size>,
+    private val onSizeSelected: (String) -> Unit  // Add this callback for selected size
 ) : RecyclerView.Adapter<SizeAdapter.SizeViewHolder>() {
+
     private var selectedPosition = RecyclerView.NO_POSITION
 
     inner class SizeViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val sizeText: TextView = itemView.findViewById(R.id.size_text_id)
+
         init {
             itemView.setOnClickListener {
                 val previousPosition = selectedPosition
@@ -24,10 +27,11 @@ class SizeAdapter(
                 // Notify changes for re-rendering
                 notifyItemChanged(previousPosition)
                 notifyItemChanged(selectedPosition)
+
+                // Call the callback with the selected size
+                onSizeSelected(sizes[selectedPosition].size)
             }
         }
-
-
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SizeViewHolder {
@@ -48,14 +52,11 @@ class SizeAdapter(
             holder.sizeText.setTextColor(
                 ContextCompat.getColor(holder.itemView.context, R.color.text_color_dark)
             )
-
         } else {
             holder.itemView.setBackgroundResource(R.drawable.default_item_background)
             holder.sizeText.setTextColor(
                 ContextCompat.getColor(holder.itemView.context, R.color.text_color_light)
             )
         }
-
-
     }
 }

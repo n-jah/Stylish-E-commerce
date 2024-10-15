@@ -6,6 +6,9 @@ import android.graphics.Color
 import android.os.Bundle
 import android.view.MenuItem
 import android.view.View
+import android.widget.FrameLayout
+import android.widget.ImageView
+import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.ActionBarDrawerToggle
@@ -27,7 +30,12 @@ import com.example.stylish.ui.auth.activity.SplashScreen.Companion.PREFS_NAME
 import com.example.stylish.ui.auth.activity.WellcomeScreen
 import com.example.stylish.ui.home.fragment.HomeFragment
 import com.example.stylish.ui.home.fragment.WishlistFragment
+import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.google.android.material.bottomnavigation.LabelVisibilityMode
 import com.google.android.material.navigation.NavigationView
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.DatabaseReference
+import com.google.firebase.database.FirebaseDatabase
 
 class MainActivity : AppCompatActivity() {
 
@@ -39,22 +47,24 @@ class MainActivity : AppCompatActivity() {
     // UI Components
     private lateinit var drawerLayout: DrawerLayout
     private lateinit var drawerToggle: ActionBarDrawerToggle
-    private lateinit var itemRV: RecyclerView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
         // Set initial fragment (HomeFragment)
         if (savedInstanceState == null) {
             setCurrentFragment(HomeFragment(), "HOME_FRAGMENT", isLeftAnimation = false)
         }
 
 
+
         initViewModels()  // Initialize ViewModels
         setupUI()         // Setup UI Components
+
+
     }
+
     private fun setCurrentFragment(fragment: Fragment, tag: String, isLeftAnimation: Boolean) {
         val currentFragment = supportFragmentManager.findFragmentById(R.id.fragment_container)
 
@@ -85,7 +95,6 @@ class MainActivity : AppCompatActivity() {
         transaction.replace(R.id.fragment_container, fragment, tag).commit()
     }
 
-
     private fun initViewModels() {
         // Auth ViewModel
         val authFactory = AuthViewModelFactory(AuthRepositoryImpl())
@@ -101,8 +110,6 @@ class MainActivity : AppCompatActivity() {
         setupDrawer()        // Initialize the drawer navigation
         setupBottomNav()     // Initialize the bottom navigation
 
-
-
         // Cart floating button click
         binding.floatCartButton.setOnClickListener {
             startActivity(Intent(this, CartActivity::class.java))
@@ -113,27 +120,65 @@ class MainActivity : AppCompatActivity() {
             authViewModel.signOutUser()
         }
     }
+
     private fun setupBottomNav() {
-        val bottomNavigationView = binding.bottomNavigationView
+        val homeItem = binding.navHome
+        val wishlistItem = binding.navWishlist
 
-        bottomNavigationView.setOnItemSelectedListener { menuItem ->
-            when (menuItem.itemId) {
-                R.id.navigation_home -> {
-                    // Navigate to HomeFragment, slide in from right
-                    setCurrentFragment(HomeFragment(), "HOME_FRAGMENT", isLeftAnimation = false)
-                    true
-                }
+        // Adjust the padding to account for system insets (especially for devices using gestures)
+        ViewCompat.setOnApplyWindowInsetsListener(binding.navView) { v, insets ->
+            val systemBarsInsets = insets.getInsets(WindowInsetsCompat.Type.systemBars())
 
-                R.id.navigation_favorites -> {
-                    // Navigate to WishlistFragment, slide in from left
-                    setCurrentFragment(WishlistFragment(), "WISHLIST_FRAGMENT", isLeftAnimation = true)
-                    true
-                }
+            // Apply bottom insets to avoid overlap with system navigation bar
+            binding.navView.setPadding(
+                binding.navView.paddingLeft,
+                binding.navView.paddingTop,
+                binding.navView.paddingRight,
+                systemBarsInsets.bottom // Adds padding to avoid overlap
+            )
 
-                else -> false
-            }
+            insets
         }
 
+        // Home Navigation
+        homeItem.setOnClickListener {
+            showTextAndHideIcon(homeItem, R.id.home_icon, R.id.home_text)
+            hideTextAndShowIcon(wishlistItem, R.id.wishlist_icon, R.id.wishlist_text)
+            // Set the fragment to HomeFragment
+            setCurrentFragment(HomeFragment(), "HOME_FRAGMENT", isLeftAnimation = false)
+        }
+
+        // Wishlist Navigation
+        wishlistItem.setOnClickListener {
+            showTextAndHideIcon(wishlistItem, R.id.wishlist_icon, R.id.wishlist_text)
+            hideTextAndShowIcon(homeItem, R.id.home_icon, R.id.home_text)
+            // Set the fragment to WishlistFragment
+            setCurrentFragment(WishlistFragment(), "WISHLIST_FRAGMENT", isLeftAnimation = true)
+        }
+    }
+
+    private fun showTextAndHideIcon(item: FrameLayout, iconId: Int, textId: Int) {
+        val icon = item.findViewById<ImageView>(iconId)
+        val text = item.findViewById<TextView>(textId)
+
+        icon.animate().alpha(0f).setDuration(200).withEndAction {
+            icon.visibility = View.GONE
+            text.alpha = 0f
+            text.visibility = View.VISIBLE
+            text.animate().alpha(1f).setDuration(200).start()
+        }.start()
+    }
+
+    private fun hideTextAndShowIcon(item: FrameLayout, iconId: Int, textId: Int) {
+        val icon = item.findViewById<ImageView>(iconId)
+        val text = item.findViewById<TextView>(textId)
+
+        text.animate().alpha(0f).setDuration(200).withEndAction {
+            text.visibility = View.GONE
+            icon.alpha = 0f
+            icon.visibility = View.VISIBLE
+            icon.animate().alpha(1f).setDuration(200).start()
+        }.start()
     }
 
     private fun setupStatusBar() {
@@ -141,13 +186,12 @@ class MainActivity : AppCompatActivity() {
         enableEdgeToEdge()
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main_home)) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            v.setPadding(systemBars.left, systemBars.top-30, systemBars.right, systemBars.bottom)
+            v.setPadding(systemBars.left, systemBars.top - 30, systemBars.right, systemBars.bottom)
             insets
         }
     }
 
     private fun setupDrawer() {
-
         drawerLayout = binding.mainHome
         val navigationView: NavigationView = binding.navView
 
@@ -172,7 +216,6 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-
         // Handle navigation item clicks
         navigationView.setNavigationItemSelectedListener { menuItem ->
             handleNavigationMenu(menuItem)
@@ -186,11 +229,9 @@ class MainActivity : AppCompatActivity() {
                 Toast.makeText(this, "Logged out", Toast.LENGTH_SHORT).show()
                 navigateToLoginScreen()
             }.onFailure {
-                Toast.makeText(this,
-                    "Failed to log out", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "Failed to log out", Toast.LENGTH_SHORT).show()
             }
         })
-
     }
 
     private fun handleNavigationMenu(menuItem: MenuItem) {
@@ -201,7 +242,6 @@ class MainActivity : AppCompatActivity() {
             // Handle other menu items here
         }
     }
-
 
     private fun navigateToLoginScreen() {
         val intent = Intent(this, WellcomeScreen::class.java)
@@ -215,7 +255,10 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        return if (drawerToggle.onOptionsItemSelected(item)) true
-        else super.onOptionsItemSelected(item)
+        return if (drawerToggle.onOptionsItemSelected(item)) {
+            true
+        } else super.onOptionsItemSelected(item)
     }
 }
+
+
