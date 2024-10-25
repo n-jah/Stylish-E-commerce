@@ -1,12 +1,13 @@
 package com.example.stylish.ui.home.fragment
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
+    import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.stylish.ViewModel.MainViewModel
@@ -16,6 +17,7 @@ import com.example.stylish.databinding.FragmentHomeBinding
 import com.example.stylish.repository.FirebaseItemRepository
 import com.example.stylish.repository.FirebaseBrandRepositry
 import com.example.stylish.repository.MainViewModelFactory
+import com.google.firebase.auth.FirebaseAuth
 
 class HomeFragment : Fragment() {
 
@@ -23,6 +25,9 @@ class HomeFragment : Fragment() {
     private val binding get() = _binding!!
 
     private lateinit var viewModel: MainViewModel
+    private lateinit var auth: FirebaseAuth
+    private lateinit var brandAdapter: BrandAdapter
+    private lateinit var itemAdapter: ItemAdapter
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -30,47 +35,88 @@ class HomeFragment : Fragment() {
     ): View? {
         // Inflate the layout for this fragment using View Binding
         _binding = FragmentHomeBinding.inflate(inflater, container, false)
+        return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
         // Initialize ViewModel
         initViewModel()
 
         // Setup RecyclerViews
         setupRecyclerViews()
-
         // Observe data
         initObservers()
 
-        return binding.root
+
+
+
+
     }
 
     private fun setupRecyclerViews() {
         // Setup Brands RecyclerView
+        brandAdapter = BrandAdapter(isLoading = true)
         binding.brandsRecyclerView.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
-        binding.brandsRecyclerView.adapter = BrandAdapter(isLoading = true)
+        binding.brandsRecyclerView.adapter = brandAdapter // Keep only this line
 
         // Setup Items RecyclerView
+        itemAdapter = ItemAdapter(isLoading = true, viewModel = viewModel)
         binding.newArrivalRecyclerView.layoutManager = GridLayoutManager(requireContext(), 2)
-        binding.newArrivalRecyclerView.adapter = ItemAdapter(isLoading = true)
+        binding.newArrivalRecyclerView.adapter = itemAdapter // Keep only this line
     }
 
     private fun initViewModel() {
+        auth = FirebaseAuth.getInstance()
         val mainFactory = MainViewModelFactory(FirebaseItemRepository(), FirebaseBrandRepositry())
-        viewModel = ViewModelProvider(this, mainFactory).get(MainViewModel::class.java)
+        viewModel = ViewModelProvider(requireActivity(), mainFactory).get(MainViewModel::class.java)
+        viewModel.userId = auth.currentUser?.uid ?: ""
+
+        viewModel.fetchItemsWithFavorites()
+
+
     }
 
     private fun initObservers() {
+
+
+
         // Observe brands data
         viewModel.brands.observe(viewLifecycleOwner, Observer { brands ->
             if (brands != null) {
-                binding.brandsRecyclerView.adapter = BrandAdapter(brands, isLoading = false)
+
+                brandAdapter.updateBrands(brands)
+                brandAdapter = BrandAdapter(brands, isLoading = false)
+                binding.brandsRecyclerView.adapter = brandAdapter
+
+             }else{
+                binding.brandsRecyclerView.adapter = BrandAdapter(isLoading = true)
             }
+
         })
 
         // Observe items data
         viewModel.items.observe(viewLifecycleOwner, Observer { items ->
-            if (items != null) {
-                binding.newArrivalRecyclerView.adapter = ItemAdapter(items, isLoading = false)
+            Log.w("HomeFragmentItems", "items: $items")
+
+            if (items.isEmpty()) {
+
+                viewModel.fetchItemsWithFavorites()
+
             }
+            if (items != null) {
+
+
+                itemAdapter.updateItems(items) // Create a method in ItemAdapter to update data
+                itemAdapter = ItemAdapter(items, viewModel = viewModel, isLoading = false)
+                binding.newArrivalRecyclerView.adapter = itemAdapter
+
+            }else{
+                binding.newArrivalRecyclerView.adapter = ItemAdapter(isLoading = true, viewModel = viewModel)
+            }
+
+            itemAdapter.notifyDataSetChanged()
         })
     }
 

@@ -106,9 +106,8 @@ class BrandAdapter(
     }
 
     // Method to update the adapter data
-    fun updateBrands(newBrandList: List<Brand>, loading: Boolean) {
+    fun updateBrands(newBrandList: List<Brand>) {
         this.brandList = newBrandList
-        this.isLoading = loading
         notifyDataSetChanged()
     }
 }

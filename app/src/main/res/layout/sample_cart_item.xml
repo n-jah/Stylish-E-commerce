@@ -25,8 +25,8 @@
         <ImageView
 
             android:id="@+id/productImage"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
             android:layout_gravity="center"
             android:scaleType="centerCrop"
             android:src="@drawable/hoodie_image1" />
@@ -42,16 +42,37 @@
         android:layout_weight="1"
         android:orientation="vertical">
 
-        <!-- Product Name -->
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            >
+            <!-- Product Name -->
+            <TextView
+                android:id="@+id/productName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Men's Tie-Dye T-Shirt Nike Sportswear"
+                android:textAppearance="@style/men_s_tie_d"
+                android:lineSpacingExtra="2sp"
+                android:maxLines="2"
+                android:textStyle="bold" />
+
+
+
+        </LinearLayout>
+
+
         <TextView
-            android:id="@+id/productName"
+            android:id="@+id/productSize"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Men's Tie-Dye T-Shirt Nike Sportswear"
-            android:textAppearance="@style/men_s_tie_d"
-            android:lineSpacingExtra="2sp"
-            android:maxLines="2"
-            android:textStyle="bold" />
+            android:text="@string/size"
+
+            android:textColor="@color/secondrey_text_color_light"
+            android:textSize="13dp" />
 
         <LinearLayout
             android:layout_width="wrap_content"

@@ -29,7 +29,8 @@
         android:layout_height="0dp"
         android:orientation="vertical"
         android:padding="10dp"
-        app:layout_constraintBottom_toTopOf="@+id/bottomButton"
+
+        app:layout_constraintBottom_toTopOf="@+id/linearLayout3"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent">
@@ -58,7 +59,28 @@
             android:id="@+id/cartRecyclerView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp" />
+            android:layout_marginTop="16dp"
+            app:layout_constraintHeight_percent="0.5"
+            app:layout_constraintBottom_toTopOf="@+id/linearLayout3" />
+
+        <!-- Empty View - Lottie Animation for empty cart -->
+        <com.airbnb.lottie.LottieAnimationView
+            android:id="@+id/emptyCartAnimation"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:visibility="gone"
+            app:lottie_autoPlay="true"
+            app:lottie_speed="@integer/material_motion_duration_long_2"
+            app:lottie_loop="false"
+            app:lottie_rawRes="@raw/empty_cart"
+
+            app:layout_constraintBottom_toTopOf="@+id/linearLayout3"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+
+            />
+
 
 
     </LinearLayout>
@@ -71,7 +93,8 @@
         android:orientation="vertical"
 
         android:padding="10dp"
-        app:layout_constraintBottom_toBottomOf="@+id/contentLayout"
+
+        app:layout_constraintBottom_toTopOf="@id/bottomButton"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent">
 

@@ -40,7 +40,7 @@ class SplashScreen : AppCompatActivity() {
                 startActivity(Intent(this, WellcomeScreen::class.java))
             }
             finish()
-        }, 1000)
+        }, 10)
     }
 
     private fun isUserSignedIn(): Boolean {

@@ -14,16 +14,20 @@
     import com.bumptech.glide.load.resource.bitmap.CenterInside
     import com.bumptech.glide.request.RequestOptions
     import com.example.stylish.R
+    import com.example.stylish.ViewModel.MainViewModel
     import com.example.stylish.model.Item
+
     import com.example.stylish.ui.home.activity.ItemActivity
     import com.facebook.shimmer.ShimmerFrameLayout
+    import com.google.firebase.auth.FirebaseAuth
 
     @Suppress("DEPRECATION")
     class ItemAdapter(
         private val itemList: List<Item> = emptyList(),
-        private val isLoading: Boolean = true // Default value to avoid nulls
-    ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+        private val isLoading: Boolean = true ,  // Default value to avoid nulls
+        private val viewModel: MainViewModel // Pass the ViewModel
 
+    ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
         private val VIEW_TYPE_ITEM = 0
         private val VIEW_TYPE_SHIMMER = 1
@@ -33,23 +37,33 @@
             val itemImage: ImageView = itemView.findViewById(R.id.product_img_card)
             val itemName: TextView = itemView.findViewById(R.id.itemNameCard)
             val itemPrice: TextView = itemView.findViewById(R.id.itemPrice_incard)
-
+            val favicon: ImageView = itemView.findViewById(R.id.favicon)
             @SuppressLint("SuspiciousIndentation")
             fun bind(itemModel: Item, context: Context) {
                 itemName.text = itemModel.title
                 itemPrice.text = itemModel.price.toString()
-
-
                 val requestOptions = RequestOptions().transforms(CenterInside())
                     Glide.with(context)
                         .load(itemModel.imgUrl[0].toString())
-                        .placeholder(R.drawable.placeholder)
                         .apply(requestOptions)
                         .into(itemImage)
 
+                if (itemModel.isFavorite) {
+                    favicon.setImageResource(R.drawable.hear_checkd)
+                }else{
+                    favicon.setImageResource(R.drawable.favorites)
+                }
+                favicon.setOnClickListener {
+                    val newFavoriteState = !itemModel.isFavorite
+                    itemModel.isFavorite = newFavoriteState
+                    viewModel.updateFavoriteState(itemModel.id, newFavoriteState)
+                    if (newFavoriteState) {
+                        favicon.setImageResource(R.drawable.hear_checkd)
+                    } else {
+                        favicon.setImageResource(R.drawable.favorites)
+                    }
 
-
-
+                }
             }
         }
 
@@ -68,10 +82,8 @@
                 ShimmerViewHolder(itemView)
             }
         }
-
         override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
             if (getItemViewType(position) == VIEW_TYPE_ITEM) {
-
 
                 val itemViewHolder = holder as ItemViewHolder
                 val currentItem = itemList[position]
@@ -102,5 +114,16 @@
         override fun getItemViewType(position: Int): Int {
             return if (isLoading) VIEW_TYPE_SHIMMER else VIEW_TYPE_ITEM
         }
+
+
+        fun updateItems(newItems: List<Item>) {
+            val previousSize = itemList.size
+            itemList.toMutableList().addAll(newItems)
+            notifyItemRangeInserted(previousSize, newItems.size)
+        }
+
+
+
+
     }
 

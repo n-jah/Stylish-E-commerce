@@ -60,16 +60,9 @@ class ItemActivity : AppCompatActivity() {
         getBundle()
 
         binding.cartButton.setOnClickListener {
-            val userId = auth.currentUser?.uid // Get the user ID safely
-            if (userId != null) {
-                // Fetch the user's cart
-                cartViewModel.fetchUserCart(userId)
 
+            startActivity(Intent(this, CartActivity::class.java))
 
-            } else {
-                // Handle the case when the user is not authenticated
-                Toast.makeText(this, "User not authenticated", Toast.LENGTH_SHORT).show()
-            }
         }
 
 // Observe cart items when the activity is created

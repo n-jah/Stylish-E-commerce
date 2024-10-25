@@ -39,6 +39,7 @@ import com.google.firebase.database.FirebaseDatabase
 
 class MainActivity : AppCompatActivity() {
 
+
     // Binding and ViewModel
     private lateinit var binding: ActivityMainBinding
     private lateinit var viewModel: MainViewModel
@@ -99,10 +100,6 @@ class MainActivity : AppCompatActivity() {
         // Auth ViewModel
         val authFactory = AuthViewModelFactory(AuthRepositoryImpl())
         authViewModel = ViewModelProvider(this, authFactory).get(AuthViewModel::class.java)
-
-        // Main ViewModel
-        val mainFactory = MainViewModelFactory(FirebaseItemRepository(), FirebaseBrandRepositry())
-        viewModel = ViewModelProvider(this, mainFactory).get(MainViewModel::class.java)
     }
 
     private fun setupUI() {

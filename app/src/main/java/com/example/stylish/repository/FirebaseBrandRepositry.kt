@@ -1,5 +1,6 @@
 package com.example.stylish.repository
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.example.stylish.model.Brand
@@ -25,6 +26,7 @@ class FirebaseBrandRepositry : BrandRepository {
                     brand?.let { lists.add(it) }
                 }
                 _brands.value = lists
+                Log.w("FirebaseBrandRepository", "fetchBrands: $lists")
             }
 
             override fun onCancelled(error: DatabaseError) {

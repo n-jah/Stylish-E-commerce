@@ -55,6 +55,7 @@ dependencies {
     implementation(libs.firebase.database)
     implementation(libs.firebase.auth.ktx)
     implementation(libs.firebase.auth)
+    implementation(libs.androidx.room.ktx)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -69,5 +70,6 @@ dependencies {
     // OkHttp for making HTTP requests
     implementation ("com.sun.mail:android-mail:1.6.2")
     implementation ("com.sun.mail:android-activation:1.6.2")
+    implementation ("com.airbnb.android:lottie:5.0.3")
 
 }
