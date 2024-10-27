@@ -20,7 +20,6 @@ import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import androidx.recyclerview.widget.RecyclerView
 import com.example.stylish.R
 import com.example.stylish.ViewModel.AuthViewModel
 import com.example.stylish.ViewModel.MainViewModel
@@ -30,12 +29,8 @@ import com.example.stylish.ui.auth.activity.SplashScreen.Companion.PREFS_NAME
 import com.example.stylish.ui.auth.activity.WellcomeScreen
 import com.example.stylish.ui.home.fragment.HomeFragment
 import com.example.stylish.ui.home.fragment.WishlistFragment
-import com.google.android.material.bottomnavigation.BottomNavigationView
-import com.google.android.material.bottomnavigation.LabelVisibilityMode
 import com.google.android.material.navigation.NavigationView
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.database.DatabaseReference
-import com.google.firebase.database.FirebaseDatabase
+
 
 class MainActivity : AppCompatActivity() {
 
@@ -93,7 +88,9 @@ class MainActivity : AppCompatActivity() {
         }
 
         // Replace fragment
-        transaction.replace(R.id.fragment_container, fragment, tag).commit()
+        transaction.replace(R.id.fragment_container, fragment, tag)
+            .disallowAddToBackStack()
+            .commit()
     }
 
     private fun initViewModels() {

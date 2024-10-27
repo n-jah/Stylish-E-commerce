@@ -15,6 +15,7 @@
     import com.bumptech.glide.request.RequestOptions
     import com.example.stylish.R
     import com.example.stylish.ViewModel.MainViewModel
+    import com.example.stylish.assets.UpdateFavoriteCallback
     import com.example.stylish.model.Item
 
     import com.example.stylish.ui.home.activity.ItemActivity
@@ -23,9 +24,9 @@
 
     @Suppress("DEPRECATION")
     class ItemAdapter(
-        private val itemList: List<Item> = emptyList(),
-        private val isLoading: Boolean = true ,  // Default value to avoid nulls
-        private val viewModel: MainViewModel // Pass the ViewModel
+          var itemList: List<Item> = emptyList(),
+        var isLoading: Boolean = true ,  // Default value to avoid nulls
+      var viewModel: MainViewModel // Pass the ViewModel
 
     ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
@@ -56,12 +57,30 @@
                 favicon.setOnClickListener {
                     val newFavoriteState = !itemModel.isFavorite
                     itemModel.isFavorite = newFavoriteState
-                    viewModel.updateFavoriteState(itemModel.id, newFavoriteState)
-                    if (newFavoriteState) {
-                        favicon.setImageResource(R.drawable.hear_checkd)
-                    } else {
-                        favicon.setImageResource(R.drawable.favorites)
-                    }
+
+
+                    viewModel.updateFavoriteState(itemModel.id, newFavoriteState, object :UpdateFavoriteCallback {
+
+                        override fun onSuccess() {
+                            // Handle success if needed
+                            if (newFavoriteState) {
+
+                                favicon.setImageResource(R.drawable.hear_checkd)
+                                viewModel.loadFavoriteItems() // Load items after updating
+
+
+                            } else {
+
+                                favicon.setImageResource(R.drawable.favorites)
+                                viewModel.loadFavoriteItems() // Load items after updating
+
+                            }
+                        }
+                        override fun onFailure() {
+
+                            Log.e("ItemAdapter", "Failed to update favorite state")
+                        }
+                    })
 
                 }
             }
@@ -117,9 +136,8 @@
 
 
         fun updateItems(newItems: List<Item>) {
-            val previousSize = itemList.size
-            itemList.toMutableList().addAll(newItems)
-            notifyItemRangeInserted(previousSize, newItems.size)
+            itemList= newItems
+            notifyDataSetChanged()
         }
 
 

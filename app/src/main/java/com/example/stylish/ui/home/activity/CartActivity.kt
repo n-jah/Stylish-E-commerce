@@ -41,16 +41,13 @@ class CartActivity : AppCompatActivity() {
             // Update the quantity in Firebase
             cartViewModel.updateCartItem(auth.currentUser?.uid ?: "", cartItemKey, cartItem)
             setPrice(cartAdapter.getCartItems())
-
             // Handle quantity change logic
         }, onRemoveItem = { cartItem  ->
             // Remove item from cart in Firebase using the Firebase key
             cartViewModel.removeItemFromCart(auth.currentUser?.uid ?: "", cartItem.cartItemKey)
-
             // Remove item from adapter and update the UI
             cartAdapter.removeItem(cartItem)
             setPrice(cartAdapter.getCartItems())
-
 
         })
 
@@ -65,13 +62,9 @@ class CartActivity : AppCompatActivity() {
             cartAdapter.updateCartItems(cartItems.toMutableList()) // Ensure it's mutable
             setPrice(cartItems)
             handleEmptyView(cartItems)  // Check if the list is empty and handle the UI
-
         }
         binding.backButton.setOnClickListener {
             finish()
-
-
-
         }
 
         // Load the user's cart

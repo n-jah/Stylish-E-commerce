@@ -5,6 +5,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.stylish.assets.UpdateFavoriteCallback
 import com.example.stylish.model.Brand
 import com.example.stylish.model.Item
 import com.example.stylish.repository.BrandRepository
@@ -20,6 +21,10 @@ class MainViewModel(private val itemRepsitory: ItemRepsitory,private val brandRe
     private val _items =MutableLiveData<List<Item>>()
     val items : LiveData<List<Item>> get() = _items
     val brands : LiveData<List<Brand>> = brandRepository.getBrands()
+    private val _favoriteItems = MutableLiveData<List<Item>>()
+    val favoriteItems: LiveData<List<Item>> get() = _favoriteItems
+
+
     fun fetchItemsWithFavorites() {
         viewModelScope.launch {
             val itemsList = itemRepsitory.getItems().value ?: emptyList()
@@ -28,20 +33,38 @@ class MainViewModel(private val itemRepsitory: ItemRepsitory,private val brandRe
                 item.isFavorite = favoriteStates[item.id] ?: false
             }
             _items.value = itemsList
-            Log.w("MainViewModel", "fetchItemsWithFavorites: $itemsList")
 
         }
     }
-
-
-
-
-    fun updateFavoriteState(itemId: String, isFavorite: Boolean){
+    fun loadFavoriteItems() {
         viewModelScope.launch {
-            itemRepsitory.updateFavoriteState(userId?:"", itemId, isFavorite)
-
+            val favoriteItemsList = itemRepsitory.getUserFavoriteStates(userId ?: "")
+            _favoriteItems.value = favoriteItemsList.filter { it.value }.keys.mapNotNull { itemRepsitory.getItemById(it) }
         }
     }
+    fun updateFavoriteState(itemId: String, isFavorite: Boolean, callback: UpdateFavoriteCallback) {
+        viewModelScope.launch {
+            try {
+                itemRepsitory.updateFavoriteState(userId ?: "", itemId, isFavorite)
+
+                // Update the local `_items` LiveData list
+                _items.value = _items.value?.map { item ->
+                    if (item.id == itemId) {
+                        item.copy(isFavorite = isFavorite)
+                    } else {
+                        item
+                    }
+                }
+                callback.onSuccess() // Call onSuccess if the update is successful
+                Log.d("MainViewModel", "Favorite state updated successfully")
+            } catch (e: Exception) {
+                Log.e("MainViewModel", "Failed to update favorite state", e)
+                callback.onFailure() // Call onFailure if there's an error
+            }
+        }
+    }
+
+
 
 
 

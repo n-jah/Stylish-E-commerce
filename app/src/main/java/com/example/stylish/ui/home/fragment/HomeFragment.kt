@@ -32,7 +32,7 @@ class HomeFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         // Inflate the layout for this fragment using View Binding
         _binding = FragmentHomeBinding.inflate(inflater, container, false)
         return binding.root
@@ -40,18 +40,12 @@ class HomeFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
         // Initialize ViewModel
         initViewModel()
-
         // Setup RecyclerViews
         setupRecyclerViews()
         // Observe data
         initObservers()
-
-
-
-
 
     }
 
@@ -98,25 +92,17 @@ class HomeFragment : Fragment() {
 
         // Observe items data
         viewModel.items.observe(viewLifecycleOwner, Observer { items ->
-            Log.w("HomeFragmentItems", "items: $items")
 
             if (items.isEmpty()) {
 
                 viewModel.fetchItemsWithFavorites()
 
             }
-            if (items != null) {
-
-
+            else {
                 itemAdapter.updateItems(items) // Create a method in ItemAdapter to update data
-                itemAdapter = ItemAdapter(items, viewModel = viewModel, isLoading = false)
-                binding.newArrivalRecyclerView.adapter = itemAdapter
-
-            }else{
-                binding.newArrivalRecyclerView.adapter = ItemAdapter(isLoading = true, viewModel = viewModel)
+                itemAdapter.isLoading = false
             }
 
-            itemAdapter.notifyDataSetChanged()
         })
     }
 
