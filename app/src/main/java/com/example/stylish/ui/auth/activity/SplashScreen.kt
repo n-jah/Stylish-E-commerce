@@ -18,6 +18,7 @@ class SplashScreen : AppCompatActivity() {
     companion object {
         const val PREFS_NAME = "userPrefs"
         const val REMEMBER_ME_KEY = "keepSignedIn"
+
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -55,10 +56,8 @@ class SplashScreen : AppCompatActivity() {
         val currentUser = FirebaseAuth.getInstance().currentUser
         if (currentUser != null) {
             Log.d("SplashScreen", "User is signed in: $currentUser")
-            Toast.makeText(this, "User is signed in: ${currentUser.email}", Toast.LENGTH_SHORT).show()
         } else {
             Log.d("SplashScreen", "No user is signed in.")
-            Toast.makeText(this, "No user is signed in.", Toast.LENGTH_SHORT).show()
         }
         return currentUser != null
     }

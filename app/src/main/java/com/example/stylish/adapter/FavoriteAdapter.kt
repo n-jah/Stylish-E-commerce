@@ -14,15 +14,13 @@ import com.bumptech.glide.request.RequestOptions
 import com.example.stylish.R
 import com.example.stylish.ViewModel.MainViewModel
 import com.example.stylish.adapter.ItemDiffCallback
-import com.example.stylish.assets.UpdateFavoriteCallback
+import com.example.stylish.utilities.UpdateFavoriteCallback
 import com.example.stylish.model.Item
 import com.example.stylish.ui.home.activity.ItemActivity
-import com.google.firebase.auth.FirebaseAuth
 
 class FavoriteAdapter(
     private val viewModel: MainViewModel
 ) : ListAdapter<Item, FavoriteAdapter.ItemViewHolder>(ItemDiffCallback()) {
-
     inner class ItemViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val itemImage: ImageView = itemView.findViewById(R.id.product_img_card)
         val itemName: TextView = itemView.findViewById(R.id.itemNameCard)

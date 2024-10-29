@@ -7,17 +7,19 @@
     tools:context=".ui.home.fragment.HomeFragment">
 
 
-    <TextView
+    <com.example.stylish.assets.CapitalizeFirstTextView
+
         android:id="@+id/greetingText_name_of_user"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="10dp"
         android:paddingStart="16dp"
         android:paddingTop="8dp"
-        android:text="Hemendra"
+        android:text=" Name "
         android:textAppearance="@style/head1"
-        android:textSize="28sp"
+        android:textSize="22sp"
         android:textStyle="bold"
+        android:visibility="gone"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -28,9 +30,9 @@
         android:layout_marginStart="10dp"
         android:paddingStart="16dp"
         android:paddingTop="4dp"
-        android:text="Welcome to Laza."
+        android:text="@string/welcome_to_stylish"
         android:textAppearance="@style/secondryTextLight"
-        android:textSize="16sp"
+        android:textSize="13sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/greetingText_name_of_user" />
 

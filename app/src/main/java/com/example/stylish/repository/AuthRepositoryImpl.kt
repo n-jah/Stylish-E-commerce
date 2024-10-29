@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import com.example.stylish.MyApp
 import com.example.stylish.R
+import com.example.stylish.model.User
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
@@ -102,8 +103,6 @@ class AuthRepositoryImpl : AuthRepositoryInterface {
         }
     }
 
-
-
     override suspend fun restorePasswordWithEmail(email: String): Result<String> {
         return try {
             auth.sendPasswordResetEmail(email).await()
@@ -113,5 +112,30 @@ class AuthRepositoryImpl : AuthRepositoryInterface {
         }
      }
 
+    override fun getUserInfo(callback: (User?) -> Unit) {
+        val currentUser = auth.currentUser
+        if (currentUser != null) {
+            val userId = currentUser.uid
+            val userRef = FirebaseDatabase.getInstance().getReference("users").child(userId)
+
+            userRef.get().addOnCompleteListener { taskResult ->
+                if (taskResult.isSuccessful) {
+                    val snapshot = taskResult.result
+                    val userData = if (snapshot != null && snapshot.exists()) {
+                        snapshot.getValue(User::class.java)
+
+                    } else {
+                        null
+                    }
+                    callback(userData)  // Call the callback with user data
+                } else {
+                    Log.e("AuthRepositoryImpl", "Error fetching user info", taskResult.exception)
+                    callback(null)  // Call the callback with null on error
+                }
+            }
+        } else {
+            callback(null)  // If no user is logged in, return null
+        }
+    }
 
 }

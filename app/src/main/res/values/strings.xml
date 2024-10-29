@@ -71,6 +71,8 @@
     <string name="size">XLL</string>
     <string name="zeroPrecent">$0.00</string>
     <string name="favorite_icon">Favorite icon</string>
+    <string name="welcome_to_stylish">Welcome to Stylish.</string>
+    <string name="placeHolderLink">https://openplanned.org/openplanned-content/uploads/2016/01/blank-profile-picture-973460_640-500x500.png</string>
 
 
 </resources>

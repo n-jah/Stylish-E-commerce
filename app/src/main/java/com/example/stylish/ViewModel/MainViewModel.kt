@@ -5,16 +5,16 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.stylish.assets.UpdateFavoriteCallback
+import com.example.stylish.utilities.UpdateFavoriteCallback
 import com.example.stylish.model.Brand
 import com.example.stylish.model.Item
+import com.example.stylish.model.User
+import com.example.stylish.repository.AuthRepositoryInterface
 import com.example.stylish.repository.BrandRepository
 import com.example.stylish.repository.ItemRepsitory
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.database.*
 import kotlinx.coroutines.launch
 
-class MainViewModel(private val itemRepsitory: ItemRepsitory,private val brandRepository: BrandRepository) : ViewModel() {
+class MainViewModel(private val itemRepsitory: ItemRepsitory,private val brandRepository: BrandRepository,val authRepository: AuthRepositoryInterface) : ViewModel() {
 
 
     var userId: String? = null
@@ -23,6 +23,9 @@ class MainViewModel(private val itemRepsitory: ItemRepsitory,private val brandRe
     val brands : LiveData<List<Brand>> = brandRepository.getBrands()
     private val _favoriteItems = MutableLiveData<List<Item>>()
     val favoriteItems: LiveData<List<Item>> get() = _favoriteItems
+
+    private val _userLiveData = MutableLiveData<User?>()
+    val userLiveData: LiveData<User?> get() = _userLiveData
 
 
     fun fetchItemsWithFavorites() {
@@ -64,8 +67,11 @@ class MainViewModel(private val itemRepsitory: ItemRepsitory,private val brandRe
         }
     }
 
-
-
+     fun getUserInfo() {
+         authRepository.getUserInfo { user->
+             _userLiveData.postValue(user)
+         }
+    }
 
 
 }

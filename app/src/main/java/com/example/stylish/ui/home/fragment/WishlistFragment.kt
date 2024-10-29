@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.stylish.ViewModel.MainViewModel
 import com.example.stylish.databinding.FragmentWishlistBinding
+import com.example.stylish.repository.AuthRepositoryImpl
 import com.example.stylish.repository.FirebaseBrandRepositry
 import com.example.stylish.repository.FirebaseItemRepository
 import com.example.stylish.repository.MainViewModelFactory
@@ -48,7 +49,9 @@ class WishlistFragment : Fragment() {
     }
     private fun initViewModel() {
         auth = FirebaseAuth.getInstance()
-        val mainFactory = MainViewModelFactory(FirebaseItemRepository(), FirebaseBrandRepositry())
+        val mainFactory = MainViewModelFactory(FirebaseItemRepository(), FirebaseBrandRepositry(),
+            AuthRepositoryImpl()
+        )
         viewModel = ViewModelProvider(requireActivity(), mainFactory).get(MainViewModel::class.java)
         viewModel.userId = auth.currentUser?.uid ?: ""
         binding.progressBar.visibility = View.VISIBLE

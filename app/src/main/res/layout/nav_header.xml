@@ -52,6 +52,7 @@
                 android:paddingTop="8dp"
                 android:text="Hemendra"
                 android:textColor="@android:color/black"
+                android:maxLines="1"
                 android:textSize="18sp"
                 android:textStyle="bold" />
 
@@ -68,13 +69,12 @@
                     android:id="@+id/nav_header_status"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_gravity="bottom"
                     android:drawablePadding="4dp"
                     android:paddingBottom="8dp"
                     android:text="Verified Profile"
                     android:textColor="#8F959E"
-                    android:layout_gravity="bottom"
-                    android:textSize="12sp"
-                    />
+                    android:textSize="12sp" />
 
                 <ImageView
                     android:layout_width="wrap_content"

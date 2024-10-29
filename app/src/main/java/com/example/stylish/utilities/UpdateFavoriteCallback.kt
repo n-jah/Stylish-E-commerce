@@ -1,4 +1,4 @@
-package com.example.stylish.assets
+package com.example.stylish.utilities
 
 interface UpdateFavoriteCallback {
     fun onSuccess()

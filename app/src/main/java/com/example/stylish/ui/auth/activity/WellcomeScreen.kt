@@ -39,7 +39,6 @@ class WellcomeScreen : AppCompatActivity(), FragmentChangeListener {
     private val authRepository: AuthRepositoryInterface = AuthRepositoryImpl()
     private val authViewModel: AuthViewModel by lazy {
         ViewModelProvider(this, AuthViewModelFactory(authRepository)).get(AuthViewModel::class.java)
-
     }
 
 
@@ -137,9 +136,7 @@ class WellcomeScreen : AppCompatActivity(), FragmentChangeListener {
                     val fragment = currentFragment
                     val email = fragment.getEmailOfUser()
                     if (email != null) {
-
                                 authViewModel.restorePasswordWithEmail(email)
-
                     } else {
                         Toast.makeText(this, "Please fill in the email fields", Toast.LENGTH_SHORT).show()
                     }

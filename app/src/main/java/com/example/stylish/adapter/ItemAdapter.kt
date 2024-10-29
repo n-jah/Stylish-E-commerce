@@ -15,12 +15,11 @@
     import com.bumptech.glide.request.RequestOptions
     import com.example.stylish.R
     import com.example.stylish.ViewModel.MainViewModel
-    import com.example.stylish.assets.UpdateFavoriteCallback
+    import com.example.stylish.utilities.UpdateFavoriteCallback
     import com.example.stylish.model.Item
 
     import com.example.stylish.ui.home.activity.ItemActivity
     import com.facebook.shimmer.ShimmerFrameLayout
-    import com.google.firebase.auth.FirebaseAuth
 
     @Suppress("DEPRECATION")
     class ItemAdapter(
@@ -59,7 +58,8 @@
                     itemModel.isFavorite = newFavoriteState
 
 
-                    viewModel.updateFavoriteState(itemModel.id, newFavoriteState, object :UpdateFavoriteCallback {
+                    viewModel.updateFavoriteState(itemModel.id, newFavoriteState, object :
+                        UpdateFavoriteCallback {
 
                         override fun onSuccess() {
                             // Handle success if needed
@@ -138,6 +138,7 @@
         fun updateItems(newItems: List<Item>) {
             itemList= newItems
             notifyDataSetChanged()
+
         }
 
 
