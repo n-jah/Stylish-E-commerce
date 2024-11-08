@@ -61,18 +61,21 @@
     <string name="reset_password">Reset Password</string>
     <string name="drawer_close">Colse Drawer</string>
     <string name="drawer_open">Open Drawer</string>
-    <string name="your_web_client_id">268886359428-s36v1vte90fuoul7i6l3treir9hsqlk3.apps.googleusercontent.com</string>
+    <string name="your_web_client_id" translatable="false">268886359428-s36v1vte90fuoul7i6l3treir9hsqlk3.apps.googleusercontent.com</string>
 
     <string name="facebook_app_id">1400075447583863</string>
-    <string name="fb_login_protocol_scheme">fb6ead2d60b44448211aab819f0ab0edb5</string>
+    <string name="fb_login_protocol_scheme" translatable="false">fb6ead2d60b44448211aab819f0ab0edb5</string>
     <string name="facebook_client_token">2156d3922742877c3362a7b62a087d04</string>
-    <string name="API_Key">RkHjQR5YtzD5CWPeR4xqORMoT</string>
-    <string name="API_secret">hflvunWw7T2ZMTnIp86XrSo4Q1JYYBIazo58nTK9zA32hjLlOx</string>
-    <string name="size">XLL</string>
-    <string name="zeroPrecent">$0.00</string>
-    <string name="favorite_icon">Favorite icon</string>
+    <string name="API_Key" translatable="false">RkHjQR5YtzD5CWPeR4xqORMoT</string>
+    <string name="API_secret" translatable="false">hflvunWw7T2ZMTnIp86XrSo4Q1JYYBIazo58nTK9zA32hjLlOx</string>
+    <string name="size" translatable="false">XLL</string>
+    <string name="zeroPrecent" translatable="false">$0.00</string>
+    <string name="favorite_icon" translatable="false">Favorite icon</string>
     <string name="welcome_to_stylish">Welcome to Stylish.</string>
-    <string name="placeHolderLink">https://openplanned.org/openplanned-content/uploads/2016/01/blank-profile-picture-973460_640-500x500.png</string>
+    <string name="placeHolderLink" translatable="false">https://openplanned.org/openplanned-content/uploads/2016/01/blank-profile-picture-973460_640-500x500.png</string>
+    <string name="cash_on_delivery_cod">Cash on Delivery</string>
+    <string name="use_your_cards_to_pay">Use your cards to pay</string>
+    <string name="pay_with_stripe">Pay with Stripe</string>
 
 
 </resources>

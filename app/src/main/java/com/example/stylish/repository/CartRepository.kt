@@ -8,4 +8,6 @@ interface CartRepository {
     suspend fun getCartItems(userId: String): List<CartItemDetail>
     suspend fun updateCartItem(userId: String, cartItemId: String, updatedItem: CartItemDetail)
     suspend fun removeItemFromCart(userId: String, cartItemId: String)
+    suspend fun dropCart(userId: String)
+    suspend fun addOrder(userId: String,orderItems: List<CartItemDetail>)
 }

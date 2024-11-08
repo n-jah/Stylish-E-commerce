@@ -3,9 +3,10 @@ package com.example.stylish.ui.home.activity
 import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
-import android.util.Log
 import android.view.View
+import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
@@ -13,30 +14,145 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.stylish.R
 import com.example.stylish.ViewModel.CartViewModel
+import com.example.stylish.ViewModel.PaymentViewModel
+import com.example.stylish.ViewModel.PaymentViewModelFactory
 import com.example.stylish.adapter.CartAdapter
 import com.example.stylish.databinding.ActivityCartBinding
 import com.example.stylish.modeldata.CartItemDetail
 import com.example.stylish.repository.CartViewModelFactory
 import com.example.stylish.repository.FirebaseCartRepositoryImpl
 import com.google.firebase.auth.FirebaseAuth
+import com.stripe.android.PaymentConfiguration
+import com.stripe.android.paymentsheet.PaymentSheet
+import com.stripe.android.paymentsheet.PaymentSheetResult
 
 class CartActivity : AppCompatActivity() {
     private lateinit var binding: ActivityCartBinding
     private lateinit var cartAdapter: CartAdapter
     private lateinit var cartViewModel: CartViewModel
     private lateinit var auth: FirebaseAuth
+    private lateinit var paymentSheet: PaymentSheet
+    private val viewModel: PaymentViewModel by viewModels {
+        PaymentViewModelFactory(applicationContext)
+    }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         binding = ActivityCartBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
         setupStatusBar()
-        auth = FirebaseAuth.getInstance()
+        setUpPayment()
 
-        val repository = FirebaseCartRepositoryImpl()
-        val factory = CartViewModelFactory(repository)
-        cartViewModel = ViewModelProvider(this, factory).get(CartViewModel::class.java)
 
+        setUpViewModel()
+
+        setupUI()
+
+        setupOvservers()
+
+
+
+    }
+
+    private fun setUpPayment() {
+        PaymentConfiguration.init(this, "pk_test_51PvqwnGfrZnPfialSKBHf1dunaJqztGTmy1celVwsFZifTEepFf9l808cUw77yiT5Xj9n9cvJDxS1JLIzXvbjKe800CIDNtEZK") // Add your publishable key here
+        paymentSheet = PaymentSheet(this , ::onPaymentSheetResult )
+
+    }
+
+    private fun setupOvservers() {
+        // Observe the client secret from ViewModel
+        viewModel.clientSecret.observe(this) { clientSecret ->
+            presentPaymentSheet(clientSecret)
+        }
+
+        viewModel.error.observe(this) { error ->
+            Toast.makeText(this, error, Toast.LENGTH_SHORT).show()
+        }
+        // Observe cart items from ViewModel
+        cartViewModel.cartItems.observe(this) { cartItems ->
+            cartAdapter.updateCartItems(cartItems.toMutableList()) // Ensure it's mutable
+            setPrice(cartItems)
+            handleEmptyView(cartItems)  // Check if the list is empty and handle the UI
+        }
+    }
+
+    private fun setupUI() {
+
+        listOfItems()
+
+
+        binding.addressAdd.setOnClickListener {
+             startActivity(Intent(this, AddressActivity::class.java))
+         }
+        // Load the user's cart
+        auth.currentUser?.uid?.let { userId ->
+            cartViewModel.loadUserCart(userId)
+        }
+
+        binding.cartRecyclerView.apply {
+            layoutManager = LinearLayoutManager(this@CartActivity)
+            adapter = cartAdapter
+        }
+
+        binding.backButton.setOnClickListener {
+            finish()
+        }
+
+        checkOut()
+
+        swtishChack()
+
+    }
+
+    private fun checkOut() {
+        val checkOutButton = binding.bottomButton
+
+        checkOutButton.setOnClickListener {
+            val validation = binding.checkb.isChecked &&
+                    (binding.checkboxpaymentStrip.isChecked || binding.checkboxpayondelivery.isChecked) &&
+                    cartAdapter.getCartItems().isNotEmpty()
+
+
+            if (validation) {
+                if (binding.checkboxpayondelivery.isChecked) {
+
+                    Toast.makeText(this, "Successful", Toast.LENGTH_SHORT).show()
+
+                }
+                if (binding.checkboxpaymentStrip.isChecked) {
+
+                        val amount = ((cartViewModel.getTotalPrice()+10) * 100 )
+                        viewModel.createPaymentFlow(amount.toInt())
+
+
+                    Toast.makeText(this, "Successful", Toast.LENGTH_SHORT).show()
+                }
+
+            } else {
+                Toast.makeText(this, "Please complete all required steps", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+
+    private fun swtishChack() {
+
+        val strip = binding.checkboxpaymentStrip
+        val payCash = binding.checkboxpayondelivery
+        strip.setOnCheckedChangeListener { _, isChecked ->
+            if (isChecked) {
+                payCash.isChecked = false
+            }
+        }
+        payCash.setOnCheckedChangeListener { _, isChecked ->
+            if (isChecked) {
+                strip.isChecked = false
+            }
+        }
+    }
+
+    private fun listOfItems() {
         cartAdapter = CartAdapter(mutableListOf(), onQuantityChange = { cartItem , cartItemKey ->
             // Update the quantity in Firebase
             cartViewModel.updateCartItem(auth.currentUser?.uid ?: "", cartItemKey, cartItem)
@@ -50,31 +166,15 @@ class CartActivity : AppCompatActivity() {
             setPrice(cartAdapter.getCartItems())
 
         })
+    }
+
+    private fun setUpViewModel(){
+        auth = FirebaseAuth.getInstance()
+        val repository = FirebaseCartRepositoryImpl()
+        val factory = CartViewModelFactory(repository)
+        cartViewModel = ViewModelProvider(this, factory).get(CartViewModel::class.java)
 
 
-        binding.cartRecyclerView.apply {
-            layoutManager = LinearLayoutManager(this@CartActivity)
-            adapter = cartAdapter
-        }
-
-        // Observe cart items from ViewModel
-        cartViewModel.cartItems.observe(this) { cartItems ->
-            cartAdapter.updateCartItems(cartItems.toMutableList()) // Ensure it's mutable
-            setPrice(cartItems)
-            handleEmptyView(cartItems)  // Check if the list is empty and handle the UI
-        }
-        binding.backButton.setOnClickListener {
-            finish()
-        }
-
-        // Load the user's cart
-        auth.currentUser?.uid?.let { userId ->
-            cartViewModel.loadUserCart(userId)
-        }
-
-        binding.addressAdd.setOnClickListener {
-            startActivity(Intent(this, AddressActivity::class.java))
-        }
     }
 
     private fun setPrice(cartItems: List<CartItemDetail>) {
@@ -125,5 +225,28 @@ class CartActivity : AppCompatActivity() {
             v.setPadding(systemBars.left, systemBars.top - 30, systemBars.right, systemBars.bottom)
             insets
         }
+    }
+
+
+    private fun onPaymentSheetResult(result: PaymentSheetResult) {
+        val resultText = when (result) {
+            is PaymentSheetResult.Completed ->  {
+                addToOrders()
+                finish()
+                "Payment complete! "
+            }
+            is PaymentSheetResult.Canceled -> "Payment canceled!"
+            is PaymentSheetResult.Failed -> "Payment failed! ${result.error.localizedMessage}"
+        }
+        Toast.makeText(this, resultText, Toast.LENGTH_SHORT).show()
+    }
+
+    private fun addToOrders() {
+        cartViewModel.addOreder(auth.currentUser?.uid ?: "")
+    }
+
+    private fun presentPaymentSheet(clientSecret: String) {
+        val configuration = PaymentSheet.Configuration("Stylish")
+        paymentSheet.presentWithPaymentIntent(clientSecret, configuration)
     }
 }

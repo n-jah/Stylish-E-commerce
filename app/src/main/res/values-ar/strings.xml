@@ -63,6 +63,6 @@
     <string name="drawer_close">Colse Drawer</string>
     <string name="drawer_open">Open Drawer</string>
     <string name="facebook_app_id">1400075447583863</string>
-    <string name="fb_login_protocol_scheme">fb1400075447583863</string>
     <string name="facebook_client_token">2156d3922742877c3362a7b62a087d04</string>
+    <string name="welcome_to_stylish">"اهلا بك "</string>
 </resources>

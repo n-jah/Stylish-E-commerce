@@ -71,5 +71,7 @@ dependencies {
     implementation ("com.sun.mail:android-mail:1.6.2")
     implementation ("com.sun.mail:android-activation:1.6.2")
     implementation ("com.airbnb.android:lottie:5.0.3")
+    implementation ("com.stripe:stripe-android:20.53.0")
+    implementation("com.android.volley:volley:1.2.1")
 
 }

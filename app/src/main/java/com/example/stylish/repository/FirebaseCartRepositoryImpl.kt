@@ -105,5 +105,31 @@ class FirebaseCartRepositoryImpl : CartRepository {
         }
     }
 
+    override suspend fun dropCart(userId: String) {
+
+        try {
+            val userCartRef = usersRef.child(userId).child("cart")
+            userCartRef.removeValue().await() // Wait for Firebase to complete the operation
+            Log.d("CartRepository", "Cart dropped successfully")
+        } catch (e: Exception) {
+            Log.e("CartRepository", "Error dropping cart: ${e.message}")
+
+        }
+
+    }
+
+    override suspend fun addOrder(userId: String, orderItems: List<CartItemDetail>) {
+        try {
+            val userOrdersRef = usersRef.child(userId).child("orders")
+            val newOrderRef = userOrdersRef.push()
+            newOrderRef.setValue(orderItems).await() // Wait for Firebase to complete the operation
+            Log.d("CartRepository", "Order added successfully")
+        } catch (e: Exception) {
+
+        }
+
+
+    }
+
 
 }

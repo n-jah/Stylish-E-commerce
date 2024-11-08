@@ -17,6 +17,7 @@ class CartViewModel(private val cartRepository: CartRepository) : ViewModel() {
 
     private val _cartItems = MutableLiveData<List<CartItemDetail>>()
     val cartItems: LiveData<List<CartItemDetail>> get() = _cartItems
+
     // Function to add an item to the cart
     fun addItemToCart(userId: String, cartItem: CartItem) {
         viewModelScope.launch {
@@ -30,7 +31,8 @@ class CartViewModel(private val cartRepository: CartRepository) : ViewModel() {
             }
         }
     }
-//
+
+    //
 // Fetch user's cart and item details
     fun loadUserCart(userId: String) {
         viewModelScope.launch {
@@ -47,11 +49,12 @@ class CartViewModel(private val cartRepository: CartRepository) : ViewModel() {
         }
     }
 
-    fun getTotalPrice():Float{
+    fun getTotalPrice(): Float {
+
 
         var cartItems = cartItems.value ?: emptyList()
         var totalPrice = 0f
-        for (item in cartItems){
+        for (item in cartItems) {
             totalPrice += item.price * item.quantity
 
         }
@@ -81,5 +84,33 @@ class CartViewModel(private val cartRepository: CartRepository) : ViewModel() {
             }
         }
     }
+
+    fun dropCart(userId: String) {
+        viewModelScope.launch {
+            try {
+                cartRepository.dropCart(userId)
+                loadUserCart(userId) // Refresh the cart after dropping
+            } catch (e: Exception) {
+                // Handle error
+            }
+
+        }
+    }
+
+    fun addOreder(userId: String) {
+        viewModelScope.launch {
+            try {
+                loadUserCart(userId) // Refresh the cart after dropping
+                cartRepository.addOrder(userId, cartItems.value ?: emptyList())
+                dropCart(userId)
+
+            } catch (e: Exception) {
+            }
+
+
+        }
+
+    }
+
 }
 

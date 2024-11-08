@@ -173,6 +173,8 @@
                 android:textSize="16sp"
                 android:textStyle="bold" />
 
+
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -190,11 +192,11 @@
                     android:padding="8dp">
 
                     <ImageView
-                        android:id="@+id/card_logo"
+                        android:id="@+id/payment_icon"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:layout_gravity="center"
-                        android:src="@drawable/visalogo" />
+                        android:src="@drawable/payment_money_svgrepo_com" />
                 </FrameLayout>
 
                 <LinearLayout
@@ -208,7 +210,7 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="4"
                         android:fontFamily="@font/inter"
-                        android:text="@string/name_of_card"
+                        android:text="@string/cash_on_delivery_cod"
                         android:textAppearance="@style/head1"
                         android:textColor="#1D1E20"
                         android:textSize="15sp"
@@ -219,7 +221,7 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:fontFamily="@font/inter"
-                        android:text="@string/card_number_last_numbs"
+                        android:text="Pay by cash on delivery."
                         android:textAppearance="@style/head1"
                         android:textColor="#8F959E"
                         android:textSize="15sp"
@@ -227,7 +229,68 @@
                 </LinearLayout>
 
                 <CheckBox
-                    android:id="@+id/checkboxpayment"
+                    android:id="@+id/checkboxpayondelivery"
+                    android:layout_width="wrap_content"
+                    android:layout_height="50dp"
+                    android:layout_weight="1"
+                    android:scaleX="1.4"
+                    android:scaleY="1.4" />
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <FrameLayout
+                    android:layout_width="0dp"
+                    android:layout_height="60dp"
+                    android:layout_marginStart="15dp"
+                    android:layout_marginEnd="10dp"
+                    android:layout_weight="2"
+                    android:background="@drawable/visabackgroundlight"
+                    android:padding="8dp">
+
+                    <ImageView
+                        android:id="@+id/paymentwithstrip"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_gravity="center"
+                        android:src="@drawable/stripe_logo__revised_2016" />
+                </FrameLayout>
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="8"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="4"
+                        android:fontFamily="@font/inter"
+                        android:text="@string/pay_with_stripe"
+                        android:textAppearance="@style/head1"
+                        android:textColor="#1D1E20"
+                        android:textSize="15sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:fontFamily="@font/inter"
+                        android:text="@string/use_your_cards_to_pay"
+                        android:textAppearance="@style/head1"
+                        android:textColor="#8F959E"
+                        android:textSize="15sp"
+                        android:textStyle="normal" />
+                </LinearLayout>
+
+                <CheckBox
+                    android:id="@+id/checkboxpayment_strip"
                     android:layout_width="wrap_content"
                     android:layout_height="50dp"
                     android:layout_weight="1"
