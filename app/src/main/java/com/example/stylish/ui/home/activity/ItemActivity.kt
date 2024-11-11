@@ -138,9 +138,9 @@ class ItemActivity : AppCompatActivity() {
                 .into(binding.itemImage)
 
             val sizes: MutableList<Size> = mutableListOf()
-            val sizeObjectList = item.size
+            val sizeObjectList = item.sizes.toList()
             for (n in sizeObjectList) {
-                sizes.add(Size(n))
+                sizes.add(Size(n.size, n.stock))
             }
             sizeInti(sizes)
             imgsinti(item.imgUrl)

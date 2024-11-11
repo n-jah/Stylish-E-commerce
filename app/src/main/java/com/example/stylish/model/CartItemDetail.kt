@@ -6,6 +6,8 @@ data class CartItemDetail(
     val price: Float,
     val imageUrl: List<String>,
     val quantity: Int,
-    val size: String
+    val size: String,
+    var isOutOfStock: Boolean = false
+
 )
 

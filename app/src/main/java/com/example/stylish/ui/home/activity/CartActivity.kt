@@ -84,7 +84,8 @@ class CartActivity : AppCompatActivity() {
 
 
         binding.addressAdd.setOnClickListener {
-             startActivity(Intent(this, AddressActivity::class.java))
+
+         startActivity(Intent(this, AddressActivity::class.java))
          }
         // Load the user's cart
         auth.currentUser?.uid?.let { userId ->
@@ -118,7 +119,9 @@ class CartActivity : AppCompatActivity() {
             if (validation) {
                 if (binding.checkboxpayondelivery.isChecked) {
 
-                    Toast.makeText(this, "Successful", Toast.LENGTH_SHORT).show()
+                    addToOrders()
+                    Toast.makeText(this, "Order Placed", Toast.LENGTH_SHORT).show()
+                    finish()
 
                 }
                 if (binding.checkboxpaymentStrip.isChecked) {
@@ -126,8 +129,6 @@ class CartActivity : AppCompatActivity() {
                         val amount = ((cartViewModel.getTotalPrice()+10) * 100 )
                         viewModel.createPaymentFlow(amount.toInt())
 
-
-                    Toast.makeText(this, "Successful", Toast.LENGTH_SHORT).show()
                 }
 
             } else {
@@ -155,8 +156,13 @@ class CartActivity : AppCompatActivity() {
     private fun listOfItems() {
         cartAdapter = CartAdapter(mutableListOf(), onQuantityChange = { cartItem , cartItemKey ->
             // Update the quantity in Firebase
-            cartViewModel.updateCartItem(auth.currentUser?.uid ?: "", cartItemKey, cartItem)
-            setPrice(cartAdapter.getCartItems())
+
+            if (cartViewModel.checkStock(cartItem.itemId, cartItem.size, cartItem.quantity)){
+                cartViewModel.updateCartItem(auth.currentUser?.uid ?: "", cartItemKey, cartItem)
+                setPrice(cartAdapter.getCartItems())
+            }else{
+                Toast.makeText(this, "Out of Stock", Toast.LENGTH_SHORT).show()
+            }
             // Handle quantity change logic
         }, onRemoveItem = { cartItem  ->
             // Remove item from cart in Firebase using the Firebase key
@@ -173,8 +179,6 @@ class CartActivity : AppCompatActivity() {
         val repository = FirebaseCartRepositoryImpl()
         val factory = CartViewModelFactory(repository)
         cartViewModel = ViewModelProvider(this, factory).get(CartViewModel::class.java)
-
-
     }
 
     private fun setPrice(cartItems: List<CartItemDetail>) {
@@ -242,7 +246,12 @@ class CartActivity : AppCompatActivity() {
     }
 
     private fun addToOrders() {
-        cartViewModel.addOreder(auth.currentUser?.uid ?: "")
+        cartViewModel.addOreder(auth.currentUser?.uid ?: "") {
+            if (it) {
+                cartViewModel.decreaseStockForAllItems(cartAdapter.getCartItems())
+            }
+        }
+
     }
 
     private fun presentPaymentSheet(clientSecret: String) {

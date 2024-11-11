@@ -7,6 +7,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
 import android.util.Log
+import com.example.stylish.model.Size
 //import com.example.stylish.model.CartItemDetail
 import com.example.stylish.modeldata.CartItemDetail
 
@@ -49,6 +50,7 @@ class FirebaseCartRepositoryImpl : CartRepository {
                 val newCartItemRef = cartRef.push()
                 newCartItemRef.setValue(cartItem).await() // Add new item to Firebase
                 Log.d("CartRepository", "Item added to cart successfully")
+
             }
         } catch (e: Exception) {
             Log.e("CartRepository", "Error adding item to cart: ${e.message}")
@@ -64,8 +66,32 @@ class FirebaseCartRepositoryImpl : CartRepository {
         for (cartItemSnapshot in snapshot.children) {
             val cartItemKey = cartItemSnapshot.key.toString() // Get the Firebase key
             val itemId = cartItemSnapshot.child("itemId").value.toString()
-            val quantity = cartItemSnapshot.child("quantity").value.toString().toInt()
+            var quantity = cartItemSnapshot.child("quantity").value.toString().toInt()
             val size = cartItemSnapshot.child("size").value.toString()
+            var isOutOfStock = false
+
+            val sizesInItem = database.getReference("items/$itemId/sizes").get().await()
+            if(sizesInItem.exists()){
+                sizesInItem.children.forEach {
+
+                    val sizeOfItem = it.child("size").value.toString()
+                    val quantityOfItem = it.child("quantity").value.toString().toInt()
+
+                    if (sizeOfItem == size){
+
+                        quantity = if (quantityOfItem == 0){
+                            isOutOfStock = true
+                            quantityOfItem
+                        }else if (quantityOfItem < quantity){
+                            quantityOfItem
+                        }else{
+                            cartItemSnapshot.child("quantity").value.toString().toInt()
+                        }
+                    }
+
+                }
+            }
+
 
             // Retrieve item details from the 'items' reference
             val itemSnapshot = database.getReference("items").child(itemId).get().await()
@@ -75,7 +101,7 @@ class FirebaseCartRepositoryImpl : CartRepository {
                 val imageUrl = itemSnapshot.child("imgUrl").value as? List<String> ?: emptyList()
 
                 // Pass the Firebase key to CartItemDetail
-                cartItemsList.add(CartItemDetail(cartItemKey, itemId, title, price, imageUrl, quantity, size))
+                cartItemsList.add(CartItemDetail(cartItemKey, itemId, title, price, imageUrl, quantity, size,isOutOfStock))
             }
         }
         return@withContext cartItemsList
@@ -117,19 +143,118 @@ class FirebaseCartRepositoryImpl : CartRepository {
         }
 
     }
-
-    override suspend fun addOrder(userId: String, orderItems: List<CartItemDetail>) {
+    override suspend fun addOrder(userId: String, orderItems: List<CartItemDetail>, status: (Boolean) -> Unit) {
         try {
             val userOrdersRef = usersRef.child(userId).child("orders")
             val newOrderRef = userOrdersRef.push()
-            newOrderRef.setValue(orderItems).await() // Wait for Firebase to complete the operation
+            newOrderRef.setValue(orderItems).await()
+            status(true)
+
             Log.d("CartRepository", "Order added successfully")
         } catch (e: Exception) {
-
+            status(false)  // Invoke status callback with false on failure
+            Log.e("CartRepository", "Failed to add order: ${e.message}")
         }
-
-
     }
 
+    override suspend fun checkStock(itemId: String, size: String, quantity: Int ): Boolean = withContext(Dispatchers.IO) {
+        try {
 
+            // Access the "items" reference to get the specific item by ID
+            val itemSnapshot = database.getReference("items").child(itemId).get().await()
+            if (itemSnapshot.exists()) {
+                // Assuming the item has a "sizes" array field in the database
+                val sizesList = itemSnapshot.child("sizes").children
+                for (sizeSnapshot in sizesList) {
+                    val availableSize = sizeSnapshot.child("size").value.toString()
+                    val availableQuantity = sizeSnapshot.child("quantity").value.toString().toInt()
+                    if (availableSize == size && availableQuantity >= quantity) {
+
+                        return@withContext true // Stock is sufficient
+                    }
+                }
+            }
+
+            // Return false if item, size, or sufficient quantity is not found
+            return@withContext false
+        } catch (e: Exception) {
+            Log.e("CartRepository", "Error checking stock: ${e.message}")
+            throw e // Rethrow or handle the exception as needed
+        }
+    }
+
+    override suspend fun dicresStock(itemId: String, selectedSize: String, quantityToDecress: Int): Boolean {
+        try {
+            // Get a reference to the specific item's sizes in Firebase
+            val itemRef = database.getReference("items").child(itemId).child("sizes")
+            val sizesSnapshot = itemRef.get().await()
+
+            if (!sizesSnapshot.exists()) {
+                return false
+            }
+
+            // Parse each size and find the matching size
+            val sizeList = sizesSnapshot.children.mapNotNull { sizeSnapshot ->
+                val sizeMap = sizeSnapshot.value as? Map<*, *>
+                sizeMap?.let {
+                    val size = it["size"] as? String ?: ""
+                    val stock = it["quantity"] as? Long ?: 0L
+                    Size(size, stock.toInt())
+                }
+            }
+            // Find the size object that matches the given selectedSize
+            val size = sizeList.find { it.size == selectedSize }
+
+            if (size != null && size.stock >= quantityToDecress) {
+                // Calculate the new stock
+                val newStock = size.stock - quantityToDecress
+
+                val sizeSnapshotKey = sizesSnapshot.children.find {
+                    val sizeMap = it.value as? Map<*, *>
+                    sizeMap?.get("size") == size.size
+                }?.key
+                if (sizeSnapshotKey != null) {
+                    itemRef.child(sizeSnapshotKey).child("quantity").setValue(newStock).await()
+                    return true
+                } else {
+                    return false
+                }
+            } else {
+                return false
+            }
+        } catch (e: Exception) {
+            return false
+        }
+    }
+
+    override suspend fun decreaseStockForAllItems(cartItems: List<CartItemDetail>): Boolean {
+        try {
+            var allItemsUpdated = true  // Flag to track the success of all operations
+
+            for (cartItem in cartItems) {
+                val itemId = cartItem.itemId  // Get the item ID from the cart item
+                val selectedSize = cartItem.size  // Get the selected size
+                val quantityToDecrease = cartItem.quantity  // Get the quantity to decrease
+
+                // Call the existing decreaseStock function for each item
+                val itemUpdated = dicresStock(itemId, selectedSize, quantityToDecrease)
+
+                if (!itemUpdated) {
+                    // If any item fails to update, mark the flag as false and log the error
+                    Log.d("CartRepository", "Failed to decrease stock for item ID: $itemId, Size: $selectedSize")
+                    allItemsUpdated = false
+                }
+            }
+            // Return the result based on whether all items were updated successfully
+            if (allItemsUpdated) {
+                Log.d("CartRepository", "All cart items stock decreased successfully.")
+            } else {
+                Log.d("CartRepository", "Some items failed to decrease stock.")
+            }
+            return allItemsUpdated
+        } catch (e: Exception) {
+            Log.e("CartRepository", "Error decreasing stock for cart items: ${e.message}")
+            return false
+        }
+    }
 }

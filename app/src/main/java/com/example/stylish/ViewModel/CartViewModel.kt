@@ -12,6 +12,7 @@ import com.example.stylish.modeldata.CartItemDetail
 import com.example.stylish.repository.CartRepository
 import com.example.stylish.repository.ItemRepsitory
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 
 class CartViewModel(private val cartRepository: CartRepository) : ViewModel() {
 
@@ -97,20 +98,63 @@ class CartViewModel(private val cartRepository: CartRepository) : ViewModel() {
         }
     }
 
-    fun addOreder(userId: String) {
+    fun addOreder(userId: String , callBack: (Boolean) -> Unit) {
         viewModelScope.launch {
             try {
                 loadUserCart(userId) // Refresh the cart after dropping
-                cartRepository.addOrder(userId, cartItems.value ?: emptyList())
-                dropCart(userId)
+                cartRepository.addOrder(userId, cartItems.value ?: emptyList(), status = {
+                    if (it){
+                        dropCart(userId)
+                        callBack(true)
+                    }else{
+                        Log.d("CartViewModel", "Error adding order")
+                        callBack(false)
+                    }
+                })
+
 
             } catch (e: Exception) {
             }
-
-
         }
-
+    }
+    fun dicresStock(itemId: String, selectedSize: String, quantityToDecress: Int){
+        viewModelScope.launch {
+            try {
+                cartRepository.dicresStock(itemId, selectedSize, quantityToDecress)
+            } catch (e: Exception) {
+                // Handle error
+            }
+        }
+    }
+    fun decreaseStockForAllItems(cartItems: List<CartItemDetail>) {
+        viewModelScope.launch {
+            try {
+                cartRepository.decreaseStockForAllItems(cartItems)
+            } catch (e: Exception) {
+                // Handle error
+            }
+        }
     }
 
+    fun checkStock(itemId: String, size: String, quantity: Int): Boolean {
+        var stock = false
+
+        // Use async to return the value
+        runBlocking {
+            try {
+                // Wait for the result from the repository
+                stock = cartRepository.checkStock(itemId, size, quantity)
+
+            } catch (_: Exception) {
+                // Handle exceptions
+            }
+        }
+
+        return stock
+    }
+
+
+
 }
+
 

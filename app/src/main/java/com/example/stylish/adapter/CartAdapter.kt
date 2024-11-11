@@ -39,47 +39,77 @@ class CartAdapter(
     override fun onBindViewHolder(holder: CartViewHolder, position: Int) {
         val cartItem = cartItems[position]
 
-        // Binding data to views
-        holder.title.text = cartItem.title
-        holder.price.text = cartItem.price.toString()
-        holder.quantity.text = cartItem.quantity.toString()
-        holder.size.text = cartItem.size.capitalize()
+        if(cartItem.isOutOfStock){
 
-        // Load image if available
-        if (cartItem.imageUrl.isNotEmpty()) {
-            Glide.with(holder.itemView.context)
-                .load(cartItem.imageUrl[0])
-                .placeholder(android.R.drawable.ic_menu_report_image)
-                .error(android.R.drawable.ic_menu_report_image)
-                .into(holder.imageView)
-        }
+            holder.itemView.alpha = 0.6f
+            holder.title.text = cartItem.title
+            holder.price.text =  cartItem.price.toString()
+            holder.quantity.visibility = View.GONE
+            holder.size.text = "Out of Stock"
+            holder.size.setTextColor(holder.itemView.context.getColor(android.R.color.holo_red_light))
+            // Load image if available
+            if (cartItem.imageUrl.isNotEmpty()) {
+                Glide.with(holder.itemView.context)
+                    .load(cartItem.imageUrl[0])
+                    .placeholder(android.R.drawable.ic_menu_report_image)
+                    .error(android.R.drawable.ic_menu_report_image)
+                    .into(holder.imageView)
+            }
+            holder.increaseButton.visibility = View.GONE
+            holder.decreaseButton.visibility = View.GONE
+
+            holder.removeButton.setOnClickListener {
+                onRemoveItem(cartItem)
+                removeItem(cartItem) // Call the adapter's own removeItem method
+            }
+
 //
-        // Increase quantity
-        holder.increaseButton.setOnClickListener {
-            val updatedCartItem = cartItem.copy(quantity = cartItem.quantity + 1)
-            onQuantityChange(updatedCartItem, cartItem.cartItemKey)
 
-        }
+        }else{
+            holder.itemView.alpha = 1.0f
+            holder.itemView.isEnabled = true
+            // Binding data to views
+            holder.title.text = cartItem.title
+            holder.price.text = cartItem.price.toString()
+            holder.quantity.text = cartItem.quantity.toString()
+            holder.size.text = cartItem.size.capitalize()
 
-
-//        // Decrease quantity
-        holder.decreaseButton.setOnClickListener{
-            var quantity = cartItem.quantity
-            if (quantity > 1) {
-
-                val updatedCartItem = cartItem.copy(quantity = quantity - 1)
+            // Load image if available
+            if (cartItem.imageUrl.isNotEmpty()) {
+                Glide.with(holder.itemView.context)
+                    .load(cartItem.imageUrl[0])
+                    .placeholder(android.R.drawable.ic_menu_report_image)
+                    .error(android.R.drawable.ic_menu_report_image)
+                    .into(holder.imageView)
+            }
+//
+            // Increase quantity
+            holder.increaseButton.setOnClickListener {
+                val updatedCartItem = cartItem.copy(quantity = cartItem.quantity + 1)
                 onQuantityChange(updatedCartItem, cartItem.cartItemKey)
 
             }
-        }
 
 
-        // Remove item
-        holder.removeButton.setOnClickListener {
-            onRemoveItem(cartItem)
-            removeItem(cartItem) // Call the adapter's own removeItem method
+//        // Decrease quantity
+            holder.decreaseButton.setOnClickListener{
+                var quantity = cartItem.quantity
+                if (quantity > 1) {
+                    val updatedCartItem = cartItem.copy(quantity = quantity - 1)
+                    onQuantityChange(updatedCartItem, cartItem.cartItemKey)
+                }
+            }
+
+            // Remove item
+            holder.removeButton.setOnClickListener {
+                onRemoveItem(cartItem)
+                removeItem(cartItem) // Call the adapter's own removeItem method
+            }
         }
+
     }
+
+
 
     override fun getItemCount(): Int = cartItems.size
 
