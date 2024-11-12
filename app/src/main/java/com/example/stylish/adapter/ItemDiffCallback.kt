@@ -1,7 +1,7 @@
 package com.example.stylish.adapter
 
 import androidx.recyclerview.widget.DiffUtil
-import com.example.stylish.model.Item
+import com.example.stylish.model.home.Item
 
 class ItemDiffCallback: DiffUtil.ItemCallback<Item>() {
     override fun areItemsTheSame(oldItem: Item, newItem: Item): Boolean {

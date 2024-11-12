@@ -12,10 +12,10 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.CenterInside
 import com.bumptech.glide.request.RequestOptions
 import com.example.stylish.R
-import com.example.stylish.ViewModel.MainViewModel
+import com.example.stylish.ViewModel.home.MainViewModel
 import com.example.stylish.adapter.ItemDiffCallback
 import com.example.stylish.utilities.UpdateFavoriteCallback
-import com.example.stylish.model.Item
+import com.example.stylish.model.home.Item
 import com.example.stylish.ui.home.activity.ItemActivity
 
 class FavoriteAdapter(

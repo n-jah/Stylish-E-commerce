@@ -12,7 +12,7 @@
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        tools:context=".ui.home.activity.CartActivity">
+        tools:context=".ui.cart.CartActivity">
 
 
         <!-- Content above the button -->

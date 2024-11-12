@@ -1,7 +1,6 @@
 package com.example.stylish.ui.home.fragment
 
 import FavoriteAdapter
-import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -11,13 +10,12 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.GridLayoutManager
-import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.stylish.ViewModel.MainViewModel
+import com.example.stylish.ViewModel.home.MainViewModel
 import com.example.stylish.databinding.FragmentWishlistBinding
-import com.example.stylish.repository.AuthRepositoryImpl
-import com.example.stylish.repository.FirebaseBrandRepositry
-import com.example.stylish.repository.FirebaseItemRepository
-import com.example.stylish.repository.MainViewModelFactory
+import com.example.stylish.repository.auth.AuthRepositoryImpl
+import com.example.stylish.repository.home.FirebaseBrandRepositry
+import com.example.stylish.repository.home.FirebaseItemRepository
+import com.example.stylish.ViewModel.home.MainViewModelFactory
 import com.google.firebase.auth.FirebaseAuth
 
 class WishlistFragment : Fragment() {
@@ -49,7 +47,8 @@ class WishlistFragment : Fragment() {
     }
     private fun initViewModel() {
         auth = FirebaseAuth.getInstance()
-        val mainFactory = MainViewModelFactory(FirebaseItemRepository(), FirebaseBrandRepositry(),
+        val mainFactory = MainViewModelFactory(
+            FirebaseItemRepository(), FirebaseBrandRepositry(),
             AuthRepositoryImpl()
         )
         viewModel = ViewModelProvider(requireActivity(), mainFactory).get(MainViewModel::class.java)

@@ -9,14 +9,14 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.stylish.ViewModel.MainViewModel
+import com.example.stylish.ViewModel.home.MainViewModel
 import com.example.stylish.adapter.BrandAdapter
 import com.example.stylish.adapter.ItemAdapter
 import com.example.stylish.databinding.FragmentHomeBinding
-import com.example.stylish.repository.AuthRepositoryImpl
-import com.example.stylish.repository.FirebaseItemRepository
-import com.example.stylish.repository.FirebaseBrandRepositry
-import com.example.stylish.repository.MainViewModelFactory
+import com.example.stylish.repository.auth.AuthRepositoryImpl
+import com.example.stylish.repository.home.FirebaseItemRepository
+import com.example.stylish.repository.home.FirebaseBrandRepositry
+import com.example.stylish.ViewModel.home.MainViewModelFactory
 import com.example.stylish.utilities.UserUtils
 import com.google.firebase.auth.FirebaseAuth
 

@@ -10,7 +10,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.stylish.R
 //import com.example.stylish.model.CartItemDetail
-import com.example.stylish.modeldata.CartItemDetail
+import com.example.stylish.model.cart.CartItemDetail
 
 class CartAdapter(
     private var cartItems: MutableList<CartItemDetail>,

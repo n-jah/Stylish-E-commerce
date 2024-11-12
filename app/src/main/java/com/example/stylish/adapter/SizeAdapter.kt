@@ -7,7 +7,7 @@ import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.example.stylish.R
-import com.example.stylish.model.Size
+import com.example.stylish.model.home.Size
 
 class SizeAdapter(
     private val sizes: List<Size>,

@@ -2,34 +2,28 @@ package com.example.stylish.ui.home.activity
 
 import android.content.Intent
 import android.graphics.Color
-import android.media.Rating
 import android.os.Bundle
 import android.util.Log
 import android.widget.ImageButton
 import android.widget.Toast
-import androidx.activity.enableEdgeToEdge
-import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.CenterInside
 import com.bumptech.glide.request.RequestOptions
 import com.example.stylish.R
-import com.example.stylish.ViewModel.CartViewModel
+import com.example.stylish.ViewModel.cart.CartViewModel
 import com.example.stylish.adapter.ItemImagesAdapter
 import com.example.stylish.adapter.SizeAdapter
 import com.example.stylish.databinding.ActivityItemBinding
-import com.example.stylish.model.CartItem
-import com.example.stylish.model.Item
-import com.example.stylish.model.Size
-import com.example.stylish.repository.CartRepository
-import com.example.stylish.repository.CartViewModelFactory
-import com.example.stylish.repository.FirebaseCartRepositoryImpl
+import com.example.stylish.model.cart.CartItem
+import com.example.stylish.model.home.Item
+import com.example.stylish.model.home.Size
+import com.example.stylish.repository.cart.CartRepository
+import com.example.stylish.ViewModel.cart.CartViewModelFactory
+import com.example.stylish.repository.cart.FirebaseCartRepositoryImpl
+import com.example.stylish.ui.cart.CartActivity
 import com.google.firebase.auth.FirebaseAuth
 class ItemActivity : AppCompatActivity() {
 

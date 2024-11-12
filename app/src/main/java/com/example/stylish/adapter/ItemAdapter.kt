@@ -14,18 +14,18 @@
     import com.bumptech.glide.load.resource.bitmap.CenterInside
     import com.bumptech.glide.request.RequestOptions
     import com.example.stylish.R
-    import com.example.stylish.ViewModel.MainViewModel
+    import com.example.stylish.ViewModel.home.MainViewModel
     import com.example.stylish.utilities.UpdateFavoriteCallback
-    import com.example.stylish.model.Item
+    import com.example.stylish.model.home.Item
 
     import com.example.stylish.ui.home.activity.ItemActivity
     import com.facebook.shimmer.ShimmerFrameLayout
 
     @Suppress("DEPRECATION")
     class ItemAdapter(
-          var itemList: List<Item> = emptyList(),
-        var isLoading: Boolean = true ,  // Default value to avoid nulls
-      var viewModel: MainViewModel // Pass the ViewModel
+        var itemList: List<Item> = emptyList(),
+        var isLoading: Boolean = true,  // Default value to avoid nulls
+        var viewModel: MainViewModel // Pass the ViewModel
 
     ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 

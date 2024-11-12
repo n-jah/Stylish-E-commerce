@@ -18,10 +18,10 @@
 
 
         <activity
-            android:name=".ui.home.activity.AddressActivity"
+            android:name=".ui.cart.AddressActivity"
             android:exported="false" />
         <activity
-            android:name=".ui.home.activity.CartActivity"
+            android:name=".ui.cart.CartActivity"
             android:exported="false" />
         <activity
             android:name=".ui.home.activity.ItemActivity"

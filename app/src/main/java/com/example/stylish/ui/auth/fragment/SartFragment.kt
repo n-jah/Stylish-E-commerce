@@ -10,11 +10,11 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import com.example.stylish.ViewModel.AuthViewModel
+import com.example.stylish.ViewModel.auth.AuthViewModel
 import com.example.stylish.databinding.FragmentSartBinding
-import com.example.stylish.repository.AuthRepositoryImpl
-import com.example.stylish.repository.AuthRepositoryInterface
-import com.example.stylish.repository.AuthViewModelFactory
+import com.example.stylish.repository.auth.AuthRepositoryImpl
+import com.example.stylish.repository.auth.AuthRepositoryInterface
+import com.example.stylish.ViewModel.auth.AuthViewModelFactory
 import com.example.stylish.ui.auth.activity.SplashScreen.Companion.PREFS_NAME
 import com.example.stylish.ui.auth.activity.SplashScreen.Companion.REMEMBER_ME_KEY
 import com.example.stylish.ui.home.activity.MainActivity

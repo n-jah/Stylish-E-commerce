@@ -8,11 +8,11 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import com.example.stylish.ViewModel.AuthViewModel
+import com.example.stylish.ViewModel.auth.AuthViewModel
 import com.example.stylish.databinding.ActivityLoginBinding
-import com.example.stylish.repository.AuthRepositoryImpl
-import com.example.stylish.repository.AuthRepositoryInterface
-import com.example.stylish.repository.AuthViewModelFactory
+import com.example.stylish.repository.auth.AuthRepositoryImpl
+import com.example.stylish.repository.auth.AuthRepositoryInterface
+import com.example.stylish.ViewModel.auth.AuthViewModelFactory
 
 class SignInFragment : Fragment() {
 

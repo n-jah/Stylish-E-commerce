@@ -1,0 +1,244 @@
+package com.example.stylish.ui.cart
+
+import android.content.Intent
+import android.graphics.Color
+import android.os.Bundle
+import android.view.View
+import android.widget.Toast
+import androidx.activity.enableEdgeToEdge
+import androidx.activity.viewModels
+import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.stylish.R
+import com.example.stylish.ViewModel.cart.CartViewModel
+import com.example.stylish.ViewModel.payment.PaymentViewModel
+import com.example.stylish.ViewModel.payment.PaymentViewModelFactory
+import com.example.stylish.adapter.CartAdapter
+import com.example.stylish.databinding.ActivityCartBinding
+import com.example.stylish.model.cart.CartItemDetail
+import com.example.stylish.ViewModel.cart.CartViewModelFactory
+import com.example.stylish.repository.cart.FirebaseCartRepositoryImpl
+import com.google.firebase.auth.FirebaseAuth
+import com.stripe.android.PaymentConfiguration
+import com.stripe.android.paymentsheet.PaymentSheet
+import com.stripe.android.paymentsheet.PaymentSheetResult
+
+class CartActivity : AppCompatActivity() {
+    private lateinit var binding: ActivityCartBinding
+    private lateinit var cartAdapter: CartAdapter
+    private lateinit var cartViewModel: CartViewModel
+    private lateinit var auth: FirebaseAuth
+    private lateinit var paymentSheet: PaymentSheet
+    private val viewModel: PaymentViewModel by viewModels {
+        PaymentViewModelFactory(applicationContext)
+    }
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        binding = ActivityCartBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+        setupStatusBar()
+        setUpPayment()
+        setUpViewModel()
+        setupUI()
+        setupOvservers()
+    }
+
+    private fun setUpPayment() {
+        PaymentConfiguration.init(this, "pk_test_51PvqwnGfrZnPfialSKBHf1dunaJqztGTmy1celVwsFZifTEepFf9l808cUw77yiT5Xj9n9cvJDxS1JLIzXvbjKe800CIDNtEZK") // Add your publishable key here
+        paymentSheet = PaymentSheet(this , ::onPaymentSheetResult )
+    }
+    private fun setupOvservers() {
+        // Observe the client secret from ViewModel
+        viewModel.clientSecret.observe(this) { clientSecret ->
+            presentPaymentSheet(clientSecret)
+        }
+
+        viewModel.error.observe(this) { error ->
+            Toast.makeText(this, error, Toast.LENGTH_SHORT).show()
+        }
+        // Observe cart items from ViewModel
+        cartViewModel.cartItems.observe(this) { cartItems ->
+            cartAdapter.updateCartItems(cartItems.toMutableList()) // Ensure it's mutable
+            setPrice(cartItems)
+            handleEmptyView(cartItems)  // Check if the list is empty and handle the UI
+        }
+    }
+
+    private fun setupUI() {
+
+        listOfItems()
+        binding.addressAdd.setOnClickListener {
+         startActivity(Intent(this, AddressActivity::class.java))
+         }
+        // Load the user's cart
+        auth.currentUser?.uid?.let { userId ->
+            cartViewModel.loadUserCart(userId)
+        }
+        binding.cartRecyclerView.apply {
+            layoutManager = LinearLayoutManager(this@CartActivity)
+            adapter = cartAdapter
+        }
+        binding.backButton.setOnClickListener {
+            finish()
+        }
+        checkOut()
+        swtishChack()
+
+    }
+
+    private fun checkOut() {
+        val checkOutButton = binding.bottomButton
+
+        checkOutButton.setOnClickListener {
+            val validation = binding.checkb.isChecked &&
+                    (binding.checkboxpaymentStrip.isChecked || binding.checkboxpayondelivery.isChecked) &&
+                    cartAdapter.getCartItems().isNotEmpty()
+
+
+            if (validation) {
+                if (binding.checkboxpayondelivery.isChecked) {
+
+                    addToOrders()
+                    Toast.makeText(this, "Order Placed", Toast.LENGTH_SHORT).show()
+                    finish()
+
+                }
+                if (binding.checkboxpaymentStrip.isChecked) {
+
+                        val amount = ((cartViewModel.getTotalPrice()+10) * 100 )
+                        viewModel.createPaymentFlow(amount.toInt())
+
+                }
+
+            } else {
+                Toast.makeText(this, "Please complete all required steps", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+
+    private fun swtishChack() {
+
+        val strip = binding.checkboxpaymentStrip
+        val payCash = binding.checkboxpayondelivery
+        strip.setOnCheckedChangeListener { _, isChecked ->
+            if (isChecked) {
+                payCash.isChecked = false
+            }
+        }
+        payCash.setOnCheckedChangeListener { _, isChecked ->
+            if (isChecked) {
+                strip.isChecked = false
+            }
+        }
+    }
+
+    private fun listOfItems() {
+        cartAdapter = CartAdapter(mutableListOf(), onQuantityChange = { cartItem , cartItemKey ->
+            // Update the quantity in Firebase
+
+            if (cartViewModel.checkStock(cartItem.itemId, cartItem.size, cartItem.quantity)){
+                cartViewModel.updateCartItem(auth.currentUser?.uid ?: "", cartItemKey, cartItem)
+                setPrice(cartAdapter.getCartItems())
+            }else{
+                Toast.makeText(this, "Out of Stock", Toast.LENGTH_SHORT).show()
+            }
+            // Handle quantity change logic
+        }, onRemoveItem = { cartItem  ->
+            // Remove item from cart in Firebase using the Firebase key
+            cartViewModel.removeItemFromCart(auth.currentUser?.uid ?: "", cartItem.cartItemKey)
+            // Remove item from adapter and update the UI
+            cartAdapter.removeItem(cartItem)
+            setPrice(cartAdapter.getCartItems())
+
+        })
+    }
+
+    private fun setUpViewModel(){
+        auth = FirebaseAuth.getInstance()
+        val repository = FirebaseCartRepositoryImpl()
+        val factory = CartViewModelFactory(repository)
+        cartViewModel = ViewModelProvider(this, factory).get(CartViewModel::class.java)
+    }
+
+    private fun setPrice(cartItems: List<CartItemDetail>) {
+        // Change from List<CartItemDetail>? to List<CartItemDetail>
+        if (cartItems.isNotEmpty()) {
+            var verAllPrice: Float = cartViewModel.getTotalPrice()
+            val itemsCount: Int = cartAdapter.itemCount
+
+            if (verAllPrice > 0 && itemsCount > 0) {
+
+                val deliveryCharge = 10.0f
+                val totalPrice = verAllPrice + deliveryCharge
+
+                binding.subtotalPrice.text = "$$verAllPrice"
+                binding.deliveryCharge.text = "$$deliveryCharge"
+                binding.totalPrice.text = "$$totalPrice"
+
+
+
+            } else {
+                // If the prices or items are 0
+                binding.subtotalPrice.text = getString(R.string.zeroPrecent)
+                binding.deliveryCharge.text = getString(R.string.zeroPrecent)
+                binding.totalPrice.text = getString(R.string.zeroPrecent)
+            }
+        } else {
+            // Reset price fields if there are no items
+            binding.subtotalPrice.text = getString(R.string.zeroPrecent)
+            binding.deliveryCharge.text = getString(R.string.zeroPrecent)
+            binding.totalPrice.text = getString(R.string.zeroPrecent)
+        }
+    }
+    // Function to handle the visibility of the empty view
+    private fun handleEmptyView(cartItems: List<CartItemDetail>) {
+        if (cartItems.isEmpty()) {
+            binding.cartRecyclerView.visibility = View.GONE
+            binding.emptyCartAnimation.visibility = View.VISIBLE  // For Lottie Animation
+        } else {
+            binding.cartRecyclerView.visibility = View.VISIBLE
+            binding.emptyCartAnimation.visibility = View.GONE
+        }
+    }
+    private fun setupStatusBar() {
+        window.statusBarColor = Color.TRANSPARENT
+        enableEdgeToEdge()
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main_home)) { v, insets ->
+            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+            v.setPadding(systemBars.left, systemBars.top - 30, systemBars.right, systemBars.bottom)
+            insets
+        }
+    }
+
+
+    private fun onPaymentSheetResult(result: PaymentSheetResult) {
+        val resultText = when (result) {
+            is PaymentSheetResult.Completed ->  {
+                addToOrders()
+                finish()
+                "Payment complete! "
+            }
+            is PaymentSheetResult.Canceled -> "Payment canceled!"
+            is PaymentSheetResult.Failed -> "Payment failed! ${result.error.localizedMessage}"
+        }
+        Toast.makeText(this, resultText, Toast.LENGTH_SHORT).show()
+    }
+
+    private fun addToOrders() {
+        cartViewModel.addOreder(auth.currentUser?.uid ?: "") {
+            if (it) {
+                cartViewModel.decreaseStockForAllItems(cartAdapter.getCartItems())
+            }
+        }
+
+    }
+
+    private fun presentPaymentSheet(clientSecret: String) {
+        val configuration = PaymentSheet.Configuration("Stylish")
+        paymentSheet.presentWithPaymentIntent(clientSecret, configuration)
+    }
+}

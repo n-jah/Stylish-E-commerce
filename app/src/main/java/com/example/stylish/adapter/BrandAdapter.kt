@@ -11,7 +11,7 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.CenterInside
 import com.bumptech.glide.request.RequestOptions
 import com.example.stylish.R
-import com.example.stylish.model.Brand
+import com.example.stylish.model.home.Brand
 import com.facebook.shimmer.ShimmerFrameLayout
 
 @Suppress("DEPRECATION")
