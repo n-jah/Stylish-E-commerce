@@ -3,6 +3,7 @@ package com.example.stylish.ui.cart
 import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
@@ -32,6 +33,8 @@ class CartActivity : AppCompatActivity() {
     private lateinit var cartViewModel: CartViewModel
     private lateinit var auth: FirebaseAuth
     private lateinit var paymentSheet: PaymentSheet
+    private var address: String? = null
+    private var addressFlag: Boolean = false
     private val viewModel: PaymentViewModel by viewModels {
         PaymentViewModelFactory(applicationContext)
     }
@@ -66,6 +69,7 @@ class CartActivity : AppCompatActivity() {
             setPrice(cartItems)
             handleEmptyView(cartItems)  // Check if the list is empty and handle the UI
         }
+
     }
 
     private fun setupUI() {
@@ -73,6 +77,7 @@ class CartActivity : AppCompatActivity() {
         listOfItems()
         binding.addressAdd.setOnClickListener {
          startActivity(Intent(this, AddressActivity::class.java))
+
          }
         // Load the user's cart
         auth.currentUser?.uid?.let { userId ->
@@ -87,35 +92,67 @@ class CartActivity : AppCompatActivity() {
         }
         checkOut()
         swtishChack()
+        showAddress()
+    }
 
+    override fun onResume() {
+        super.onResume()
+
+        cartViewModel.getAddresses(auth.currentUser?.uid ?: "")
+    }
+    private fun showAddress() {
+        cartViewModel.getAddresses(auth.currentUser.toString()?:" ")
+        // Observe the LiveData address and update UI
+        cartViewModel.address.observe(this) { local_address ->
+            // Update the address UI
+            address = local_address.last().detailedAddress
+            Log.d("AddressActivity", "Address: ${address.toString()}")
+            val textOfAddress = binding.addressTv
+            // If the address is null or empty, prompt the user to add it
+            if (address.isNullOrEmpty()|| address!!.isBlank()) {
+                addressFlag = false
+                textOfAddress.text = "Add Address"
+                textOfAddress.setTextColor(Color.parseColor("#b22222"))
+
+                Log.d("AddressActivity", "Address: $address")
+
+                // Handle click to add address
+                textOfAddress.setOnClickListener {
+                    startActivity(Intent(this, AddressActivity::class.java))
+                }
+            } else {
+                addressFlag = true
+                Log.d("AddressActivity", "Address: $address")
+                textOfAddress.text = address
+            }
+        }
     }
 
     private fun checkOut() {
         val checkOutButton = binding.bottomButton
 
         checkOutButton.setOnClickListener {
-            val validation = binding.checkb.isChecked &&
-                    (binding.checkboxpaymentStrip.isChecked || binding.checkboxpayondelivery.isChecked) &&
-                    cartAdapter.getCartItems().isNotEmpty()
-
-
+            val validation =
+                    (binding.checkboxpaymentStrip.isChecked || binding.checkboxpayondelivery.isChecked ) && addressFlag  && cartAdapter.getCartItems().isNotEmpty()
             if (validation) {
                 if (binding.checkboxpayondelivery.isChecked) {
-
                     addToOrders()
+
                     Toast.makeText(this, "Order Placed", Toast.LENGTH_SHORT).show()
                     finish()
-
                 }
                 if (binding.checkboxpaymentStrip.isChecked) {
-
                         val amount = ((cartViewModel.getTotalPrice()+10) * 100 )
                         viewModel.createPaymentFlow(amount.toInt())
+                }
+            } else {
+                if ( ! (binding.checkboxpaymentStrip.isChecked || binding.checkboxpayondelivery.isChecked )){
+                    Toast.makeText(this, "Please select a payment method", Toast.LENGTH_SHORT).show()
+                }
+                if (!addressFlag){
+                    Toast.makeText(this, "Please add an address", Toast.LENGTH_SHORT).show()
 
                 }
-
-            } else {
-                Toast.makeText(this, "Please complete all required steps", Toast.LENGTH_SHORT).show()
             }
         }
     }
@@ -161,7 +198,8 @@ class CartActivity : AppCompatActivity() {
         auth = FirebaseAuth.getInstance()
         val repository = FirebaseCartRepositoryImpl()
         val factory = CartViewModelFactory(repository)
-        cartViewModel = ViewModelProvider(this, factory).get(CartViewModel::class.java)
+        cartViewModel = ViewModelProvider(this, factory)[CartViewModel::class.java]
+        cartViewModel.getAddresses(auth.currentUser?.uid ?: "")
     }
 
     private fun setPrice(cartItems: List<CartItemDetail>) {
@@ -234,6 +272,7 @@ class CartActivity : AppCompatActivity() {
                 cartViewModel.decreaseStockForAllItems(cartAdapter.getCartItems())
             }
         }
+
 
     }
 

@@ -76,6 +76,7 @@
     <string name="cash_on_delivery_cod">Cash on Delivery</string>
     <string name="use_your_cards_to_pay">Use your cards to pay</string>
     <string name="pay_with_stripe">Pay with Stripe</string>
+    <string name="add_address">Add Address</string>
 
 
 </resources>

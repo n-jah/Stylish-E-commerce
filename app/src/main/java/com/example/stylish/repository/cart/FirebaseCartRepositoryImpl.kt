@@ -7,9 +7,12 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
 import android.util.Log
+import androidx.lifecycle.LiveData
 import com.example.stylish.model.home.Size
 //import com.example.stylish.model.CartItemDetail
 import com.example.stylish.model.cart.CartItemDetail
+import com.example.stylish.model.cart.Order
+import com.example.stylish.model.user.UserAddress
 
 class FirebaseCartRepositoryImpl : CartRepository {
 
@@ -143,11 +146,19 @@ class FirebaseCartRepositoryImpl : CartRepository {
         }
 
     }
-    override suspend fun addOrder(userId: String, orderItems: List<CartItemDetail>, status: (Boolean) -> Unit) {
+    override suspend fun addOrder(
+        userId: String,
+        orderItems: List<CartItemDetail>,
+        date: String,
+        totalPrice: String,
+        address: LiveData<List<UserAddress>>,
+        status: (Boolean) -> Unit
+    ) {
         try {
             val userOrdersRef = usersRef.child(userId).child("orders")
             val newOrderRef = userOrdersRef.push()
-            newOrderRef.setValue(orderItems).await()
+            val oreder = Order(orderItems, userId, date, totalPrice, address.value!![0])
+            newOrderRef.setValue(oreder).await()
             status(true)
 
             Log.d("CartRepository", "Order added successfully")
@@ -257,4 +268,33 @@ class FirebaseCartRepositoryImpl : CartRepository {
             return false
         }
     }
+
+    override suspend fun addAddress(userId: String, address: UserAddress) {
+        try {
+            val userAddressRef = usersRef.child(userId).child("address")
+            userAddressRef.push().setValue(address).await()
+        } catch (_: Exception) {
+         }
+    }
+    override suspend fun getAddresses(userId: String): List<UserAddress> {
+        val userAddressRef = usersRef.child(userId).child("address")
+        val userAddressSnapshot = userAddressRef.get().await()
+
+        val addressList = mutableListOf<UserAddress>()
+
+        if (userAddressSnapshot.exists()) {
+            for (addressSnapshot in userAddressSnapshot.children) {
+                val address = addressSnapshot.getValue(UserAddress::class.java)
+                if (address != null) {
+                    addressList.add(address)
+                }
+            }
+            Log.d("CartRepository", "Addresses retrieved successfully: $addressList")
+        } else {
+            Log.d("CartRepository", "No addresses found for user: $userId")
+            addressList.add(UserAddress("", "", "", "", ""))
+        }
+        return addressList
+    }
+
 }

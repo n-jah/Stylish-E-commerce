@@ -29,7 +29,7 @@
         android:layout_height="0dp"
         android:orientation="vertical"
         android:padding="10dp"
-        app:layout_constraintBottom_toTopOf="@+id/bottomButton"
+        app:layout_constraintBottom_toTopOf="@+id/addAddress"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent">
@@ -62,6 +62,7 @@
             android:layout_marginTop="24dp" />
 
         <EditText
+            android:id="@+id/nameEt"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Name"
@@ -83,6 +84,8 @@
             android:layout_marginTop="16dp">
 
             <EditText
+
+                android:id="@+id/countryEt"
                 android:layout_width="0dp"
                 android:layout_weight="1"
                 android:layout_height="wrap_content"
@@ -95,6 +98,7 @@
                 android:layout_height="match_parent" />
 
             <EditText
+                android:id="@+id/governmentEt"
                 android:layout_width="0dp"
                 android:layout_weight="1"
                 android:layout_height="wrap_content"
@@ -113,6 +117,7 @@
             android:layout_marginTop="24dp" />
 
         <EditText
+            android:id="@+id/phoneEt"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="+2-010-97-406-914"
@@ -130,6 +135,7 @@
             android:layout_marginTop="24dp" />
 
         <EditText
+            android:id="@+id/addressEt"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="43, Electronics City Phase 1, Electronic City"
@@ -137,51 +143,17 @@
             android:padding="12dp"
             android:layout_marginTop="8dp" />
 
-        <!-- Save as primary address Switch -->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="center_vertical"
-            android:layout_marginTop="16dp">
-
-            <TextView
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                android:layout_height="wrap_content"
-                android:text="Save as primary address"
-                android:textSize="14sp"
-                android:textStyle="bold"
-                android:fontFamily="@font/inter"
-                android:textColor="@android:color/black" />
-
-            <com.google.android.material.switchmaterial.SwitchMaterial
-            android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:checked="true"
-                android:trackTint="@android:color/holo_green_dark"
-                android:thumbTint="@android:color/holo_green_dark"
-                android:theme="@style/Theme.AppCompat.Light.NoActionBar"
-                />
-
-        </LinearLayout>
-
-
-
-
-
-
     </LinearLayout>
 
 
     <!-- Bottom button -->
     <androidx.appcompat.widget.AppCompatButton
-        android:id="@+id/bottomButton"
+        android:id="@+id/addAddress"
         android:layout_width="match_parent"
         android:layout_height="80dp"
         android:background="@drawable/buttonbase"
         android:backgroundTint="@color/primary_color"
-        android:text="@string/checkout"
+        android:text="@string/add_address"
         android:textAppearance="@style/head2"
         android:textColor="@android:color/white"
         android:textStyle="bold"

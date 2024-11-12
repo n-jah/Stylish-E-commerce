@@ -1,6 +1,8 @@
 package com.example.stylish.ViewModel.cart
 
+import android.os.Build
 import android.util.Log
+import androidx.annotation.RequiresApi
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -8,14 +10,18 @@ import androidx.lifecycle.viewModelScope
 import com.example.stylish.model.cart.CartItem
 //import com.example.stylish.model.CartItemDetail
 import com.example.stylish.model.cart.CartItemDetail
+import com.example.stylish.model.user.UserAddress
 import com.example.stylish.repository.cart.CartRepository
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
+import java.time.LocalDate
 
 class CartViewModel(private val cartRepository: CartRepository) : ViewModel() {
 
     private val _cartItems = MutableLiveData<List<CartItemDetail>>()
     val cartItems: LiveData<List<CartItemDetail>> get() = _cartItems
+    private val _address = MutableLiveData<List<UserAddress>>()
+    val address: LiveData<List<UserAddress>> get() = _address
 
     // Function to add an item to the cart
     fun addItemToCart(userId: String, cartItem: CartItem) {
@@ -96,11 +102,19 @@ class CartViewModel(private val cartRepository: CartRepository) : ViewModel() {
         }
     }
 
-    fun addOreder(userId: String , callBack: (Boolean) -> Unit) {
+    @RequiresApi(Build.VERSION_CODES.O)
+    fun addOreder(userId: String, callBack: (Boolean) -> Unit) {
         viewModelScope.launch {
             try {
+                val currentDate = LocalDate.now()  // Get the current date
+                val formattedDate = currentDate.toString()  // Format the date as needed
+                val cartItems = cartItems.value ?: emptyList()
                 loadUserCart(userId) // Refresh the cart after dropping
-                cartRepository.addOrder(userId, cartItems.value ?: emptyList(), status = {
+                cartRepository.addOrder(userId, cartItems,
+                    formattedDate,
+                    getTotalPrice().toString(),
+                    address,
+                    status = {
                     if (it){
                         dropCart(userId)
                         callBack(true)
@@ -151,8 +165,34 @@ class CartViewModel(private val cartRepository: CartRepository) : ViewModel() {
         return stock
     }
 
+    fun addAddress(userId: String, address: UserAddress) {
+        viewModelScope.launch {
+            try {
+                cartRepository.addAddress(userId, address)
+            } catch (e: Exception) {
+            }
+
+
+        }
+    }
+    fun getAddresses(userId: String){
+
+        viewModelScope.launch {
+            try {
+                _address.value = cartRepository.getAddresses(userId)
+            } catch (e: Exception) {
+                // Handle error
+            }
+        }
+
+    }
+
+
+
+
 
 
 }
+
 
 

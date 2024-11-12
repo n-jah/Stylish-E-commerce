@@ -168,6 +168,7 @@
                         android:src="@drawable/map_img_light" />
 
                     <TextView
+                        android:id="@+id/address_tv"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="8"
@@ -177,13 +178,6 @@
                         android:textColor="#8F959E"
                         android:textSize="15sp" />
 
-                    <CheckBox
-                        android:id="@+id/checkb"
-                        android:layout_width="wrap_content"
-                        android:layout_height="50dp"
-                        android:layout_weight="1"
-                        android:scaleX="1.4"
-                        android:scaleY="1.4" />
                 </LinearLayout>
 
                 <TextView
