@@ -15,12 +15,12 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.stylish.R
 import com.example.stylish.ViewModel.cart.CartViewModel
+import com.example.stylish.ViewModel.cart.CartViewModelFactory
 import com.example.stylish.ViewModel.payment.PaymentViewModel
 import com.example.stylish.ViewModel.payment.PaymentViewModelFactory
 import com.example.stylish.adapter.CartAdapter
 import com.example.stylish.databinding.ActivityCartBinding
 import com.example.stylish.model.cart.CartItemDetail
-import com.example.stylish.ViewModel.cart.CartViewModelFactory
 import com.example.stylish.repository.cart.FirebaseCartRepositoryImpl
 import com.google.firebase.auth.FirebaseAuth
 import com.stripe.android.PaymentConfiguration
@@ -38,6 +38,7 @@ class CartActivity : AppCompatActivity() {
     private val viewModel: PaymentViewModel by viewModels {
         PaymentViewModelFactory(applicationContext)
     }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -51,9 +52,13 @@ class CartActivity : AppCompatActivity() {
     }
 
     private fun setUpPayment() {
-        PaymentConfiguration.init(this, "pk_test_51PvqwnGfrZnPfialSKBHf1dunaJqztGTmy1celVwsFZifTEepFf9l808cUw77yiT5Xj9n9cvJDxS1JLIzXvbjKe800CIDNtEZK") // Add your publishable key here
-        paymentSheet = PaymentSheet(this , ::onPaymentSheetResult )
+        PaymentConfiguration.init(
+            this,
+            "pk_test_51PvqwnGfrZnPfialSKBHf1dunaJqztGTmy1celVwsFZifTEepFf9l808cUw77yiT5Xj9n9cvJDxS1JLIzXvbjKe800CIDNtEZK"
+        ) // Add your publishable key here
+        paymentSheet = PaymentSheet(this, ::onPaymentSheetResult)
     }
+
     private fun setupOvservers() {
         // Observe the client secret from ViewModel
         viewModel.clientSecret.observe(this) { clientSecret ->
@@ -76,9 +81,9 @@ class CartActivity : AppCompatActivity() {
 
         listOfItems()
         binding.addressAdd.setOnClickListener {
-         startActivity(Intent(this, AddressActivity::class.java))
+            startActivity(Intent(this, AddressActivity::class.java))
 
-         }
+        }
         // Load the user's cart
         auth.currentUser?.uid?.let { userId ->
             cartViewModel.loadUserCart(userId)
@@ -100,16 +105,18 @@ class CartActivity : AppCompatActivity() {
 
         cartViewModel.getAddresses(auth.currentUser?.uid ?: "")
     }
+
     private fun showAddress() {
-        cartViewModel.getAddresses(auth.currentUser.toString()?:" ")
+        cartViewModel.getAddresses(auth.currentUser.toString())
         // Observe the LiveData address and update UI
         cartViewModel.address.observe(this) { local_address ->
             // Update the address UI
             address = local_address.last().detailedAddress
+            val government = local_address.last().government
             Log.d("AddressActivity", "Address: ${address.toString()}")
             val textOfAddress = binding.addressTv
             // If the address is null or empty, prompt the user to add it
-            if (address.isNullOrEmpty()|| address!!.isBlank()) {
+            if (address.isNullOrEmpty() || address!!.isBlank()) {
                 addressFlag = false
                 textOfAddress.text = "Add Address"
                 textOfAddress.setTextColor(Color.parseColor("#b22222"))
@@ -123,7 +130,7 @@ class CartActivity : AppCompatActivity() {
             } else {
                 addressFlag = true
                 Log.d("AddressActivity", "Address: $address")
-                textOfAddress.text = address
+                textOfAddress.text = government + "\n" + address
             }
         }
     }
@@ -133,7 +140,8 @@ class CartActivity : AppCompatActivity() {
 
         checkOutButton.setOnClickListener {
             val validation =
-                    (binding.checkboxpaymentStrip.isChecked || binding.checkboxpayondelivery.isChecked ) && addressFlag  && cartAdapter.getCartItems().isNotEmpty()
+                (binding.checkboxpaymentStrip.isChecked || binding.checkboxpayondelivery.isChecked) && addressFlag && cartAdapter.getCartItems()
+                    .isNotEmpty()
             if (validation) {
                 if (binding.checkboxpayondelivery.isChecked) {
                     addToOrders()
@@ -142,14 +150,15 @@ class CartActivity : AppCompatActivity() {
                     finish()
                 }
                 if (binding.checkboxpaymentStrip.isChecked) {
-                        val amount = ((cartViewModel.getTotalPrice()+10) * 100 )
-                        viewModel.createPaymentFlow(amount.toInt())
+                    val amount = ((cartViewModel.getTotalPrice() + 10) * 100)
+                    viewModel.createPaymentFlow(amount.toInt())
                 }
             } else {
-                if ( ! (binding.checkboxpaymentStrip.isChecked || binding.checkboxpayondelivery.isChecked )){
-                    Toast.makeText(this, "Please select a payment method", Toast.LENGTH_SHORT).show()
+                if (!(binding.checkboxpaymentStrip.isChecked || binding.checkboxpayondelivery.isChecked)) {
+                    Toast.makeText(this, "Please select a payment method", Toast.LENGTH_SHORT)
+                        .show()
                 }
-                if (!addressFlag){
+                if (!addressFlag) {
                     Toast.makeText(this, "Please add an address", Toast.LENGTH_SHORT).show()
 
                 }
@@ -174,17 +183,17 @@ class CartActivity : AppCompatActivity() {
     }
 
     private fun listOfItems() {
-        cartAdapter = CartAdapter(mutableListOf(), onQuantityChange = { cartItem , cartItemKey ->
+        cartAdapter = CartAdapter(mutableListOf(), onQuantityChange = { cartItem, cartItemKey ->
             // Update the quantity in Firebase
 
-            if (cartViewModel.checkStock(cartItem.itemId, cartItem.size, cartItem.quantity)){
+            if (cartViewModel.checkStock(cartItem.itemId, cartItem.size, cartItem.quantity)) {
                 cartViewModel.updateCartItem(auth.currentUser?.uid ?: "", cartItemKey, cartItem)
                 setPrice(cartAdapter.getCartItems())
-            }else{
+            } else {
                 Toast.makeText(this, "Out of Stock", Toast.LENGTH_SHORT).show()
             }
             // Handle quantity change logic
-        }, onRemoveItem = { cartItem  ->
+        }, onRemoveItem = { cartItem ->
             // Remove item from cart in Firebase using the Firebase key
             cartViewModel.removeItemFromCart(auth.currentUser?.uid ?: "", cartItem.cartItemKey)
             // Remove item from adapter and update the UI
@@ -194,7 +203,7 @@ class CartActivity : AppCompatActivity() {
         })
     }
 
-    private fun setUpViewModel(){
+    private fun setUpViewModel() {
         auth = FirebaseAuth.getInstance()
         val repository = FirebaseCartRepositoryImpl()
         val factory = CartViewModelFactory(repository)
@@ -218,7 +227,6 @@ class CartActivity : AppCompatActivity() {
                 binding.totalPrice.text = "$$totalPrice"
 
 
-
             } else {
                 // If the prices or items are 0
                 binding.subtotalPrice.text = getString(R.string.zeroPrecent)
@@ -232,6 +240,7 @@ class CartActivity : AppCompatActivity() {
             binding.totalPrice.text = getString(R.string.zeroPrecent)
         }
     }
+
     // Function to handle the visibility of the empty view
     private fun handleEmptyView(cartItems: List<CartItemDetail>) {
         if (cartItems.isEmpty()) {
@@ -242,6 +251,7 @@ class CartActivity : AppCompatActivity() {
             binding.emptyCartAnimation.visibility = View.GONE
         }
     }
+
     private fun setupStatusBar() {
         window.statusBarColor = Color.TRANSPARENT
         enableEdgeToEdge()
@@ -255,11 +265,12 @@ class CartActivity : AppCompatActivity() {
 
     private fun onPaymentSheetResult(result: PaymentSheetResult) {
         val resultText = when (result) {
-            is PaymentSheetResult.Completed ->  {
+            is PaymentSheetResult.Completed -> {
                 addToOrders()
                 finish()
                 "Payment complete! "
             }
+
             is PaymentSheetResult.Canceled -> "Payment canceled!"
             is PaymentSheetResult.Failed -> "Payment failed! ${result.error.localizedMessage}"
         }

@@ -16,6 +16,7 @@ import com.example.stylish.model.user.UserAddress
 
 class FirebaseCartRepositoryImpl : CartRepository {
 
+    private val ordersRef: DatabaseReference = FirebaseDatabase.getInstance().getReference("orders")
     private val usersRef: DatabaseReference = FirebaseDatabase.getInstance().getReference("users")
     private val database = FirebaseDatabase.getInstance()
 
@@ -155,12 +156,11 @@ class FirebaseCartRepositoryImpl : CartRepository {
         status: (Boolean) -> Unit
     ) {
         try {
-            val userOrdersRef = usersRef.child(userId).child("orders")
-            val newOrderRef = userOrdersRef.push()
-            val oreder = Order(orderItems, userId, date, totalPrice, address.value!![0])
-            newOrderRef.setValue(oreder).await()
+            val newOrder = ordersRef.push()
+            val order = Order(orderItems, userId, date, totalPrice, address.value!![0])
+            // Set the order under the newOrderRef
+            newOrder.setValue(order).await()
             status(true)
-
             Log.d("CartRepository", "Order added successfully")
         } catch (e: Exception) {
             status(false)  // Invoke status callback with false on failure
@@ -287,6 +287,7 @@ class FirebaseCartRepositoryImpl : CartRepository {
                 val address = addressSnapshot.getValue(UserAddress::class.java)
                 if (address != null) {
                     addressList.add(address)
+
                 }
             }
             Log.d("CartRepository", "Addresses retrieved successfully: $addressList")

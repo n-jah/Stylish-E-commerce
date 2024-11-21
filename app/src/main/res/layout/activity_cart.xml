@@ -172,6 +172,7 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="8"
+                        android:minLines="2"
                         android:fontFamily="@font/inter"
                         android:text="@string/address"
                         android:textAppearance="@style/head1"

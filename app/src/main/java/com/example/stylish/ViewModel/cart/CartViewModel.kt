@@ -15,6 +15,7 @@ import com.example.stylish.repository.cart.CartRepository
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import java.time.LocalDate
+import java.util.Calendar
 
 class CartViewModel(private val cartRepository: CartRepository) : ViewModel() {
 
@@ -102,30 +103,35 @@ class CartViewModel(private val cartRepository: CartRepository) : ViewModel() {
         }
     }
 
-    @RequiresApi(Build.VERSION_CODES.O)
     fun addOreder(userId: String, callBack: (Boolean) -> Unit) {
         viewModelScope.launch {
             try {
-                val currentDate = LocalDate.now()  // Get the current date
-                val formattedDate = currentDate.toString()  // Format the date as needed
+                // Get the current date compatible with all API levels
+                val calendar = Calendar.getInstance()
+                val year = calendar.get(Calendar.YEAR)
+                val month = calendar.get(Calendar.MONTH) + 1 // Months are 0-based
+                val day = calendar.get(Calendar.DAY_OF_MONTH)
+                val formattedDate = "$year-$month-$day" // Format the date as needed
                 val cartItems = cartItems.value ?: emptyList()
                 loadUserCart(userId) // Refresh the cart after dropping
-                cartRepository.addOrder(userId, cartItems,
+                cartRepository.addOrder(
+                    userId,
+                    cartItems,
                     formattedDate,
-                    getTotalPrice().toString(),
-                    address,
-                    status = {
-                    if (it){
+                    (getTotalPrice()+10).toString(),
+                    address
+                ) { success ->
+                    if (success) {
                         dropCart(userId)
                         callBack(true)
-                    }else{
+                    } else {
                         Log.d("CartViewModel", "Error adding order")
                         callBack(false)
                     }
-                })
-
-
+                }
             } catch (e: Exception) {
+                Log.e("CartViewModel", "Error in addOrder: ${e.message}")
+                callBack(false)
             }
         }
     }
