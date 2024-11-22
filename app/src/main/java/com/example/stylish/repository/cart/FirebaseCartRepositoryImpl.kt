@@ -13,6 +13,7 @@ import com.example.stylish.model.home.Size
 import com.example.stylish.model.cart.CartItemDetail
 import com.example.stylish.model.cart.Order
 import com.example.stylish.model.user.UserAddress
+import com.example.stylish.utilities.sendEmail
 
 class FirebaseCartRepositoryImpl : CartRepository {
 
@@ -175,11 +176,20 @@ class FirebaseCartRepositoryImpl : CartRepository {
 
         return try {
             val snapshot = databaseRefForOrders.get().await() // Suspend until the data is fetched
-
-            snapshot.children.mapNotNull { it.getValue(Order::class.java) }
+            snapshot.children.mapNotNull { it.getValue(Order::class.java) }.reversed()
         } catch (e: Exception) {
             Log.e("CartRepository", "Failed to retrieve orders: ${e.message}")
             emptyList()
+        }
+    }
+
+    override suspend fun sendOrderConfirmationEmail(
+        recipient: String,
+        subject: String,
+        messageBody: String
+    ) {
+        withContext(Dispatchers.IO) {
+            sendEmail(recipient, subject, messageBody)
         }
     }
 

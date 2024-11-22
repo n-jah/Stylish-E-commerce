@@ -22,5 +22,7 @@ interface CartRepository {
     suspend fun decreaseStockForAllItems(cartItems: List<CartItemDetail>): Boolean
     suspend fun addAddress(userId: String, address: UserAddress)
     suspend fun getAddresses(userId: String): List<UserAddress>
+    suspend fun sendOrderConfirmationEmail(recipient: String, subject: String, messageBody: String)
+
 
 }

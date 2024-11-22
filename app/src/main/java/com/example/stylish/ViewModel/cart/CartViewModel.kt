@@ -14,6 +14,7 @@ import com.example.stylish.model.cart.Order
 import com.example.stylish.model.user.UserAddress
 import com.example.stylish.repository.cart.CartRepository
 import com.example.stylish.utilities.UserUtils
+import com.example.stylish.utilities.sendEmail
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import java.time.LocalDate
@@ -117,6 +118,8 @@ class CartViewModel(private val cartRepository: CartRepository) : ViewModel() {
                 val day = calendar.get(Calendar.DAY_OF_MONTH)
                 val formattedDate = "$year-$month-$day" // Format the date as needed
                 val cartItems = cartItems.value ?: emptyList()
+
+                val order = Order(cartItems, userId, formattedDate, (getTotalPrice()+10).toString(), address.value!![0], "Confirmed")
                 loadUserCart() // Refresh the cart after dropping
                 cartRepository.addOrder(
                     userId,
@@ -128,6 +131,7 @@ class CartViewModel(private val cartRepository: CartRepository) : ViewModel() {
                 ) { success ->
                     if (success) {
                         dropCart()
+                        sendOrderConfirmationEmail(order)
                         callBack(true)
                     } else {
                         Log.d("CartViewModel", "Error adding order")
@@ -139,6 +143,41 @@ class CartViewModel(private val cartRepository: CartRepository) : ViewModel() {
                 callBack(false)
             }
         }
+    }
+
+    fun sendOrderConfirmationEmail(order: Order) {
+        viewModelScope.launch {
+            try {
+             //   val recipient = UserUtils.auth.currentUser?.email.toString()
+                val recipient = "be-ngah@outlook.com"
+                val subject = "Order Confirmation"
+                val messageBody = buildOrderDetailsMessage(order)
+                cartRepository.sendOrderConfirmationEmail(recipient, subject, messageBody)
+                Log.d("CartViewModel", "Order confirmation email sent successfully${orders.value?.last()}")
+            } catch (e: Exception) {
+                Log.e("CartViewModel", "Error sending order confirmation email: ${e.message}")
+            }
+        }
+    }
+    private fun buildOrderDetailsMessage(order: Order): String {
+        val items = order.orderItems.joinToString(separator = "\n") { item ->
+            "${item.title} (Size: ${item.size}) - $${item.price} x ${item.quantity}"
+        }
+        return """
+        Thank you for your order!
+        
+        Order Date: ${order.date}
+        Total Price: $${order.totalPrice}
+        
+        Address:
+        ${order.address.name}
+        ${order.address.detailedAddress}, ${order.address.government}, ${order.address.country}
+        
+        Items:
+        $items
+        
+        Your order is confirmed and will be delivered soon.
+    """.trimIndent()
     }
 
     fun getOrders(){

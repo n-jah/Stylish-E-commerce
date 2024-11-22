@@ -22,6 +22,7 @@ import com.example.stylish.ViewModel.payment.PaymentViewModelFactory
 import com.example.stylish.adapter.CartAdapter
 import com.example.stylish.databinding.ActivityCartBinding
 import com.example.stylish.model.cart.CartItemDetail
+import com.example.stylish.model.cart.Order
 import com.example.stylish.repository.cart.FirebaseCartRepositoryImpl
 import com.example.stylish.ui.home.activity.MainActivity
 import com.google.firebase.auth.FirebaseAuth
@@ -56,7 +57,7 @@ class CartActivity : AppCompatActivity() {
     private fun setUpPayment() {
         PaymentConfiguration.init(
             this,
-            "pk_test_51PvqwnGfrZnPfialSKBHf1dunaJqztGTmy1celVwsFZifTEepFf9l808cUw77yiT5Xj9n9cvJDxS1JLIzXvbjKe800CIDNtEZK"
+            getString(R.string.publish_key)
         ) // Add your publishable key here
         paymentSheet = PaymentSheet(this, ::onPaymentSheetResult)
     }
@@ -286,6 +287,9 @@ class CartActivity : AppCompatActivity() {
 
 
     }
+
+
+
     private fun showOrderConfirmedBottomSheet() {
         val bottomSheet = OrderConfirmedBottomSheet.newInstance()
         bottomSheet.show(supportFragmentManager, "OrderConfirmedBottomSheet")
