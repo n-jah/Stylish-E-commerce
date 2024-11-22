@@ -9,7 +9,7 @@ object UserUtils {
     const val PREFS_NAME = "userPrefs"
     const val PREFS_PROFILE_PIC_URL = "profilePicUrl"
 
-    private val auth: FirebaseAuth = FirebaseAuth.getInstance()
+     val auth: FirebaseAuth = FirebaseAuth.getInstance()
 
     fun getFirstName(fullName: String): String {
         return fullName.split(" ").firstOrNull() ?: ""

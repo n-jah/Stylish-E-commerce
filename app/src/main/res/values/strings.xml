@@ -77,6 +77,11 @@
     <string name="use_your_cards_to_pay">Use your cards to pay</string>
     <string name="pay_with_stripe">Pay with Stripe</string>
     <string name="add_address">Add Address</string>
+    <string name="order_confirmed">Order Confirmed</string>
+    <string name="order_confirmed_description">Your order has been confirmed, we will send you confirmation email shortly.</string>
+    <string name="go_to_orders">Go to Orders</string>
+    <string name="orders">Orders</string>
+    <string name="item_in_order_name">item_in_order_name</string>
 
 
 </resources>

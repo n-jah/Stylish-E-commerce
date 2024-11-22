@@ -81,7 +81,7 @@ class AddressActivity : AppCompatActivity() {
 
         // Save the address to Firebase
 
-        cartViewModel.addAddress(userId ?: "", userAddress)
+        cartViewModel.addAddress(userAddress)
 
         finish()
 

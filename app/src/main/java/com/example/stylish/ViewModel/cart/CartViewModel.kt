@@ -10,8 +10,10 @@ import androidx.lifecycle.viewModelScope
 import com.example.stylish.model.cart.CartItem
 //import com.example.stylish.model.CartItemDetail
 import com.example.stylish.model.cart.CartItemDetail
+import com.example.stylish.model.cart.Order
 import com.example.stylish.model.user.UserAddress
 import com.example.stylish.repository.cart.CartRepository
+import com.example.stylish.utilities.UserUtils
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import java.time.LocalDate
@@ -23,9 +25,11 @@ class CartViewModel(private val cartRepository: CartRepository) : ViewModel() {
     val cartItems: LiveData<List<CartItemDetail>> get() = _cartItems
     private val _address = MutableLiveData<List<UserAddress>>()
     val address: LiveData<List<UserAddress>> get() = _address
-
+    private val _orders = MutableLiveData<List<Order>>()
+    val orders: LiveData<List<Order>> get() = _orders
+    val userId = UserUtils.auth.currentUser?.uid ?: ""
     // Function to add an item to the cart
-    fun addItemToCart(userId: String, cartItem: CartItem) {
+    fun addItemToCart( cartItem: CartItem) {
         viewModelScope.launch {
             try {
                 cartRepository.addItemToCart(userId, cartItem)
@@ -40,7 +44,7 @@ class CartViewModel(private val cartRepository: CartRepository) : ViewModel() {
 
     //
 // Fetch user's cart and item details
-    fun loadUserCart(userId: String) {
+    fun loadUserCart() {
         viewModelScope.launch {
             try {
                 // Step 1: Fetch cart items with just ID, quantity, and size
@@ -69,33 +73,33 @@ class CartViewModel(private val cartRepository: CartRepository) : ViewModel() {
 //
 
 
-    fun updateCartItem(userId: String, cartItemId: String, updatedItem: CartItemDetail) {
+    fun updateCartItem( cartItemId: String, updatedItem: CartItemDetail) {
         viewModelScope.launch {
             try {
                 cartRepository.updateCartItem(userId, cartItemId, updatedItem)
-                loadUserCart(userId) // Optionally refresh the cart after updating
+                loadUserCart() // Optionally refresh the cart after updating
             } catch (e: Exception) {
                 // Handle error
             }
         }
     }
 
-    fun removeItemFromCart(userId: String, cartItemId: String) {
+    fun removeItemFromCart( cartItemId: String) {
         viewModelScope.launch {
             try {
                 cartRepository.removeItemFromCart(userId, cartItemId)
-                loadUserCart(userId) // Refresh the cart after removal
+                loadUserCart() // Refresh the cart after removal
             } catch (e: Exception) {
                 // Handle error
             }
         }
     }
 
-    fun dropCart(userId: String) {
+    fun dropCart() {
         viewModelScope.launch {
             try {
                 cartRepository.dropCart(userId)
-                loadUserCart(userId) // Refresh the cart after dropping
+                loadUserCart() // Refresh the cart after dropping
             } catch (e: Exception) {
                 // Handle error
             }
@@ -103,7 +107,7 @@ class CartViewModel(private val cartRepository: CartRepository) : ViewModel() {
         }
     }
 
-    fun addOreder(userId: String, callBack: (Boolean) -> Unit) {
+    fun addOreder( callBack: (Boolean) -> Unit) {
         viewModelScope.launch {
             try {
                 // Get the current date compatible with all API levels
@@ -113,16 +117,17 @@ class CartViewModel(private val cartRepository: CartRepository) : ViewModel() {
                 val day = calendar.get(Calendar.DAY_OF_MONTH)
                 val formattedDate = "$year-$month-$day" // Format the date as needed
                 val cartItems = cartItems.value ?: emptyList()
-                loadUserCart(userId) // Refresh the cart after dropping
+                loadUserCart() // Refresh the cart after dropping
                 cartRepository.addOrder(
                     userId,
                     cartItems,
                     formattedDate,
                     (getTotalPrice()+10).toString(),
-                    address
+                    address,
+                    "Confirmed"
                 ) { success ->
                     if (success) {
-                        dropCart(userId)
+                        dropCart()
                         callBack(true)
                     } else {
                         Log.d("CartViewModel", "Error adding order")
@@ -133,6 +138,17 @@ class CartViewModel(private val cartRepository: CartRepository) : ViewModel() {
                 Log.e("CartViewModel", "Error in addOrder: ${e.message}")
                 callBack(false)
             }
+        }
+    }
+
+    fun getOrders(){
+        viewModelScope.launch {
+            try {
+                _orders.value = cartRepository.getOrders(userId)
+                Log.d("CartViewModel", "Orders fetched successfully${_orders.value}")
+            } catch (e: Exception) {
+                // Handle error
+    }
         }
     }
     fun dicresStock(itemId: String, selectedSize: String, quantityToDecress: Int){
@@ -171,7 +187,7 @@ class CartViewModel(private val cartRepository: CartRepository) : ViewModel() {
         return stock
     }
 
-    fun addAddress(userId: String, address: UserAddress) {
+    fun addAddress(address: UserAddress) {
         viewModelScope.launch {
             try {
                 cartRepository.addAddress(userId, address)
@@ -181,7 +197,7 @@ class CartViewModel(private val cartRepository: CartRepository) : ViewModel() {
 
         }
     }
-    fun getAddresses(userId: String){
+    fun getAddresses(){
 
         viewModelScope.launch {
             try {
@@ -192,6 +208,8 @@ class CartViewModel(private val cartRepository: CartRepository) : ViewModel() {
         }
 
     }
+
+
 
 
 

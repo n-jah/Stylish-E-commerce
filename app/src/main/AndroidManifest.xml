@@ -15,8 +15,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Stylish"
         tools:targetApi="31">
-
-
+        <activity
+            android:name=".ui.cart.OrdersActivity"
+            android:exported="false" />
         <activity
             android:name=".ui.cart.AddressActivity"
             android:exported="false" />
@@ -51,8 +52,10 @@
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
+
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
+
                 <data android:scheme="@string/fb_login_protocol_scheme" />
             </intent-filter>
         </activity>

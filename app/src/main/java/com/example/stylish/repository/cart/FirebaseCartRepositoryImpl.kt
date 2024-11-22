@@ -153,11 +153,12 @@ class FirebaseCartRepositoryImpl : CartRepository {
         date: String,
         totalPrice: String,
         address: LiveData<List<UserAddress>>,
+        stateOfOrder: String,
         status: (Boolean) -> Unit
     ) {
         try {
             val newOrder = ordersRef.push()
-            val order = Order(orderItems, userId, date, totalPrice, address.value!![0])
+            val order = Order(orderItems, userId, date, totalPrice, address.value!![0], stateOfOrder)
             // Set the order under the newOrderRef
             newOrder.setValue(order).await()
             status(true)
@@ -167,6 +168,21 @@ class FirebaseCartRepositoryImpl : CartRepository {
             Log.e("CartRepository", "Failed to add order: ${e.message}")
         }
     }
+    override suspend fun getOrders(userId: String): List<Order> {
+        val databaseRefForOrders = database.getReference("orders")
+            .orderByChild("userId")
+            .equalTo(userId)
+
+        return try {
+            val snapshot = databaseRefForOrders.get().await() // Suspend until the data is fetched
+
+            snapshot.children.mapNotNull { it.getValue(Order::class.java) }
+        } catch (e: Exception) {
+            Log.e("CartRepository", "Failed to retrieve orders: ${e.message}")
+            emptyList()
+        }
+    }
+
 
     override suspend fun checkStock(itemId: String, size: String, quantity: Int ): Boolean = withContext(Dispatchers.IO) {
         try {

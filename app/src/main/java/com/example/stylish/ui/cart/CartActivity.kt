@@ -1,5 +1,6 @@
 package com.example.stylish.ui.cart
 
+import android.app.PendingIntent
 import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
@@ -22,6 +23,7 @@ import com.example.stylish.adapter.CartAdapter
 import com.example.stylish.databinding.ActivityCartBinding
 import com.example.stylish.model.cart.CartItemDetail
 import com.example.stylish.repository.cart.FirebaseCartRepositoryImpl
+import com.example.stylish.ui.home.activity.MainActivity
 import com.google.firebase.auth.FirebaseAuth
 import com.stripe.android.PaymentConfiguration
 import com.stripe.android.paymentsheet.PaymentSheet
@@ -81,13 +83,12 @@ class CartActivity : AppCompatActivity() {
 
         listOfItems()
         binding.addressAdd.setOnClickListener {
-            startActivity(Intent(this, AddressActivity::class.java))
+        //    startActivity(Intent(this, AddressActivity::class.java))
+            startActivity(Intent(this, OrdersActivity::class.java))
 
         }
         // Load the user's cart
-        auth.currentUser?.uid?.let { userId ->
-            cartViewModel.loadUserCart(userId)
-        }
+        cartViewModel.loadUserCart()
         binding.cartRecyclerView.apply {
             layoutManager = LinearLayoutManager(this@CartActivity)
             adapter = cartAdapter
@@ -103,11 +104,11 @@ class CartActivity : AppCompatActivity() {
     override fun onResume() {
         super.onResume()
 
-        cartViewModel.getAddresses(auth.currentUser?.uid ?: "")
+        cartViewModel.getAddresses()
     }
 
     private fun showAddress() {
-        cartViewModel.getAddresses(auth.currentUser.toString())
+        cartViewModel.getAddresses()
         // Observe the LiveData address and update UI
         cartViewModel.address.observe(this) { local_address ->
             // Update the address UI
@@ -146,8 +147,6 @@ class CartActivity : AppCompatActivity() {
                 if (binding.checkboxpayondelivery.isChecked) {
                     addToOrders()
 
-                    Toast.makeText(this, "Order Placed", Toast.LENGTH_SHORT).show()
-                    finish()
                 }
                 if (binding.checkboxpaymentStrip.isChecked) {
                     val amount = ((cartViewModel.getTotalPrice() + 10) * 100)
@@ -187,7 +186,7 @@ class CartActivity : AppCompatActivity() {
             // Update the quantity in Firebase
 
             if (cartViewModel.checkStock(cartItem.itemId, cartItem.size, cartItem.quantity)) {
-                cartViewModel.updateCartItem(auth.currentUser?.uid ?: "", cartItemKey, cartItem)
+                cartViewModel.updateCartItem( cartItemKey, cartItem)
                 setPrice(cartAdapter.getCartItems())
             } else {
                 Toast.makeText(this, "Out of Stock", Toast.LENGTH_SHORT).show()
@@ -195,7 +194,7 @@ class CartActivity : AppCompatActivity() {
             // Handle quantity change logic
         }, onRemoveItem = { cartItem ->
             // Remove item from cart in Firebase using the Firebase key
-            cartViewModel.removeItemFromCart(auth.currentUser?.uid ?: "", cartItem.cartItemKey)
+            cartViewModel.removeItemFromCart(cartItem.cartItemKey)
             // Remove item from adapter and update the UI
             cartAdapter.removeItem(cartItem)
             setPrice(cartAdapter.getCartItems())
@@ -208,7 +207,7 @@ class CartActivity : AppCompatActivity() {
         val repository = FirebaseCartRepositoryImpl()
         val factory = CartViewModelFactory(repository)
         cartViewModel = ViewModelProvider(this, factory)[CartViewModel::class.java]
-        cartViewModel.getAddresses(auth.currentUser?.uid ?: "")
+        cartViewModel.getAddresses()
     }
 
     private fun setPrice(cartItems: List<CartItemDetail>) {
@@ -267,7 +266,6 @@ class CartActivity : AppCompatActivity() {
         val resultText = when (result) {
             is PaymentSheetResult.Completed -> {
                 addToOrders()
-                finish()
                 "Payment complete! "
             }
 
@@ -278,15 +276,23 @@ class CartActivity : AppCompatActivity() {
     }
 
     private fun addToOrders() {
-        cartViewModel.addOreder(auth.currentUser?.uid ?: "") {
+        cartViewModel.addOreder() {
             if (it) {
                 cartViewModel.decreaseStockForAllItems(cartAdapter.getCartItems())
+                Toast.makeText(this, "Order Placed", Toast.LENGTH_SHORT).show()
+                showOrderConfirmedBottomSheet()
             }
         }
 
 
     }
-
+    private fun showOrderConfirmedBottomSheet() {
+        val bottomSheet = OrderConfirmedBottomSheet.newInstance()
+        bottomSheet.show(supportFragmentManager, "OrderConfirmedBottomSheet")
+        bottomSheet.setOnDismissListener {
+            finish()
+        }
+    }
     private fun presentPaymentSheet(clientSecret: String) {
         val configuration = PaymentSheet.Configuration("Stylish")
         paymentSheet.presentWithPaymentIntent(clientSecret, configuration)

@@ -80,7 +80,7 @@ class ItemActivity : AppCompatActivity() {
             val item = intent.getParcelableExtra<Item>("object")
             if (item != null && auth.currentUser != null) {
                 val cartItem = CartItem((item.id ?: 0).toString(), 1, selectedSize!!)  // Use the selected size
-                cartViewModel.addItemToCart(auth.currentUser!!.uid, cartItem)
+                cartViewModel.addItemToCart( cartItem)
                 finish()
                 Toast.makeText(this, "Item added to cart", Toast.LENGTH_SHORT).show()
             } else {
