@@ -148,8 +148,8 @@ class CartViewModel(private val cartRepository: CartRepository) : ViewModel() {
     fun sendOrderConfirmationEmail(order: Order) {
         viewModelScope.launch {
             try {
-             //   val recipient = UserUtils.auth.currentUser?.email.toString()
-                val recipient = "be-ngah@outlook.com"
+                val recipient = UserUtils.auth.currentUser?.email.toString()
+//                val recipient = "be-ngah@outlook.com"
                 val subject = "Order Confirmation"
                 val messageBody = buildOrderDetailsMessage(order)
                 cartRepository.sendOrderConfirmationEmail(recipient, subject, messageBody)
