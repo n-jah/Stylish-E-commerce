@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Custom attribute for item background -->
+    <attr name="colorItemBackground" format="color" />
+    <attr name="colorBrandBackground" format="color"/>
+    <attr name="navigationBackground" format="color" />
+
+</resources>

@@ -8,6 +8,7 @@ import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.example.stylish.R
 import com.example.stylish.model.home.Size
+import com.google.android.material.color.MaterialColors
 
 class SizeAdapter(
     private val sizes: List<Size>,
@@ -55,7 +56,8 @@ class SizeAdapter(
         } else {
             holder.itemView.setBackgroundResource(R.drawable.default_item_background)
             holder.sizeText.setTextColor(
-                ContextCompat.getColor(holder.itemView.context, R.color.text_color_light)
+                MaterialColors.getColor(holder.itemView, com.google.android.material.R.attr.colorOnBackground)
+
             )
         }
     }

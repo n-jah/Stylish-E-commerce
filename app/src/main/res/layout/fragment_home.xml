@@ -1,25 +1,26 @@
-<?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context=".ui.home.fragment.HomeFragment">
 
+    tools:context=".ui.home.fragment.HomeFragment"
+    >
 
+    <!-- Greeting Section -->
     <com.example.stylish.assets.CapitalizeFirstTextView
-
         android:id="@+id/greetingText_name_of_user"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="10dp"
-        android:paddingStart="16dp"
-        android:paddingTop="8dp"
-        android:text=" Name "
+        android:layout_marginStart="12dp"
+        android:text="Name"
         android:textAppearance="@style/head1"
-        android:textSize="22sp"
+        android:layout_margin="10dp"
+
+        android:textSize="19sp"
         android:textStyle="bold"
         android:visibility="gone"
+        app:layout_constraintBottom_toTopOf="@id/linearLayout4"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -27,28 +28,30 @@
         android:id="@+id/welcomeText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="10dp"
-        android:paddingStart="16dp"
-        android:paddingTop="4dp"
+        android:layout_marginTop="6dp"
+        android:layout_marginStart="5dp"
         android:text="@string/welcome_to_stylish"
         android:textAppearance="@style/secondryTextLight"
-        android:textSize="13sp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/greetingText_name_of_user" />
+        android:textSize="11sp"
+        app:layout_constraintBottom_toTopOf="@+id/linearLayout4"
+        app:layout_constraintStart_toEndOf="@id/greetingText_name_of_user"
+        app:layout_constraintTop_toTopOf="parent" />
 
+    <!-- Search Bar Section -->
     <LinearLayout
         android:id="@+id/linearLayout4"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
+        android:layout_height="50dp"
         android:gravity="center_vertical"
         android:orientation="horizontal"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/chooseBrandText"
         app:layout_constraintTop_toBottomOf="@id/welcomeText">
 
         <LinearLayout
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_height="50dp"
             android:layout_margin="10dp"
             android:layout_weight="3"
             android:background="@drawable/search_bar_background"
@@ -65,17 +68,15 @@
                 android:src="@drawable/ic_search" />
 
             <EditText
+                android:layout_marginEnd="5dp"
                 android:id="@+id/searchEditText"
-                android:layout_width="0dp"
-                android:layout_height="50dp"
-                android:layout_weight="1"
-                android:background="@null"
-                android:hint="Search..."
-                android:lineHeight="20sp"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="?attr/colorItemBackground"
+                android:hint="@string/search"
                 android:maxLines="1"
                 android:paddingStart="8dp"
                 android:paddingEnd="8dp" />
-
         </LinearLayout>
 
         <androidx.appcompat.widget.AppCompatImageButton
@@ -88,14 +89,17 @@
             android:src="@drawable/mic" />
     </LinearLayout>
 
+    <!-- Brand Section -->
     <TextView
         android:id="@+id/chooseBrandText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:paddingStart="16dp"
-        android:paddingTop="16dp"
-        android:text="Choose Brand"
-        android:textSize="18sp"
+        android:layout_marginBottom="10dp"
+        android:layout_marginStart="10dp"
+        android:text="@string/choose_brand"
+        android:textColor="?attr/colorOnBackground"
+        android:layout_margin="10dp"
+        android:textSize="16sp"
         android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/linearLayout4" />
@@ -105,42 +109,40 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:paddingStart="16dp"
-        android:paddingTop="8dp"
         android:paddingEnd="16dp"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        android:layout_marginTop="7dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/chooseBrandText"
-        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
+        app:layout_constraintTop_toBottomOf="@id/chooseBrandText" />
 
+    <!-- New Arrival Section -->
     <TextView
         android:id="@+id/newArrivalText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:paddingStart="16dp"
-        android:paddingTop="16dp"
-        android:text="New Arrival"
+        android:layout_margin="10dp"
+        android:text="@string/new_arrival"
         android:textSize="18sp"
         android:textStyle="bold"
+        android:textColor="?attr/colorOnBackground"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/brandsRecyclerView" />
-
-
-    <!-- Bottom Navigation Bar -->
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/newArrivalRecyclerView"
         android:layout_width="0dp"
         android:layout_height="0dp"
+        android:layout_marginTop="5dp"
         android:orientation="vertical"
-        android:paddingTop="8dp"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
+
         app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/newArrivalText"
         app:spanCount="2" />
-
 
 </androidx.constraintlayout.widget.ConstraintLayout>

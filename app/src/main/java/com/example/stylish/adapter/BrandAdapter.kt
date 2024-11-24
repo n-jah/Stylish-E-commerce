@@ -13,14 +13,16 @@ import com.bumptech.glide.request.RequestOptions
 import com.example.stylish.R
 import com.example.stylish.model.home.Brand
 import com.facebook.shimmer.ShimmerFrameLayout
+import com.google.android.material.color.MaterialColors
 
 @Suppress("DEPRECATION")
 class BrandAdapter(
     private var brandList: List<Brand> = emptyList(),
-    private var isLoading: Boolean = true
+    private var isLoading: Boolean = true,
+    private val onBrandSelected: (Brand) -> Unit
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
-    private var selectedPosition = RecyclerView.NO_POSITION
+    private var selectedPosition = if (brandList.isNotEmpty()) 0 else RecyclerView.NO_POSITION
 
     private val VIEW_TYPE_ITEM = 0
     private val VIEW_TYPE_SHIMMER = 1
@@ -31,6 +33,9 @@ class BrandAdapter(
 
         init {
             itemView.setOnClickListener {
+                val brand = brandList[adapterPosition]
+                onBrandSelected(brand) // Notify the fragment when a brand is selected
+
                 val previousPosition = selectedPosition
                 selectedPosition = adapterPosition
 
@@ -40,6 +45,8 @@ class BrandAdapter(
             }
         }
     }
+
+
 
     inner class ShimmerViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val shimmerFrameLayout: ShimmerFrameLayout = itemView.findViewById(R.id.shimmer_item_brand)
@@ -79,7 +86,7 @@ class BrandAdapter(
             } else {
                 holder.itemView.setBackgroundResource(R.drawable.default_item_background)
                 brandViewHolder.brandName.setTextColor(
-                    ContextCompat.getColor(holder.itemView.context, R.color.text_color_light)
+                    MaterialColors.getColor(holder.itemView, com.google.android.material.R.attr.colorOnBackground)
                 )
             }
 

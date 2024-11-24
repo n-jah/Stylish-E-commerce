@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="wrap_content"
-    android:layout_height="50dp"
+    android:layout_height="40dp"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/item_brand"
     android:layout_marginStart="10dp"
     app:cardCornerRadius="10dp"
     app:cardElevation="2dp"
+
     android:background="@drawable/default_item_background"
-    android:outlineSpotShadowColor="@color/field_color_light"
-    android:outlineAmbientShadowColor="@color/field_color_light"
+
 app:strokeWidth="0dp"
     >
 <LinearLayout
@@ -22,12 +22,12 @@ app:strokeWidth="0dp"
     >
 
     <RelativeLayout
-        android:layout_width="40dp"
-        android:layout_height="40dp"
+        android:layout_width="35dp"
+        android:layout_height="35dp"
         android:layout_gravity="center_vertical"
         android:background="@drawable/button_brand"
-        android:layout_marginEnd="10dp"
         android:focusable="false"
+        android:backgroundTint="?attr/colorBrandBackground"
         android:clickable="false"
 
         >
@@ -55,6 +55,7 @@ app:strokeWidth="0dp"
         android:layout_height="wrap_content"
         android:text="@string/adidas"
         android:textSize="15sp"
+        android:textColor="?attr/colorOnBackground"
         android:textStyle="bold"
         android:fontFamily="@font/inter_bold"
         android:layout_gravity="center_vertical"

@@ -28,8 +28,8 @@ class OrdersAdapter(private val orders: MutableList<Order>) : RecyclerView.Adapt
             holder.itemView.setBackgroundResource(R.drawable.background_card_panding)
         }
         // Set the order details: total price, address, and date
-        holder.totalPrice.text = "Total Price: ${order.totalPrice}"
-        holder.address.text = "Address: ${order.address.detailedAddress}"
+        holder.totalPrice.text = "Total Price: ${order.totalPrice} $"
+        holder.address.text = "Address: ${order.address.country} - ${order.address.government} - ${order.address.detailedAddress}"
         holder.date.text = "Date: ${order.date}"
 
         val orderItemsAdapter = OrderItemsAdapter(order.orderItems)

@@ -1,5 +1,5 @@
-<?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!-- Light Theme Colors -->
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
     <color name="primary_color">#9775FA</color>
@@ -7,12 +7,17 @@
     <color name="secondrey_text_color_light">#8F959E</color>
     <color name="field_color_light">#F5F6FA</color>
     <color name="background_color_light">#FFFFFF</color>
+
+    <!-- Dark Theme Colors -->
     <color name="background_color_dark">#1B262C</color>
     <color name="text_color_dark">#FFFFFF</color>
     <color name="secondrey_text_color_dark">#8F959E</color>
     <color name="field_color_dark">#222E34</color>
+
+
+    <!-- Miscellaneous -->
     <color name="black_overlay">#66000000</color>
     <color name="facebook_color">#3b5998</color>
-    <color name="twiter_color">#1DA1F2</color>
-    <color name="launch_background_color">#9775FA</color>"
+    <color name="twitter_color">#1DA1F2</color>
+    <color name="launch_background_color">#9775FA</color>
 </resources>

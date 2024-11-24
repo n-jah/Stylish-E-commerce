@@ -1,23 +1,20 @@
 package com.example.stylish.ViewModel.cart
-
-import android.os.Build
 import android.util.Log
-import androidx.annotation.RequiresApi
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.stylish.model.cart.CartItem
-//import com.example.stylish.model.CartItemDetail
 import com.example.stylish.model.cart.CartItemDetail
 import com.example.stylish.model.cart.Order
 import com.example.stylish.model.user.UserAddress
 import com.example.stylish.repository.cart.CartRepository
+import com.example.stylish.utilities.UiState
 import com.example.stylish.utilities.UserUtils
-import com.example.stylish.utilities.sendEmail
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
-import java.time.LocalDate
+import kotlinx.coroutines.withContext
 import java.util.Calendar
 
 class CartViewModel(private val cartRepository: CartRepository) : ViewModel() {
@@ -28,137 +25,158 @@ class CartViewModel(private val cartRepository: CartRepository) : ViewModel() {
     val address: LiveData<List<UserAddress>> get() = _address
     private val _orders = MutableLiveData<List<Order>>()
     val orders: LiveData<List<Order>> get() = _orders
+
+    private val _uiState = MutableLiveData<UiState<Any>>()
+    val uiState: LiveData<UiState<Any>> get() = _uiState
+
     val userId = UserUtils.auth.currentUser?.uid ?: ""
-    // Function to add an item to the cart
-    fun addItemToCart( cartItem: CartItem) {
+
+    // Helper function to set success state
+    private fun <T : Any> setSuccessState(data: T) {
+        _uiState.value = UiState.Success(data)
+    }
+
+    // Add item to cart
+    fun addItemToCart(cartItem: CartItem) {
         viewModelScope.launch {
+            _uiState.value = UiState.Loading
             try {
                 cartRepository.addItemToCart(userId, cartItem)
-
-                // Optionally, refresh the cart or provide feedback after adding
+                setSuccessState("Item added successfully")
             } catch (e: Exception) {
-
-                Log.w("CartViewModel", "Error adding item to cart: ${e.message}")
+                handleException(e, "Error adding item to cart")
             }
         }
     }
 
-    //
 // Fetch user's cart and item details
     fun loadUserCart() {
         viewModelScope.launch {
+            _uiState.value = UiState.Loading
             try {
-                // Step 1: Fetch cart items with just ID, quantity, and size
                 val cartItemsList = cartRepository.getCartItems(userId)
-
-                // Step 2: Update LiveData with the cart details to be displayed in UI
-                _cartItems.value = cartItemsList
+                withContext(Dispatchers.Main) {
+                    _cartItems.value = cartItemsList
+                }
+                setSuccessState(cartItemsList)
             } catch (e: Exception) {
-                // Handle errors appropriately (e.g., show error message to the user)
-                e.printStackTrace()
+                handleException(e, "Error loading user cart")
             }
         }
     }
-
     fun getTotalPrice(): Float {
-
-
-        var cartItems = cartItems.value ?: emptyList()
-        var totalPrice = 0f
-        for (item in cartItems) {
-            totalPrice += item.price * item.quantity
-
-        }
-        return totalPrice
+        val cartItems = cartItems.value ?: emptyList()
+        return cartItems.calculateTotalPrice()
     }
-//
 
-
-    fun updateCartItem( cartItemId: String, updatedItem: CartItemDetail) {
+    fun updateCartItem(cartItemId: String, updatedItem: CartItemDetail) {
         viewModelScope.launch {
+            _uiState.value = UiState.Loading
             try {
                 cartRepository.updateCartItem(userId, cartItemId, updatedItem)
-                loadUserCart() // Optionally refresh the cart after updating
+                loadUserCart()
+                setSuccessState("Cart item updated successfully")
             } catch (e: Exception) {
-                // Handle error
+                handleException(e, "Error updating cart item")
             }
         }
     }
 
-    fun removeItemFromCart( cartItemId: String) {
+    // Remove item from cart
+    fun removeItemFromCart(cartItemId: String) {
         viewModelScope.launch {
+            _uiState.value = UiState.Loading
             try {
                 cartRepository.removeItemFromCart(userId, cartItemId)
-                loadUserCart() // Refresh the cart after removal
+                loadUserCart()
+                setSuccessState("Item removed successfully")
             } catch (e: Exception) {
-                // Handle error
+                handleException(e, "Error removing item from cart")
             }
         }
     }
 
+    // Clear the entire cart
     fun dropCart() {
         viewModelScope.launch {
+            _uiState.value = UiState.Loading
             try {
                 cartRepository.dropCart(userId)
-                loadUserCart() // Refresh the cart after dropping
+                loadUserCart()
+                setSuccessState("Cart cleared successfully")
             } catch (e: Exception) {
-                // Handle error
+                handleException(e, "Error clearing the cart")
             }
 
         }
     }
 
-    fun addOreder( callBack: (Boolean) -> Unit) {
+    // Place an order
+    fun addOrder(callBack: (Boolean) -> Unit) {
         viewModelScope.launch {
+            _uiState.value = UiState.Loading
             try {
-                // Get the current date compatible with all API levels
                 val calendar = Calendar.getInstance()
-                val year = calendar.get(Calendar.YEAR)
-                val month = calendar.get(Calendar.MONTH) + 1 // Months are 0-based
-                val day = calendar.get(Calendar.DAY_OF_MONTH)
-                val formattedDate = "$year-$month-$day" // Format the date as needed
+                val formattedDate = "${calendar.get(Calendar.YEAR)}-${calendar.get(Calendar.MONTH) + 1}-${calendar.get(Calendar.DAY_OF_MONTH)}"
                 val cartItems = cartItems.value ?: emptyList()
 
-                val order = Order(cartItems, userId, formattedDate, (getTotalPrice()+10).toString(), address.value!![0], "Confirmed")
+                val selectedAddress = address.value?.firstOrNull()
+                    ?: throw IllegalArgumentException("No address found for the user")
+
+                val order = Order(
+                    cartItems,
+                    userId,
+                    formattedDate,
+                    (getTotalPrice() + 10).toString(),
+                    selectedAddress,
+                    "Confirmed"
+                )
                 loadUserCart() // Refresh the cart after dropping
                 cartRepository.addOrder(
                     userId,
                     cartItems,
                     formattedDate,
-                    (getTotalPrice()+10).toString(),
+                    order.totalPrice,
                     address,
                     "Confirmed"
                 ) { success ->
                     if (success) {
-                        dropCart()
-                        sendOrderConfirmationEmail(order)
-                        callBack(true)
+                        try {
+                            dropCart()
+                            sendOrderConfirmationEmail(order)
+                            setSuccessState("Order placed successfully")
+                            callBack(true)
+                        } catch (e: Exception) {
+                            handleException(e, "Error during post-order operations")
+                            callBack(false)
+                        }
                     } else {
-                        Log.d("CartViewModel", "Error adding order")
+                        handleException(Exception("Order placement failed"), "Error adding order")
                         callBack(false)
                     }
                 }
             } catch (e: Exception) {
-                Log.e("CartViewModel", "Error in addOrder: ${e.message}")
+                handleException(e, "Error in addOrder")
                 callBack(false)
             }
         }
     }
 
+    // Send order confirmation email
     fun sendOrderConfirmationEmail(order: Order) {
         viewModelScope.launch {
             try {
                 val recipient = UserUtils.auth.currentUser?.email.toString()
-//                val recipient = "be-ngah@outlook.com"
                 val subject = "Order Confirmation"
                 val messageBody = buildOrderDetailsMessage(order)
                 cartRepository.sendOrderConfirmationEmail(recipient, subject, messageBody)
-                Log.d("CartViewModel", "Order confirmation email sent successfully${orders.value?.last()}")
             } catch (e: Exception) {
-                Log.e("CartViewModel", "Error sending order confirmation email: ${e.message}")
+                handleException(e, "Error sending order confirmation email")
             }
         }
     }
+
+    // Build email body
     private fun buildOrderDetailsMessage(order: Order): String {
         val items = order.orderItems.joinToString(separator = "\n") { item ->
             "${item.title} (Size: ${item.size}) - $${item.price} x ${item.quantity}"
@@ -177,85 +195,106 @@ class CartViewModel(private val cartRepository: CartRepository) : ViewModel() {
         $items
         
         Your order is confirmed and will be delivered soon.
-    """.trimIndent()
+        """.trimIndent()
     }
 
-    fun getOrders(){
+    // Fetch user orders
+    fun getOrders() {
         viewModelScope.launch {
+            _uiState.value = UiState.Loading
             try {
                 _orders.value = cartRepository.getOrders(userId)
-                Log.d("CartViewModel", "Orders fetched successfully${_orders.value}")
+                setSuccessState(_orders.value ?: emptyList())
             } catch (e: Exception) {
-                // Handle error
-    }
-        }
-    }
-    fun dicresStock(itemId: String, selectedSize: String, quantityToDecress: Int){
-        viewModelScope.launch {
-            try {
-                cartRepository.dicresStock(itemId, selectedSize, quantityToDecress)
-            } catch (e: Exception) {
-                // Handle error
+                handleException(e, "Error fetching orders")
             }
         }
     }
+
+    // Decrease stock for an item
+    fun decreaseStock(itemId: String, size: String, quantity: Int) {
+        viewModelScope.launch {
+            _uiState.value = UiState.Loading
+            try {
+                cartRepository.dicresStock(itemId, size, quantity)
+                setSuccessState("Stock decreased successfully")
+            } catch (e: Exception) {
+                handleException(e, "Error decreasing stock")
+            }
+        }
+    }
+
+    // Decrease stock for all items in the cart
     fun decreaseStockForAllItems(cartItems: List<CartItemDetail>) {
         viewModelScope.launch {
+            _uiState.value = UiState.Loading
             try {
                 cartRepository.decreaseStockForAllItems(cartItems)
+                setSuccessState("Stock decreased for all items")
             } catch (e: Exception) {
-                // Handle error
+                handleException(e, "Error decreasing stock for all items")
             }
         }
     }
 
+    // Check stock availability
     fun checkStock(itemId: String, size: String, quantity: Int): Boolean {
-        var stock = false
-
-        // Use async to return the value
+    var flag : Boolean
         runBlocking {
-            try {
-                // Wait for the result from the repository
-                stock = cartRepository.checkStock(itemId, size, quantity)
-
-            } catch (_: Exception) {
-                // Handle exceptions
+             try {
+                    flag=cartRepository.checkStock(itemId, size, quantity)
+            } catch (e: Exception) {
+                handleException(e, "Error checking stock")
+                 flag = false
+                 false
             }
         }
 
-        return stock
+        return flag
     }
 
+    // Add user address
     fun addAddress(address: UserAddress) {
         viewModelScope.launch {
+            _uiState.value = UiState.Loading
             try {
                 cartRepository.addAddress(userId, address)
+                setSuccessState("Address added successfully")
             } catch (e: Exception) {
+                handleException(e, "Error adding address")
             }
 
 
         }
     }
-    fun getAddresses(){
+
+    // Fetch user addresses
+    fun getAddresses() {
 
         viewModelScope.launch {
+            _uiState.value = UiState.Loading
             try {
                 _address.value = cartRepository.getAddresses(userId)
+                setSuccessState(_address.value ?: emptyList())
             } catch (e: Exception) {
-                // Handle error
+                handleException(e, "Error fetching addresses")
             }
         }
-
     }
 
-
-
-
-
-
+    // Centralized exception handler
+    private fun handleException(e: Exception, defaultMessage: String) {
+        Log.e("CartViewModel", e.message ?: defaultMessage)
+        _uiState.value = UiState.Error(e.message ?: defaultMessage)
+    }
+    private fun Iterable<CartItemDetail>.calculateTotalPrice(): Float {
+        var total = 0f
+        for (item in this) {
+            total += item.price * item.quantity
+        }
+        return total
+    }
 
 
 }
-
-
 

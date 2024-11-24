@@ -1,4 +1,5 @@
 package com.example.stylish.ui.home.activity
+
 import android.content.Context
 import android.content.Intent
 import android.graphics.Color
@@ -7,11 +8,13 @@ import android.view.MenuItem
 import android.view.View
 import android.widget.FrameLayout
 import android.widget.ImageView
+import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.appcompat.widget.SwitchCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
@@ -25,27 +28,35 @@ import com.bumptech.glide.load.resource.bitmap.CircleCrop
 import com.bumptech.glide.request.RequestOptions
 import com.example.stylish.R
 import com.example.stylish.ViewModel.auth.AuthViewModel
-import com.example.stylish.ViewModel.home.MainViewModel
 import com.example.stylish.ViewModel.auth.AuthViewModelFactory
+import com.example.stylish.ViewModel.cart.CartViewModel
+import com.example.stylish.ViewModel.cart.CartViewModelFactory
+import com.example.stylish.ViewModel.home.MainViewModel
 import com.example.stylish.ViewModel.home.MainViewModelFactory
 import com.example.stylish.databinding.ActivityMainBinding
 import com.example.stylish.repository.auth.AuthRepositoryImpl
+import com.example.stylish.repository.cart.CartRepository
+import com.example.stylish.repository.cart.FirebaseCartRepositoryImpl
 import com.example.stylish.repository.home.FirebaseBrandRepositry
 import com.example.stylish.repository.home.FirebaseItemRepository
 import com.example.stylish.ui.auth.activity.SplashScreen.Companion.PREFS_NAME
 import com.example.stylish.ui.auth.activity.WellcomeScreen
 import com.example.stylish.ui.cart.CartActivity
+import com.example.stylish.ui.cart.OrdersActivity
 import com.example.stylish.ui.home.fragment.HomeFragment
 import com.example.stylish.ui.home.fragment.WishlistFragment
 import com.example.stylish.utilities.UserUtils
 import com.google.android.material.navigation.NavigationView
 import com.google.firebase.auth.FirebaseAuth
+
 class MainActivity : AppCompatActivity() {
     // Binding and ViewModel
     private lateinit var binding: ActivityMainBinding
     private lateinit var viewModel: MainViewModel
+    private lateinit var cartViewModel : CartViewModel
     private lateinit var authViewModel: AuthViewModel
     private lateinit var auth: FirebaseAuth
+
     // UI Components
     private lateinit var drawerLayout: DrawerLayout
     private lateinit var drawerToggle: ActionBarDrawerToggle
@@ -62,6 +73,7 @@ class MainActivity : AppCompatActivity() {
         checkUserInfo()
         initObservers()   // Initialize LiveData observers
     }
+
     private fun initObservers() {
         // Observe logout result
         authViewModel.signOutResult.observe(this, Observer { result ->
@@ -74,6 +86,7 @@ class MainActivity : AppCompatActivity() {
             }
         })
     }
+
     // Check user information and update UI accordingly
     private fun checkUserInfo() {
         val sharedUserName = UserUtils.getUserNameFromSharedPreferences(this)
@@ -88,16 +101,18 @@ class MainActivity : AppCompatActivity() {
             } else {
                 // Observe the user data
                 viewModel.userLiveData.observe(this, Observer { user ->
-                    var name : String = user?.username.toString()
-                    var imageUrl : String = user?.profilePicUrl.toString()
+                    var name: String = user?.username.toString()
+                    var imageUrl: String = user?.profilePicUrl.toString()
                     // default
                     if (user?.profilePicUrl.isNullOrBlank() || user?.username.isNullOrBlank()) {
-                         name = if (user?.username.toString().isNullOrBlank()) "name" else user?.username.toString()
-                         imageUrl = getString(R.string.placeHolderLink)
+                        name = if (user?.username.toString()
+                                .isNullOrBlank()
+                        ) "name" else user?.username.toString()
+                        imageUrl = getString(R.string.placeHolderLink)
                     }
                     user?.let {
-                        UserUtils.saveUserNameInSharedPreferences(this,name)
-                        UserUtils.saveProfilePicUrlInSharedPreferences(this,imageUrl)
+                        UserUtils.saveUserNameInSharedPreferences(this, name)
+                        UserUtils.saveProfilePicUrlInSharedPreferences(this, imageUrl)
                         updateProfileInfoUI(name, imageUrl)
                     }
                 })
@@ -106,6 +121,7 @@ class MainActivity : AppCompatActivity() {
             updateProfileInfoUI(sharedUserName, sharedProfilePicUrl)
         }
     }
+
     // Update the UI with user information
     private fun updateProfileInfoUI(userName: String, profilePicUrl: String) {
         val headerView = binding.navView.getHeaderView(0)
@@ -118,6 +134,7 @@ class MainActivity : AppCompatActivity() {
             .placeholder(R.drawable.profile_placeholder)
             .into(profileImageView)
     }
+
     // Helper function to set the current fragment with animations
     private fun setCurrentFragment(fragment: Fragment, tag: String, isLeftAnimation: Boolean) {
         val currentFragment = supportFragmentManager.findFragmentById(R.id.fragment_container)
@@ -147,17 +164,27 @@ class MainActivity : AppCompatActivity() {
             .disallowAddToBackStack()
             .commit()
     }
-        // Initialize ViewModels
+
+    // Initialize ViewModels
     private fun initViewModels() {
         // Auth ViewModel
         val authFactory = AuthViewModelFactory(AuthRepositoryImpl())
         authViewModel = ViewModelProvider(this, authFactory)[AuthViewModel::class.java]
         // Main ViewModel
-        val mainFactory = MainViewModelFactory(FirebaseItemRepository(), FirebaseBrandRepositry(), AuthRepositoryImpl())
+        val mainFactory = MainViewModelFactory(
+            FirebaseItemRepository(),
+            FirebaseBrandRepositry(),
+            AuthRepositoryImpl()
+        )
+        //cart ViewModel
+        val cartFactory = CartViewModelFactory(FirebaseCartRepositoryImpl())
+        cartViewModel = ViewModelProvider(this, cartFactory)[CartViewModel::class.java]
+
         viewModel = ViewModelProvider(this, mainFactory)[MainViewModel::class.java]
         auth = FirebaseAuth.getInstance()
     }
-// Set up UI components
+
+    // Set up UI components
     private fun setupUI() {
         setupStatusBar()
         setupDrawer()        // Initialize the drawer navigation
@@ -175,7 +202,8 @@ class MainActivity : AppCompatActivity() {
             authViewModel.signOutUser()
         }
     }
-// Set up the bottom navigation
+
+    // Set up the bottom navigation
     private fun setupBottomNav() {
         val homeItem = binding.navHome
         val wishlistItem = binding.navWishlist
@@ -209,7 +237,8 @@ class MainActivity : AppCompatActivity() {
             setCurrentFragment(WishlistFragment(), "WISHLIST_FRAGMENT", isLeftAnimation = true)
         }
     }
-// Helper functions to show and hide icons and texts
+
+    // Helper functions to show and hide icons and texts
     private fun showTextAndHideIcon(item: FrameLayout, iconId: Int, textId: Int) {
         val icon = item.findViewById<ImageView>(iconId)
         val text = item.findViewById<TextView>(textId)
@@ -221,7 +250,8 @@ class MainActivity : AppCompatActivity() {
             text.animate().alpha(1f).setDuration(200).start()
         }.start()
     }
-// Helper functions to show and hide icons and texts
+
+    // Helper functions to show and hide icons and texts
     private fun hideTextAndShowIcon(item: FrameLayout, iconId: Int, textId: Int) {
         val icon = item.findViewById<ImageView>(iconId)
         val text = item.findViewById<TextView>(textId)
@@ -233,7 +263,8 @@ class MainActivity : AppCompatActivity() {
             icon.animate().alpha(1f).setDuration(200).start()
         }.start()
     }
-// Set up the status bar
+
+    // Set up the status bar
     private fun setupStatusBar() {
         window.statusBarColor = Color.TRANSPARENT
         enableEdgeToEdge()
@@ -243,6 +274,7 @@ class MainActivity : AppCompatActivity() {
             insets
         }
     }
+
     // Set up the drawer navigation
     private fun setupDrawer() {
         drawerLayout = binding.mainHome
@@ -259,47 +291,88 @@ class MainActivity : AppCompatActivity() {
         // Setup navigation view header and dark mode switch
         val headerView = navigationView.getHeaderView(0)
 
-
         val switchView = headerView.findViewById<SwitchCompat>(R.id.nav_switch)
-        switchView.setOnCheckedChangeListener { _, isChecked ->
-            if (isChecked) {
-                Toast.makeText(this, "Dark mode enabled", Toast.LENGTH_SHORT).show()
-            } else {
-                Toast.makeText(this, "Dark mode disabled", Toast.LENGTH_SHORT).show()
-            }
+        val tv_orders_count = headerView.findViewById<TextView>(R.id.tv_orders_count_onhome)
+        headerView.findViewById<LinearLayout>(R.id.tv_orders_count).setOnClickListener {
+            startActivity(Intent(this,OrdersActivity::class.java))
         }
+        cartViewModel.getOrders()
+        cartViewModel.orders.observe(this, Observer { orders ->
+            if (orders.isNotEmpty()) {
+                val count = orders.size.toString()
+                "$count Orders".also { tv_orders_count.text = it }
+            } else {
+                "0 Orders".also { tv_orders_count.text = it }
+            }
+        })
+// Initialize switch state based on current them
+        val checkTheme = UserUtils.getThemePreference(this)
+        if (checkTheme) {
+            switchView.isChecked = true
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+
+         } else {
+            switchView.isChecked = false
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+        }
+
+        switchView.setOnCheckedChangeListener { _, isChecked ->
+            // Determine theme mode
+            val mode = if (isChecked) AppCompatDelegate.MODE_NIGHT_YES else AppCompatDelegate.MODE_NIGHT_NO
+            // Save preference
+            UserUtils.saveThemePreference(this, isChecked)
+            // Apply the selected theme
+            AppCompatDelegate.setDefaultNightMode(mode)
+            // Recreate activity to apply the theme
+            recreate()
+
+        }
+
+
         // Handle navigation item clicks
         navigationView.setNavigationItemSelectedListener { menuItem ->
             handleNavigationMenu(menuItem)
             true
         }
     }
+
     // Handle navigation menu items
     private fun handleNavigationMenu(menuItem: MenuItem) {
         when (menuItem.itemId) {
             R.id.nav_account_info -> {
-                // Handle navigation to Account Information
+                Toast.makeText(this, "Account Info", Toast.LENGTH_SHORT).show()
             }
-            // Handle other menu items here
+            R.id.nav_orders -> {
+                startActivity(Intent(this,OrdersActivity::class.java))
+            }
+            R.id.cart_item -> {
+                startActivity(Intent(this,CartActivity::class.java))
+
+            }
         }
     }
-// Navigate to the login screen
+
+    // Navigate to the login screen
     private fun navigateToLoginScreen() {
         val intent = Intent(this, WellcomeScreen::class.java)
         startActivity(intent)
         finish()
     }
-// Clear the remember me preference
+
+    // Clear the remember me preference
     private fun clearRememberMePreference() {
         val sharedPreferences = getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
         sharedPreferences.edit().clear().apply()
     }
+
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return if (drawerToggle.onOptionsItemSelected(item)) {
             true
 
         } else super.onOptionsItemSelected(item)
     }
+
+
 }
 
 

@@ -3,6 +3,7 @@ package com.example.stylish.ui.cart
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
@@ -13,6 +14,8 @@ import com.example.stylish.adapter.OrdersAdapter
 import com.example.stylish.databinding.ActivityOrdersBinding
 import com.example.stylish.model.cart.Order
 import com.example.stylish.repository.cart.FirebaseCartRepositoryImpl
+import com.example.stylish.utilities.UiState
+import com.google.android.material.snackbar.Snackbar
 
 class OrdersActivity : AppCompatActivity() {
 
@@ -36,6 +39,8 @@ class OrdersActivity : AppCompatActivity() {
 
         // Set up RecyclerView
         setupRecyclerView()
+        // Set up loader
+        setupProgressbar()
 
         // Observe LiveData for orders
         setupObservers()
@@ -45,6 +50,37 @@ class OrdersActivity : AppCompatActivity() {
             onBackPressed()
         }
 
+    }
+
+    private fun setupProgressbar() {
+        // Observe UI state from ViewModel
+        viewModel.uiState.observe(this) { state ->
+            when (state) {
+                is UiState.Loading -> {
+                    // Show loading indicator
+                    binding.progressBar.visibility = View.VISIBLE
+                    binding.ordersRecyclerView.visibility = View.GONE
+                    binding.emptyoredersAnimation.visibility = View.GONE
+
+                }
+                is UiState.Success -> {
+                    // Hide loading indicator and update UI with data
+                    binding.progressBar.visibility = View.GONE
+                    binding.emptyoredersAnimation.visibility = View.GONE
+                    setupAnimation(viewModel.orders.value ?: emptyList())
+                }
+                is UiState.Error -> {
+                    // Hide loading indicator and show error message
+                    binding.progressBar.visibility = View.GONE
+                    binding.emptyoredersAnimation.visibility = View.VISIBLE
+                    binding.ordersRecyclerView.visibility = View.GONE
+
+                    Toast.makeText(this, state.message, Toast.LENGTH_SHORT).show()
+                    Snackbar.make(binding.root, state.message, Snackbar.LENGTH_LONG).show()
+
+                }
+            }
+        }
     }
 
     private fun setupAnimation(orderss: List<Order>) {

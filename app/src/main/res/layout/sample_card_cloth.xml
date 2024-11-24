@@ -1,90 +1,93 @@
-<LinearLayout
+<androidx.cardview.widget.CardView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/card_brand_cloth"
-    android:orientation="vertical"
-    android:layout_width="wrap_content"
+    android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="10dp">
 
-    <!-- FrameLayout to stack the product image and favorite icon -->
-    <FrameLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content">
+    app:cardElevation="0dp"
+    app:cardBackgroundColor="@android:color/transparent"
+    app:cardCornerRadius="10dp">
 
-        <!-- Product Image -->
-        <ImageView
-            android:id="@+id/product_img_card"
-            android:layout_width="180dp"
-            android:layout_height="240dp"
-            android:src="@drawable/cardcloth"
-            android:scaleType="centerCrop"
-            android:outlineSpotShadowColor="@color/background_color_light"
-            android:outlineAmbientShadowColor="@color/background_color_light"
-            /> <!-- Ensures the image scales properly -->
-
-        <!-- Heart Icon -->
-        <ImageView
-            android:id="@+id/favicon"
-            android:layout_width="23dp"
-            android:layout_height="23dp"
-            android:layout_gravity="end|top"
-            android:layout_marginEnd="8dp"
-            android:layout_marginTop="8dp"
-           android:src="@drawable/favorites"
-            android:contentDescription="@string/favorite_icon"
-            android:clickable="true"
-            android:focusable="true"
-
-            />
-    </FrameLayout>
-
-    <!-- Item Name -->
-    <TextView
-        android:maxLines="2"
-        android:id="@+id/itemNameCard"
-        android:layout_width="180dp"
-        android:layout_height="wrap_content"
-        android:fontFamily="@font/inter"
-        android:text="Trail Running Jacket Nike Windrunner"
-        android:textColor="@color/text_color_light"
-        android:layout_marginBottom="-10dp"
-        android:textSize="16sp"
-        android:textStyle="bold" />
-
-    <!-- Item Price -->
-    <LinearLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        >
+        android:padding="10dp">
 
+        <!-- Product Image and Heart Icon in FrameLayout -->
+        <FrameLayout
+            android:id="@+id/image_container"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:layout_constraintDimensionRatio="3:4"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintWidth_percent="1">
+
+            <!-- Product Image -->
+            <ImageView
+                android:id="@+id/product_img_card"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scaleType="centerCrop"
+                android:src="@drawable/cardcloth" />
+
+            <!-- Heart Icon -->
+            <ImageView
+                android:id="@+id/favicon"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_gravity="end|top"
+                android:layout_margin="8dp"
+                android:clickable="true"
+                android:contentDescription="@string/favorite_icon"
+                android:focusable="true"
+                android:src="@drawable/favorites" />
+        </FrameLayout>
+
+    <!-- Item Name -->
         <TextView
-
-            android:layout_width="wrap_content"
+            android:id="@+id/itemNameCard"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:fontFamily="@font/inter_bold"
-            android:text="$"
+            android:fontFamily="@font/inter"
+            android:maxLines="2"
+            android:text="Trail Running Jacket Nike Windrunner"
+            android:textColor="?attr/colorOnBackground"
+            android:textSize="16sp"
             android:textStyle="bold"
-            android:textColor="@android:color/black"
-            android:textSize="22sp"
-            />
-        <TextView
-            android:id="@+id/itemPrice_incard"
-            android:layout_width="wrap_content"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/image_container" />
+
+    <!-- Item Price -->
+        <LinearLayout
+            android:id="@+id/price_container"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:fontFamily="@font/inter_bold"
-            android:padding="8dp"
-            android:text="80"
-            android:textStyle="bold"
-            android:textColor="@android:color/black"
-            android:textSize="22sp"
-            android:layout_gravity="top|center"
-            android:layout_marginStart="-2dp"
-            />
+            android:orientation="horizontal"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/itemNameCard">
 
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/inter_bold"
+                android:text="$"
+                android:textColor="?attr/colorOnBackground"
+                android:textSize="18sp"
+                android:textStyle="bold" />
 
-    </LinearLayout>
+            <TextView
+                android:id="@+id/itemPrice_incard"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="4dp"
+                android:fontFamily="@font/inter_bold"
+                android:text="80"
+                android:textColor="?attr/colorOnBackground"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+        </LinearLayout>
 
-</LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.cardview.widget.CardView>

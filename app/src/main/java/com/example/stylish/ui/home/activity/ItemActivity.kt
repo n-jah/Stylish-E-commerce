@@ -14,6 +14,7 @@ import com.bumptech.glide.load.resource.bitmap.CenterInside
 import com.bumptech.glide.request.RequestOptions
 import com.example.stylish.R
 import com.example.stylish.ViewModel.cart.CartViewModel
+import com.example.stylish.ViewModel.cart.CartViewModelFactory
 import com.example.stylish.adapter.ItemImagesAdapter
 import com.example.stylish.adapter.SizeAdapter
 import com.example.stylish.databinding.ActivityItemBinding
@@ -21,10 +22,10 @@ import com.example.stylish.model.cart.CartItem
 import com.example.stylish.model.home.Item
 import com.example.stylish.model.home.Size
 import com.example.stylish.repository.cart.CartRepository
-import com.example.stylish.ViewModel.cart.CartViewModelFactory
 import com.example.stylish.repository.cart.FirebaseCartRepositoryImpl
 import com.example.stylish.ui.cart.CartActivity
 import com.google.firebase.auth.FirebaseAuth
+
 class ItemActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityItemBinding
@@ -79,8 +80,9 @@ class ItemActivity : AppCompatActivity() {
 
             val item = intent.getParcelableExtra<Item>("object")
             if (item != null && auth.currentUser != null) {
-                val cartItem = CartItem((item.id ?: 0).toString(), 1, selectedSize!!)  // Use the selected size
-                cartViewModel.addItemToCart( cartItem)
+                val cartItem =
+                    CartItem(item.id.toString(), 1, selectedSize!!)  // Use the selected size
+                cartViewModel.addItemToCart(cartItem)
                 finish()
                 Toast.makeText(this, "Item added to cart", Toast.LENGTH_SHORT).show()
             } else {

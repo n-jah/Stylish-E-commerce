@@ -35,7 +35,6 @@ class OrderConfirmedBottomSheet : BottomSheetDialogFragment() {
         super.onViewCreated(view, savedInstanceState)
 
         binding.goToOrdersButton.setOnClickListener {
-            //navigate to orders Activity @TODO // navigateToOrders
             startActivity(Intent(requireContext(), OrdersActivity::class.java))
             dismiss()
 

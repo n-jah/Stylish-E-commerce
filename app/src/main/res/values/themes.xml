@@ -1,13 +1,25 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
-    <!-- Base application theme. -->
-    <style name="Base.Theme.Stylish" parent="Theme.Material3.DayNight.NoActionBar">
-            <item name="android:colorPrimary">@color/primary_color</item>
-            <item name="colorOnPrimary">@color/white</item>
-            <item name="colorBackgroundFloating">@color/field_color_light</item>
-            <item name="android:colorBackground">@color/background_color_light</item>
+    <style name="Base.Theme.Stylish" parent="Theme.Material3.Light.NoActionBar">
+        <!-- Primary Colors -->
+        <item name="colorPrimary">@color/primary_color</item>
+        <item name="colorOnPrimary">@color/white</item>
+        <item name="colorSecondary">@color/secondrey_text_color_dark</item>
+        <item name="colorItemBackground">@color/field_color_light</item>
+        <item name="colorBrandBackground">@color/field_color_light</item>
 
 
+        <!-- Background Colors -->
+        <item name="navigationBackground">@color/background_color_light</item>
 
+        <item name="android:colorBackground">@color/background_color_light</item>
+        <item name="colorBackgroundFloating">@color/field_color_light</item>
+
+        <!-- Text Colors -->
+        <item name="colorOnBackground">@color/text_color_light</item>
+        <item name="colorOnSurface">@color/secondrey_text_color_light</item>
+
+        <!-- Misc Colors -->
+        <item name="colorOutline">@color/field_color_light</item>
     </style>
 
     <style name="Theme.Stylish" parent="Base.Theme.Stylish" />

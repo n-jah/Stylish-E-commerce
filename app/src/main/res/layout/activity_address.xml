@@ -5,7 +5,9 @@
     android:id="@+id/main_home"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.cart.CartActivity">
+    tools:context=".ui.cart.CartActivity"
+
+    >
 
     <androidx.appcompat.widget.AppCompatImageButton
         android:id="@+id/back_button"
@@ -48,102 +50,111 @@
                 android:layout_marginStart="16dp"
                 android:text="Address"
                 android:textSize="20sp"
+                android:textColor="?attr/colorOnBackground"
                 android:textStyle="bold" />
 
 
         </LinearLayout>
-
-        <!-- Name Field -->
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Name"
-            android:textAppearance="@style/head2black"
-            android:layout_marginTop="24dp" />
-
-        <EditText
-            android:id="@+id/nameEt"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Name"
-            android:background="@drawable/rounded_edittext_background"
-            android:padding="12dp"
-            android:layout_marginTop="8dp" />
-        <!-- Country Field -->
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Country"
-            android:textAppearance="@style/head2black"
-            android:layout_marginTop="24dp" />
-        <!-- Country and City Fields -->
         <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_marginTop="16dp">
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+            android:padding="15dp"
+    >
 
-            <EditText
+    <!-- Name Field -->
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Name"
+        android:textAppearance="@style/head2black"
+        android:textColor="?attr/colorOnBackground"
+        android:layout_marginTop="24dp" />
 
-                android:id="@+id/countryEt"
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                android:layout_height="wrap_content"
-                android:hint="Egypt"
-                android:background="@drawable/rounded_edittext_background"
-                android:padding="12dp" />
-
-            <Space
-                android:layout_width="16dp"
-                android:layout_height="match_parent" />
-
-            <EditText
-                android:id="@+id/governmentEt"
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                android:layout_height="wrap_content"
-                android:hint="Aswan"
-                android:background="@drawable/rounded_edittext_background"
-                android:padding="12dp" />
-
-        </LinearLayout>
-
-        <!-- Phone Number Field -->
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Phone Number"
-            android:textAppearance="@style/head2black"
-            android:layout_marginTop="24dp" />
-
-        <EditText
-            android:id="@+id/phoneEt"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="+2-010-97-406-914"
-            android:background="@drawable/rounded_edittext_background"
-            android:inputType="phone"
-            android:padding="12dp"
-            android:layout_marginTop="8dp" />
-
-        <!-- Address Field -->
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Address"
-            android:textAppearance="@style/head2black"
-            android:layout_marginTop="24dp" />
+    <EditText
+        android:id="@+id/nameEt"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Name"
+        android:background="@drawable/rounded_edittext_background"
+        android:padding="12dp"
+        android:layout_marginTop="8dp" />
+    <!-- Country Field -->
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Country"
+        android:textAppearance="@style/head2black"
+        android:layout_marginTop="24dp" />
+    <!-- Country and City Fields -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginTop="16dp">
 
         <EditText
-            android:id="@+id/addressEt"
-            android:layout_width="match_parent"
+
+            android:id="@+id/countryEt"
+            android:layout_width="0dp"
+            android:layout_weight="1"
             android:layout_height="wrap_content"
-            android:hint="43, Electronics City Phase 1, Electronic City"
+            android:hint="Egypt"
             android:background="@drawable/rounded_edittext_background"
-            android:padding="12dp"
-            android:layout_marginTop="8dp" />
+            android:padding="12dp" />
+
+        <Space
+            android:layout_width="16dp"
+            android:layout_height="match_parent" />
+
+        <EditText
+            android:id="@+id/governmentEt"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:hint="Aswan"
+            android:background="@drawable/rounded_edittext_background"
+            android:padding="12dp" />
 
     </LinearLayout>
+
+    <!-- Phone Number Field -->
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Phone Number"
+        android:textAppearance="@style/head2black"
+        android:layout_marginTop="24dp" />
+
+    <EditText
+        android:id="@+id/phoneEt"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="+2-010-97-406-914"
+        android:background="@drawable/rounded_edittext_background"
+        android:inputType="phone"
+        android:padding="12dp"
+        android:layout_marginTop="8dp" />
+
+    <!-- Address Field -->
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Address"
+        android:textAppearance="@style/head2black"
+        android:layout_marginTop="24dp" />
+
+    <EditText
+        android:id="@+id/addressEt"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="43, Electronics City Phase 1, Electronic City"
+        android:background="@drawable/rounded_edittext_background"
+        android:padding="12dp"
+        android:layout_marginTop="8dp" />
+
+</LinearLayout>
+</LinearLayout>
 
 
     <!-- Bottom button -->

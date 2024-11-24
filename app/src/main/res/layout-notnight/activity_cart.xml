@@ -78,6 +78,15 @@
                 </LinearLayout>
 
             </LinearLayout>
+            <ProgressBar
+                android:id="@+id/progress_bar"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginTop="16dp"
+                android:layout_marginBottom="16dp"
+                android:layout_gravity="center_vertical"
+                android:indeterminateTint="#1D1E20"
+                android:visibility="gone"/>
 
             <!-- Cart items -->
             <androidx.recyclerview.widget.RecyclerView

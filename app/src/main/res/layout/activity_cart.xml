@@ -78,6 +78,15 @@
                 </LinearLayout>
 
             </LinearLayout>
+            <ProgressBar
+                android:id="@+id/progress_bar"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginTop="16dp"
+                android:layout_marginBottom="16dp"
+                android:layout_gravity="center_vertical"
+                android:visibility="gone"
+                />
 
             <!-- Cart items -->
             <androidx.recyclerview.widget.RecyclerView
@@ -227,7 +236,6 @@
                             android:fontFamily="@font/inter"
                             android:text="@string/cash_on_delivery_cod"
                             android:textAppearance="@style/head1"
-                            android:textColor="#1D1E20"
                             android:textSize="15sp"
                             android:textStyle="bold" />
 
@@ -288,7 +296,6 @@
                             android:fontFamily="@font/inter"
                             android:text="@string/pay_with_stripe"
                             android:textAppearance="@style/head1"
-                            android:textColor="#1D1E20"
                             android:textSize="15sp"
                             android:textStyle="bold" />
 
@@ -345,7 +352,7 @@
                         android:id="@+id/subtotal_price"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="@string/_110"
+                        android:text="0$"
                         android:textSize="14sp"
                         android:textStyle="bold" />
                 </LinearLayout>
@@ -367,7 +374,7 @@
                         android:id="@+id/delivery_charge"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="$10"
+                        android:text="0$"
                         android:textSize="14sp"
                         android:textStyle="bold" />
                 </LinearLayout>
@@ -391,7 +398,7 @@
                         android:id="@+id/total_price"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="$120"
+                        android:text="0$"
                         android:textSize="14sp"
                         android:textStyle="bold" />
                 </LinearLayout>

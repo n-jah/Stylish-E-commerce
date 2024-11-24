@@ -25,6 +25,8 @@ import com.example.stylish.model.cart.CartItemDetail
 import com.example.stylish.model.cart.Order
 import com.example.stylish.repository.cart.FirebaseCartRepositoryImpl
 import com.example.stylish.ui.home.activity.MainActivity
+import com.example.stylish.utilities.UiState
+import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuth
 import com.stripe.android.PaymentConfiguration
 import com.stripe.android.paymentsheet.PaymentSheet
@@ -78,14 +80,40 @@ class CartActivity : AppCompatActivity() {
             handleEmptyView(cartItems)  // Check if the list is empty and handle the UI
         }
 
+        // Observe UI state from ViewModel
+        cartViewModel.uiState.observe(this) { state ->
+            when (state) {
+                is UiState.Loading -> {
+                    // Show loading indicator
+                    binding.progressBar.visibility = View.VISIBLE
+
+                    binding.emptyCartAnimation.visibility = View.GONE
+
+
+                }
+                is UiState.Success -> {
+                    // Hide loading indicator and update UI with data
+                    binding.progressBar.visibility = View.GONE
+                }
+                is UiState.Error -> {
+                    // Hide loading indicator and show error message
+                    binding.progressBar.visibility = View.GONE
+                    binding.emptyCartAnimation.visibility = View.VISIBLE
+                    binding.cartRecyclerView.visibility = View.GONE
+
+                    Snackbar.make(binding.root, state.message, Snackbar.LENGTH_LONG).show()
+
+                }
+            }
+        }
+
     }
 
     private fun setupUI() {
 
         listOfItems()
         binding.addressAdd.setOnClickListener {
-        //    startActivity(Intent(this, AddressActivity::class.java))
-            startActivity(Intent(this, OrdersActivity::class.java))
+            startActivity(Intent(this, AddressActivity::class.java))
 
         }
         // Load the user's cart
@@ -277,7 +305,7 @@ class CartActivity : AppCompatActivity() {
     }
 
     private fun addToOrders() {
-        cartViewModel.addOreder() {
+        cartViewModel.addOrder() {
             if (it) {
                 cartViewModel.decreaseStockForAllItems(cartAdapter.getCartItems())
                 Toast.makeText(this, "Order Placed", Toast.LENGTH_SHORT).show()

@@ -5,7 +5,6 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:gravity="start"
     android:orientation="vertical"
-    android:background="@color/background_color_light"
     android:padding="16dp">
 
     <!-- Profile Section -->
@@ -49,10 +48,10 @@
                 android:id="@+id/nav_header_username"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:maxLines="1"
                 android:paddingTop="8dp"
                 android:text="Hemendra"
-                android:textColor="@android:color/black"
-                android:maxLines="1"
+                android:textColor="?attr/colorOnBackground"
                 android:textSize="18sp"
                 android:textStyle="bold" />
 
@@ -73,7 +72,7 @@
                     android:drawablePadding="4dp"
                     android:paddingBottom="8dp"
                     android:text="Verified Profile"
-                    android:textColor="#8F959E"
+                    android:textColor="?attr/colorSecondary"
                     android:textSize="12sp" />
 
                 <ImageView
@@ -99,7 +98,7 @@
             app:layout_constraintTop_toTopOf="@id/textverf_id">
 
             <TextView
-
+                android:id="@+id/tv_orders_count_onhome"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="18dp"

@@ -5,6 +5,7 @@
     android:layout_height="wrap_content"
     android:layout_margin="8dp"
     android:background="@drawable/bg_card"
+
     android:elevation="4dp"
     android:gravity="center_vertical"
     android:orientation="horizontal"
@@ -57,6 +58,7 @@
                 android:text="Men's Tie-Dye T-Shirt Nike Sportswear"
                 android:textAppearance="@style/men_s_tie_d"
                 android:lineSpacingExtra="2sp"
+                android:textColor="?attr/colorOnBackground"
                 android:maxLines="2"
                 android:textStyle="bold" />
 
@@ -71,7 +73,8 @@
             android:layout_height="wrap_content"
             android:text="@string/size"
 
-            android:textColor="@color/secondrey_text_color_light"
+
+            android:textColor="?attr/colorSecondary"
             android:textSize="13dp" />
 
         <LinearLayout
@@ -163,7 +166,7 @@
                 android:layout_gravity="center"
                 android:layout_marginHorizontal="8dp"
                 android:text="1"
-                android:textColor="@color/black"
+                android:textColor="?attr/colorOnBackground"
                 android:textSize="16sp"
                 android:textStyle="bold" />
 

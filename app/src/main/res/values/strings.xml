@@ -83,6 +83,9 @@
     <string name="orders">Orders</string>
     <string name="item_in_order_name">item_in_order_name</string>
     <string name="publish_key">pk_test_51PvqwnGfrZnPfialSKBHf1dunaJqztGTmy1celVwsFZifTEepFf9l808cUw77yiT5Xj9n9cvJDxS1JLIzXvbjKe800CIDNtEZK</string>
+    <string name="search">Search...</string>
+    <string name="new_arrival">New Arrival</string>
+    <string name="choose_brand">Choose Brand</string>
 
 
 </resources>

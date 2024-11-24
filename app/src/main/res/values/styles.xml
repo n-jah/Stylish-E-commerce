@@ -10,7 +10,7 @@
     <style name="head1">
         <item name="android:textSize">28sp</item>
         <item name="android:letterSpacing">-0.01</item>
-        <item name="android:textColor">@color/text_color_light</item>
+        <item name="android:textColor">?attr/colorOnBackground</item>
         <item name="android:textStyle">bold</item>
         <item name="android:fontFamily">@font/inter_bold</item>
     </style>
@@ -24,14 +24,14 @@
     <style name="head2black">
         <item name="android:textSize">18sp</item>
         <item name="android:letterSpacing">-0.01</item>
-        <item name="android:textColor">@color/text_color_light</item>
+        <item name="android:textColor">?attr/colorOnBackground</item>
         <item name="android:textStyle">bold</item>
         <item name="android:fontFamily">@font/inter_bold</item>
     </style>
     <style name="secondryTextLight">
         <item name="android:textSize">17sp</item>
         <item name="android:letterSpacing">-0.01</item>
-        <item name="android:textColor">@color/secondrey_text_color_light</item>
+        <item name="android:textColor">?attr/colorSecondary</item>
         <item name="android:fontFamily">@font/inter</item>
     </style>
     <style name="secondryTextDark">

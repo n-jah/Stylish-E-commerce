@@ -17,7 +17,8 @@
             android:layout_width="50dp"
             android:layout_height="50dp"
             android:layout_gravity="left"
-            android:layout_margin="20dp"
+            android:layout_marginTop="20dp"
+            android:layout_marginStart="10dp"
             android:background="@drawable/circle"
             android:gravity="center"
             android:shadowColor="@color/field_color_light"
@@ -32,7 +33,7 @@
             android:layout_gravity="right"
             android:layout_margin="20dp"
             android:layout_marginTop="20dp"
-            android:layout_marginEnd="16dp"
+            android:layout_marginEnd="10dp"
             android:background="@drawable/circle"
             android:gravity="center"
             android:shadowColor="@color/field_color_light"
@@ -45,20 +46,22 @@
             android:layout_width="match_parent"
             android:layout_height="0dp"
             app:layout_constraintBottom_toTopOf="@id/navframe"
-            app:layout_constraintTop_toBottomOf="@+id/floating_slide_icon"
+            app:layout_constraintEnd_toEndOf="parent"
 
-            />
+            app:layout_constraintHorizontal_bias="1.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/floating_slide_icon" />
 
 
         <FrameLayout
+            android:id="@+id/navframe"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/fragment_container"
-            android:id="@+id/navframe"
             android:fitsSystemWindows="true"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/fragment_container"
 
             >
 
@@ -66,9 +69,9 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@color/field_color_light"
-                android:orientation="horizontal"
+                android:background="?attr/colorItemBackground"
                 android:gravity="center_vertical"
+                android:orientation="horizontal"
                 android:padding="4dp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -104,7 +107,6 @@
                         android:textSize="12sp"
                         android:textStyle="bold"
                         android:visibility="gone" />
-
 
 
                 </FrameLayout>
@@ -145,8 +147,6 @@
             </LinearLayout>
 
 
-
-
         </FrameLayout>
 
 
@@ -154,11 +154,12 @@
     <!-- Navigation drawer -->
     <com.google.android.material.navigation.NavigationView
         android:id="@+id/nav_view"
-        android:background="@color/background_color_light"
+
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:layout_gravity="start"
         android:fitsSystemWindows="true"
+        android:background="?attr/navigationBackground"
         app:headerLayout="@layout/nav_header"
 
         app:menu="@menu/drawer_menu" >
