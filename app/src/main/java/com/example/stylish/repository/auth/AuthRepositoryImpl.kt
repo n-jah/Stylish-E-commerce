@@ -1,9 +1,12 @@
 package com.example.stylish.repository.auth
 
+import android.net.Uri
 import android.util.Log
+import androidx.core.net.toUri
 import com.example.stylish.MyApp
 import com.example.stylish.R
 import com.example.stylish.model.user.User
+import com.example.stylish.utilities.UserUtils
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
@@ -13,11 +16,15 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseAuthUserCollisionException
 import com.google.firebase.auth.FirebaseAuthWeakPasswordException
 import com.google.firebase.auth.GoogleAuthProvider
+import com.google.firebase.auth.UserProfileChangeRequest
 import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.storage.FirebaseStorage
 import kotlinx.coroutines.tasks.await
 
 class AuthRepositoryImpl : AuthRepositoryInterface {
     private val auth: FirebaseAuth = FirebaseAuth.getInstance()
+    private var storageRef = FirebaseStorage.getInstance().reference
+    private val databaseRef = FirebaseDatabase.getInstance().reference
 
     override suspend fun signUp(email: String, password: String, username: String): Result<String> {
         return try {
@@ -48,7 +55,6 @@ class AuthRepositoryImpl : AuthRepositoryInterface {
             FirebaseAuth.getInstance()
                 .signInWithEmailAndPassword(email, password)
                 .await()
-
             Result.success("Sign-in successful")
         } catch (e: Exception) {
             Result.failure(e)
@@ -110,30 +116,120 @@ class AuthRepositoryImpl : AuthRepositoryInterface {
         }
      }
 
-    override fun getUserInfo(callback: (User?) -> Unit) {
-        val currentUser = auth.currentUser
-        if (currentUser != null) {
-            val userId = currentUser.uid
+
+    override suspend fun uploadImgProfileReturnUrl(
+        imageUri: String,
+        loading: (Boolean) -> Unit
+    ): Result<String> {
+        return try {
+            val userId = UserUtils.getCurrentUserId() ?: return Result.failure(Exception("User not logged in"))
+            val fileRef = storageRef.child("profile_images/$userId/profile.jpg")
+            loading(true)
+            fileRef.putFile(imageUri.toUri()).await()
+            val downloadUrl = fileRef.downloadUrl.await()
+            loading(false)
+            Result.success(downloadUrl.toString())
+        } catch (e: Exception) {
+            loading(false)
+            Result.failure(e)
+        }
+
+    }
+    override suspend fun getUserData(onLoading: (Boolean) -> Unit): Result<User> {
+        return try {
+            onLoading(true) // Start loading
+
+            // Step 1: Check Local Storage (SharedPreferences)
+            val userName = UserUtils.getUserNameFromSharedPreferences(MyApp.instance.applicationContext)
+            val profilePicUrl = UserUtils.getProfilePicUrlInSharedPreferences(MyApp.instance.applicationContext)
+            val email = UserUtils.getEmailFromSharedPreferences(MyApp.instance.applicationContext)
+            // If data is available in local storage
+            if (!userName.isNullOrEmpty() && !profilePicUrl.isNullOrEmpty() && !email.isNullOrEmpty()) {
+                onLoading(false) // End loading
+                Log.d("AuthRepositoryImpl", "User data from local storage: $userName, $profilePicUrl, $email")
+                return Result.success(User(username = userName, profilePicUrl = profilePicUrl, email = email))
+            }
+
+            // Step 2: Check Firebase Auth (Basic data)
+            val user = UserUtils.auth.currentUser
+            if (user != null && user.displayName != null && user.photoUrl != null && user.email != null) {
+                // Save to SharedPreferences
+                UserUtils.saveUserNameInSharedPreferences(MyApp.instance.applicationContext, user.displayName ?: "")
+                UserUtils.saveProfilePicUrlInSharedPreferences(MyApp.instance.applicationContext, user.photoUrl.toString())
+                UserUtils.saveEmailInSharedPreferences(MyApp.instance.applicationContext, user.email ?: "")
+                onLoading(false) // End loading
+                return Result.success(User(username = user.displayName ?: "", profilePicUrl = user.photoUrl.toString(), email = user.email ?: ""))
+            }
+
+            // Step 3: Fetch from Firebase Realtime Database (Fallback)
+            val userId = user?.uid ?: return Result.failure(Exception("User is not logged in"))
             val userRef = FirebaseDatabase.getInstance().getReference("users").child(userId)
 
-            userRef.get().addOnCompleteListener { taskResult ->
-                if (taskResult.isSuccessful) {
-                    val snapshot = taskResult.result
-                    val userData = if (snapshot != null && snapshot.exists()) {
-                        snapshot.getValue(User::class.java)
+            val snapshot = userRef.get().await()
+            val userNameFromDb = snapshot.child("username").value as? String
+            val profilePicUrlFromDb = snapshot.child("profilePicUrl").value as? String
+            val emailFromDb = snapshot.child("email").value as? String
 
-                    } else {
-                        null
-                    }
-                    callback(userData)  // Call the callback with user data
-                } else {
-                    Log.e("AuthRepositoryImpl", "Error fetching user info", taskResult.exception)
-                    callback(null)  // Call the callback with null on error
-                }
+            if (userNameFromDb != null && profilePicUrlFromDb != null && emailFromDb != null) {
+                // Save to SharedPreferences
+                UserUtils.saveUserNameInSharedPreferences(MyApp.instance.applicationContext, userNameFromDb)
+                UserUtils.saveProfilePicUrlInSharedPreferences(MyApp.instance.applicationContext, profilePicUrlFromDb)
+                UserUtils.saveEmailInSharedPreferences(MyApp.instance.applicationContext, emailFromDb)
+                onLoading(false) // End loading
+                return Result.success(User(username = userNameFromDb, profilePicUrl = profilePicUrlFromDb, email = emailFromDb))
             }
-        } else {
-            callback(null)  // If no user is logged in, return null
+
+            onLoading(false) // End loading if no data found
+            Result.failure(Exception("User data not found"))
+        } catch (e: Exception) {
+            onLoading(false) // End loading on error
+            Result.failure(e)
         }
     }
+    override suspend fun updateProfilePicUrl(imageUrl: String, loading: (Boolean) -> Unit) {
+        val userId = UserUtils.getCurrentUserId()?:""
+        loading(true)
+        Log.d("AuthRepositoryImpl", "updateProfilePicUrl: $imageUrl")
+        UserUtils.saveProfilePicUrlInSharedPreferences(MyApp.instance.applicationContext, imageUrl)
+        Log.d("AuthRepositoryImpl", "sharedPref${UserUtils.getProfilePicUrlInSharedPreferences(MyApp.instance.applicationContext)}")
 
+        val profileUpdates = UserProfileChangeRequest.Builder()
+            .setPhotoUri(Uri.parse(imageUrl))
+            .build()
+        auth.currentUser!!.updateProfile(profileUpdates).addOnSuccessListener {
+            loading(false)
+            Log.d("AuthRepositoryImpl", "updateProfilePicUrl: success")
+        }.addOnFailureListener {
+            loading(false)
+        }
+        databaseRef.child("users").child(userId).child("profilePicUrl").setValue(imageUrl).addOnSuccessListener {
+            loading(false)
+            Log.d("AuthRepositoryImpl", "updateProfilePicUrlrRealtime: success")
+        }.addOnFailureListener {
+            loading(false)
+            Log.d("AuthRepositoryImpl", "updateProfilePicUrlrRealtime: failure")
+        }
+        loading(false)
+    }
+    override suspend fun updateUserName(userName: String, loading: (Boolean) -> Unit) {
+        loading(true)
+        UserUtils.saveUserNameInSharedPreferences(MyApp.instance.applicationContext, userName)
+        if (auth.currentUser != null) {
+            val profileUpdates = UserProfileChangeRequest.Builder()
+                .setDisplayName(userName)
+                .build()
+            auth.currentUser!!.updateProfile(profileUpdates).addOnSuccessListener {
+                loading(false)
+            }.addOnFailureListener {
+                loading(false)
+            }
+        }
+        val userId = UserUtils.auth.currentUser?.uid
+        databaseRef.child("users").child(userId!!).child("username").setValue(userName).addOnSuccessListener {
+            loading(false)
+        }.addOnFailureListener {
+            loading(false)
+        }
+        loading(false)
+    }
 }

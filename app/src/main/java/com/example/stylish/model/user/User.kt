@@ -6,8 +6,10 @@ data class User(
     val profilePicUrl: String = "",
     val itemsInCart: List<String> = emptyList(),
     val itemsInWishlist: List<String> = emptyList(),
-    val itemsInOrders: List<String> = emptyList()
+    val itemsInOrders: List<String> = emptyList(),
+    val isAdmin: Boolean = false
 ) {
-    constructor(userId: String, username: String, email: String, profilePicUrl: String)
-            : this(userId, username, email, profilePicUrl, emptyList(), emptyList(), emptyList())
+    constructor(userId: String, username: String, email: String, profilePicUrl: String, isAdmin: Boolean)
+            : this(userId, username, email, profilePicUrl, emptyList(), emptyList(), emptyList(),isAdmin)
+
 }

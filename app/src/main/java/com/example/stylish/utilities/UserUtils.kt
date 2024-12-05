@@ -7,8 +7,8 @@ object UserUtils {
 
     const val USER_NAME_KEY = "username"
     const val PREFS_NAME = "userPrefs"
-    const val APP_PREFERENCES = "appPrefs"
     const val PREFS_PROFILE_PIC_URL = "profilePicUrl"
+    const val PREFS_PROFILE_Email = "email"
 
 
      val auth: FirebaseAuth = FirebaseAuth.getInstance()
@@ -42,6 +42,15 @@ object UserUtils {
         val sharedPreferences = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
         sharedPreferences.edit().putString(PREFS_PROFILE_PIC_URL, profilePicUrl).apply()
 
+    }
+    fun saveEmailInSharedPreferences(context: Context, email: String) {
+        val sharedPreferences = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+        sharedPreferences.edit().putString(PREFS_PROFILE_Email, email).apply()
+    }
+
+    fun getEmailFromSharedPreferences(context: Context): String? {
+        val sharedPreferences = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+        return sharedPreferences.getString(PREFS_PROFILE_Email,"")
     }
     fun getProfilePicUrlInSharedPreferences(context: Context):String?{
         val sharedPreferences = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)

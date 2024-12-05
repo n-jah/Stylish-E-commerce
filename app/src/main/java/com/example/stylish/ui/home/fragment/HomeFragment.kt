@@ -75,7 +75,6 @@ class HomeFragment : Fragment() {
 
 
 //get the name of the user
-// Define a callback for asynchronous data
     private fun setupRecyclerViews() {
         // Setup Brands RecyclerView
         brandAdapter = BrandAdapter(isLoading = true){ _ ->
@@ -142,43 +141,11 @@ class HomeFragment : Fragment() {
     }
 
     private fun addingNameToUi(binding: FragmentHomeBinding) {
-
-        binding.apply {
-
-            val sharedUserName = UserUtils.getUserNameFromSharedPreferences(requireContext())
-
-            if (!sharedUserName.isNullOrBlank()) {
-                greetingTextNameOfUser.visibility = View.VISIBLE
-                greetingTextNameOfUser.text = sharedUserName
-            }else{
-                val nameInAuth = UserUtils.getDisplayName()
-                val nameList = mutableListOf<String>()
-
-                if (!nameInAuth.isNullOrBlank()) {
-                    nameList.add(UserUtils.getFirstName(nameInAuth))
-                    nameList.add(UserUtils.getLastName(nameInAuth))
-                    greetingTextNameOfUser.visibility = View.VISIBLE
-                    greetingTextNameOfUser.text = nameList[0]
-                } else {
-                    // Observe user info if nameInAuth is null or blank
-                    viewModel.getUserInfo()
-                    viewModel.userLiveData.observe(viewLifecycleOwner) { userInfo ->
-                        userInfo?.let {
-                            nameList.add(UserUtils.getFirstName(it.username))
-                            nameList.add(UserUtils.getLastName(it.username))
-                        }
-
-                        // Update greeting text based on the nameList contents
-                        if (nameList.isNotEmpty()) {
-                            greetingTextNameOfUser.visibility = View.VISIBLE
-                            greetingTextNameOfUser.text = nameList[0] // Use index 0 for first name
-                        } else {
-                            greetingTextNameOfUser.visibility = View.GONE
-                        }
-                    }
-                }
+        viewModel.userDataLiveData.observe(viewLifecycleOwner, Observer { user ->
+            user?.let {
+                binding.greetingTextNameOfUser.text = it.username
             }
-        }
+        })
     }
     private fun setupSearch() {
 

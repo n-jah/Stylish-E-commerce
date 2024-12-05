@@ -86,6 +86,8 @@
     <string name="search">Search...</string>
     <string name="new_arrival">New Arrival</string>
     <string name="choose_brand">Choose Brand</string>
+    <string name="email_addres">Email Address</string>
+    <string name="edit_profile_picture">Edit Profile Picture</string>
 
 
 </resources>

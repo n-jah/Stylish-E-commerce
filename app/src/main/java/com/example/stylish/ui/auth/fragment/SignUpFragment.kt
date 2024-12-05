@@ -23,7 +23,6 @@ class SignUpFragment : Fragment() {
 
     private lateinit var binding: FragmentSignUpBinding
     private lateinit var viewModel: AuthViewModel
-    private val authRepository: AuthRepositoryInterface = AuthRepositoryImpl()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -38,9 +37,6 @@ class SignUpFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
 
-
-        // Initialize Firebase Auth
-        val firebaseAuth = FirebaseAuth.getInstance()
 
         // Create repository with FirebaseAuth instance
         val authRepository: AuthRepositoryInterface = AuthRepositoryImpl()

@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
+import android.util.Log
 import android.view.MenuItem
 import android.view.View
 import android.widget.FrameLayout
@@ -70,8 +71,20 @@ class MainActivity : AppCompatActivity() {
         }
         initViewModels()  // Initialize ViewModels
         setupUI()         // Setup UI Components
-        checkUserInfo()
         initObservers()   // Initialize LiveData observers
+        setupUserData()
+    }
+
+    private fun setupUserData() {
+        viewModel.userDataLiveData.observe(this, Observer { user ->
+
+            user?.let {
+
+                updateProfileInfoUI(it.username, it.profilePicUrl)
+            }
+
+        })
+
     }
 
     private fun initObservers() {
@@ -87,40 +100,6 @@ class MainActivity : AppCompatActivity() {
         })
     }
 
-    // Check user information and update UI accordingly
-    private fun checkUserInfo() {
-        val sharedUserName = UserUtils.getUserNameFromSharedPreferences(this)
-        val sharedProfilePicUrl = UserUtils.getProfilePicUrlInSharedPreferences(this)
-        if (sharedUserName.isNullOrBlank() || sharedProfilePicUrl.isNullOrBlank()) {
-            val displayName = auth.currentUser?.displayName
-            val photoUrl = auth.currentUser?.photoUrl?.toString() ?: "No URL"
-            if (!displayName.isNullOrBlank() && !photoUrl.isNullOrBlank()) {
-                UserUtils.saveUserNameInSharedPreferences(this, displayName)
-                UserUtils.saveProfilePicUrlInSharedPreferences(this, photoUrl)
-                updateProfileInfoUI(displayName, photoUrl)
-            } else {
-                // Observe the user data
-                viewModel.userLiveData.observe(this, Observer { user ->
-                    var name: String = user?.username.toString()
-                    var imageUrl: String = user?.profilePicUrl.toString()
-                    // default
-                    if (user?.profilePicUrl.isNullOrBlank() || user?.username.isNullOrBlank()) {
-                        name = if (user?.username.toString()
-                                .isNullOrBlank()
-                        ) "name" else user?.username.toString()
-                        imageUrl = getString(R.string.placeHolderLink)
-                    }
-                    user?.let {
-                        UserUtils.saveUserNameInSharedPreferences(this, name)
-                        UserUtils.saveProfilePicUrlInSharedPreferences(this, imageUrl)
-                        updateProfileInfoUI(name, imageUrl)
-                    }
-                })
-            }
-        } else {
-            updateProfileInfoUI(sharedUserName, sharedProfilePicUrl)
-        }
-    }
 
     // Update the UI with user information
     private fun updateProfileInfoUI(userName: String, profilePicUrl: String) {
@@ -190,8 +169,6 @@ class MainActivity : AppCompatActivity() {
         setupDrawer()        // Initialize the drawer navigation
         setupBottomNav()     // Initialize the bottom navigation
 
-        // triger the observer to get the user info
-        viewModel.getUserInfo()
 
         // Cart floating button click
         binding.floatCartButton.setOnClickListener {
@@ -341,6 +318,7 @@ class MainActivity : AppCompatActivity() {
         when (menuItem.itemId) {
             R.id.nav_account_info -> {
                 Toast.makeText(this, "Account Info", Toast.LENGTH_SHORT).show()
+                startActivity(Intent(this,AccountInfoActivity::class.java))
             }
             R.id.nav_orders -> {
                 startActivity(Intent(this,OrdersActivity::class.java))
@@ -370,6 +348,13 @@ class MainActivity : AppCompatActivity() {
             true
 
         } else super.onOptionsItemSelected(item)
+    }
+
+    override fun onResume() {
+        super.onResume()
+
+
+
     }
 
 
