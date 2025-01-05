@@ -23,7 +23,7 @@ import com.example.stylish.model.home.Item
 import com.example.stylish.model.home.Size
 import com.example.stylish.repository.cart.CartRepository
 import com.example.stylish.repository.cart.FirebaseCartRepositoryImpl
-import com.example.stylish.ui.cart.CartActivity
+import com.example.stylish.ui.cart.MyCartActivity
 import com.google.firebase.auth.FirebaseAuth
 
 class ItemActivity : AppCompatActivity() {
@@ -56,7 +56,7 @@ class ItemActivity : AppCompatActivity() {
 
         binding.cartButton.setOnClickListener {
 
-            startActivity(Intent(this, CartActivity::class.java))
+            startActivity(Intent(this, MyCartActivity::class.java))
 
         }
 

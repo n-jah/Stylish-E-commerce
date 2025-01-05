@@ -17,6 +17,9 @@
         android:theme="@style/Theme.Stylish"
         tools:targetApi="31">
         <activity
+            android:name=".ui.cart.MyCartActivity"
+            android:exported="false" />
+        <activity
             android:name=".ui.cart.CartActivity"
             android:exported="false" />
         <activity

@@ -42,7 +42,7 @@ import com.example.stylish.repository.home.FirebaseBrandRepositry
 import com.example.stylish.repository.home.FirebaseItemRepository
 import com.example.stylish.ui.auth.activity.SplashScreen.Companion.PREFS_NAME
 import com.example.stylish.ui.auth.activity.WellcomeScreen
-import com.example.stylish.ui.cart.CartActivity
+import com.example.stylish.ui.cart.MyCartActivity
 import com.example.stylish.ui.cart.OrdersActivity
 import com.example.stylish.ui.home.fragment.HomeFragment
 import com.example.stylish.ui.home.fragment.WishlistFragment
@@ -172,7 +172,7 @@ class MainActivity : AppCompatActivity() {
 
         // Cart floating button click
         binding.floatCartButton.setOnClickListener {
-            startActivity(Intent(this, CartActivity::class.java))
+            startActivity(Intent(this, MyCartActivity::class.java))
         }
         // Logout button
         binding.logoutLayout.setOnClickListener {
@@ -324,7 +324,7 @@ class MainActivity : AppCompatActivity() {
                 startActivity(Intent(this,OrdersActivity::class.java))
             }
             R.id.cart_item -> {
-                startActivity(Intent(this,CartActivity::class.java))
+                startActivity(Intent(this,MyCartActivity::class.java))
 
             }
         }
