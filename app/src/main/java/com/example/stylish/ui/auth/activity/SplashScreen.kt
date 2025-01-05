@@ -2,6 +2,7 @@ package com.example.stylish.ui.auth.activity
 
 import android.content.Context
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.util.Log
@@ -25,6 +26,12 @@ class SplashScreen : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContentView(R.layout.activity_splash_screen)
+
+        // Ensure the splash screen appears full-screen
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            window.setDecorFitsSystemWindows(false)
+        }
+
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main_splash)) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
@@ -41,7 +48,7 @@ class SplashScreen : AppCompatActivity() {
                 startActivity(Intent(this, WellcomeScreen::class.java))
             }
             finish()
-        }, 10)
+        }, 1000)
     }
 
     private fun isUserSignedIn(): Boolean {

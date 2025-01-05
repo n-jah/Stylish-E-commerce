@@ -23,4 +23,6 @@
     </style>
 
     <style name="Theme.Stylish" parent="Base.Theme.Stylish" />
+
+
 </resources>

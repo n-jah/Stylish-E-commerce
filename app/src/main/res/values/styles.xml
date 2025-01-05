@@ -1,11 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <style name="LaunchTheme" parent="Theme.AppCompat.NoActionBar">
+<!--    <style name="LaunchTheme" parent="Theme.AppCompat.NoActionBar">-->
+<!--        <item name="android:windowBackground">@drawable/launch_background</item>-->
+<!--    </style>-->
+
+    <style name="Theme.Stylish.Splash" parent="Theme.AppCompat.NoActionBar">
+        <!-- Set the background color -->
         <item name="android:windowBackground">@drawable/launch_background</item>
+        <!-- Hide the status bar -->
+        <item name="android:windowFullscreen">true</item>
+        <!-- Hide the action bar -->
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+        <item name="android:windowIsTranslucent">true</item>
+
     </style>
-
-
 
     <style name="head1">
         <item name="android:textSize">28sp</item>
