@@ -158,17 +158,42 @@ class FirebaseCartRepositoryImpl : CartRepository {
         status: (Boolean) -> Unit
     ) {
         try {
-            val newOrder = ordersRef.push()
-            val order = Order(orderItems, userId, date, totalPrice, address.value!![0], stateOfOrder)
-            // Set the order under the newOrderRef
-            newOrder.setValue(order).await()
-            status(true)
-            Log.d("CartRepository", "Order added successfully")
+            val counterRef = FirebaseDatabase.getInstance().getReference("orderCounter") // Reference for order counter
+            val newOrderRef = ordersRef.push() // Create a new order reference
+            val orderRef = FirebaseDatabase.getInstance().getReference("orders") // Reference for orders
+
+            // Fetch the current order ID counter
+            val currentOrderIdSnapshot = counterRef.get().await()
+            val currentOrderId = currentOrderIdSnapshot.value as? Long ?: 0L
+
+            // Increment the order ID counter for the next order
+            val newOrderId = currentOrderId + 1
+            counterRef.setValue(newOrderId)  // Update the counter in the database
+
+            // Create the order object and set the new numeric order ID
+            val order = Order(
+                orderId = newOrderId.toString(), // Use the incremented order ID
+                orderItems = orderItems,
+                userId = userId,
+                date = date,
+                totalPrice = totalPrice,
+                address = address.value!![0], // Assuming the first address is selected
+                status = stateOfOrder
+            )
+
+            // Save the order to the database
+            // Use the orderId as the key for the new order in the ordersRef
+            orderRef.child(newOrderId.toString()).setValue(order).await()
+
+            status(true) // Callback indicating success
+            Log.d("CartRepository", "Order added successfully with ID: $newOrderId")
         } catch (e: Exception) {
-            status(false)  // Invoke status callback with false on failure
+            status(false) // Callback indicating failure
             Log.e("CartRepository", "Failed to add order: ${e.message}")
         }
     }
+
+
     override suspend fun getOrders(userId: String): List<Order> {
         val databaseRefForOrders = database.getReference("orders")
             .orderByChild("userId")

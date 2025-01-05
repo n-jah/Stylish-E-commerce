@@ -15,11 +15,13 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.widget.SearchView
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.stylish.ViewModel.home.MainViewModel
@@ -34,6 +36,8 @@ import com.example.stylish.model.home.Brand
 import com.example.stylish.utilities.UserUtils
 import com.google.android.material.internal.ViewUtils.hideKeyboard
 import com.google.firebase.auth.FirebaseAuth
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import java.util.Locale
 
 class HomeFragment : Fragment() {
@@ -70,11 +74,31 @@ class HomeFragment : Fragment() {
     }
     private fun initUI() {
         addingNameToUi(binding)
-        setupSearch()
+        setupSearchBar()
+        binding.swipfreshlayout.setOnRefreshListener {
+            refreshData()
+        }
+    }
+
+    private fun refreshData() {
+
+        lifecycleScope.launch {
+
+            viewModel.apply {
+                fetchItemsWithFavorites()
+                loadFavoriteItems()
+                getUserData()
+            }
+            itemAdapter.isLoading = true
+            delay(1000)
+            brandAdapter.updateBrands(viewModel.brands.value?.toList() ?: emptyList() )
+            itemAdapter.isLoading = false
+            binding.swipfreshlayout.isRefreshing = false
+        }
     }
 
 
-//get the name of the user
+    //get the name of the user
     private fun setupRecyclerViews() {
         // Setup Brands RecyclerView
         brandAdapter = BrandAdapter(isLoading = true){ _ ->
@@ -147,38 +171,22 @@ class HomeFragment : Fragment() {
             }
         })
     }
-    private fun setupSearch() {
-
-        binding.searchEditText.setOnFocusChangeListener { _, hasFocus ->
-            if (hasFocus) {
-                // Hide other UI components when EditText gains focus
-                toggleHomeUIVisibility(false)
-            }else{
-                toggleHomeUIVisibility(true)
-            }
-        }
-
-        binding.searchEditText.setOnEditorActionListener { _, _, _ ->
-            // When the user finishes searching and presses "Done"
-            binding.searchEditText.clearFocus()
-            toggleHomeUIVisibility(true)
-            true
-        }
-
-        binding.searchEditText.addTextChangedListener(object : TextWatcher {
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
-
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                val query = s.toString().lowercase()
-                filterItems(query)
+    private fun setupSearchBar() {
+        binding.searchBar.setOnQueryTextListener(object : SearchView.OnQueryTextListener,
+            android.widget.SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                query?.let { filterItems(it) }
+                return true
             }
 
-            override fun afterTextChanged(s: Editable?) {}
+            override fun onQueryTextChange(newText: String?): Boolean {
+                newText?.let { filterItems(it) }
+                return true
+            }
         })
     }
     private fun toggleHomeUIVisibility(isVisible: Boolean) {
         val visibility = if (isVisible) View.VISIBLE else View.GONE
-
         binding.chooseBrandText.visibility = visibility
         binding.newArrivalText.visibility = visibility
         binding.brandsRecyclerView.visibility = visibility
@@ -188,7 +196,7 @@ class HomeFragment : Fragment() {
 
     private fun filterItems(query: String) {
         val filteredList = viewModel.items.value?.filter { item ->
-            item.title.lowercase().contains(query) || item.brand.lowercase().contains(query)
+            item.title.lowercase().contains(query, ignoreCase = true) || item.brand.lowercase().contains(query)
         }
 
         filteredList?.let {
@@ -197,7 +205,6 @@ class HomeFragment : Fragment() {
     }
     override fun onResume() {
         super.onResume()
-        binding.searchEditText.clearFocus() // Ensure the UI is reset when returning
         toggleHomeUIVisibility(true)
     }
 
@@ -212,10 +219,18 @@ class HomeFragment : Fragment() {
         if (result.resultCode == Activity.RESULT_OK) {
             val matches = result.data?.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS)
             val spokenText = matches?.get(0) ?: ""
-            binding.searchEditText.setText(spokenText) // Set the recognized text to the EditText
+
+            addVoiceSearchText(spokenText)
         }
     }
-
+    private fun addVoiceSearchText(spokenText: String) {
+        binding.searchBar.apply {
+            setQuery(spokenText, false) // Set the query without submitting
+            isIconified = false         // Expand the SearchView
+            requestFocus()              // Request focus for the SearchView
+        }
+        filterItems(spokenText) // Trigger filtering explicitly
+    }
     private fun checkAudioPermission() {
         when {
             ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED -> {

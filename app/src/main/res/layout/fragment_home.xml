@@ -38,56 +38,43 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <!-- Search Bar Section -->
-    <LinearLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/linearLayout4"
         android:layout_width="0dp"
         android:layout_height="50dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginEnd="10dp"
         android:gravity="center_vertical"
         android:orientation="horizontal"
+        app:layout_constraintBottom_toTopOf="@id/chooseBrandText"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/chooseBrandText"
         app:layout_constraintTop_toBottomOf="@id/welcomeText">
 
-        <LinearLayout
+        <SearchView
+            android:id="@+id/searchBar"
             android:layout_width="0dp"
-            android:layout_height="50dp"
-            android:layout_margin="10dp"
-            android:layout_weight="3"
+            android:layout_height="0dp"
             android:background="@drawable/search_bar_background"
-            android:gravity="center_vertical"
-            android:orientation="horizontal">
-
-            <ImageView
-                android:id="@+id/searchIcon"
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:layout_gravity="center_vertical"
-                android:layout_marginStart="16dp"
-                android:gravity="center"
-                android:src="@drawable/ic_search" />
-
-            <EditText
-                android:layout_marginEnd="5dp"
-                android:id="@+id/searchEditText"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="?attr/colorItemBackground"
-                android:hint="@string/search"
-                android:maxLines="1"
-                android:paddingStart="8dp"
-                android:paddingEnd="8dp" />
-        </LinearLayout>
+            android:queryHint="search.."
+            android:layout_marginEnd="3dp"
+            android:searchHintIcon="@drawable/ic_search"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/voiceSearchIcon"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <androidx.appcompat.widget.AppCompatImageButton
             android:id="@+id/voiceSearchIcon"
             android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:layout_marginEnd="10dp"
+            android:layout_height="0dp"
             android:background="@drawable/voice_button"
             android:contentDescription="@string/voice_search_icon"
-            android:src="@drawable/mic" />
-    </LinearLayout>
+            android:src="@drawable/mic"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <!-- Brand Section -->
     <TextView
@@ -129,19 +116,22 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/brandsRecyclerView" />
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/newArrivalRecyclerView"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_marginTop="5dp"
-        android:orientation="vertical"
-
-
-        app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:id="@+id/swipfreshlayout"
+        android:layout_width="match_parent"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/newArrivalText"
-        app:spanCount="2" />
+         android:layout_height="0dp">
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/newArrivalRecyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="5dp"
+            android:orientation="vertical"
+            app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
+            app:spanCount="2" />
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

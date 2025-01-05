@@ -156,6 +156,4 @@ class MainViewModel(private val itemRepsitory: ItemRepsitory, private val brandR
         }
     }
 
-
-
 }

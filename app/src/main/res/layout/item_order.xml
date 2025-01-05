@@ -18,7 +18,7 @@
         android:text="Date: 2024-11-21"
         android:textStyle="bold"
         android:fontFamily="@font/inter_bold"
-        android:textColor="@color/black"
+        android:textColor="?attr/colorOnBackground"
         android:textSize="14sp"
         android:layout_marginBottom="8dp" />
 
@@ -29,9 +29,7 @@
         android:text="Status: On Delivery"
         android:textSize="14sp"
         android:textStyle="bold"
-        android:textColor="@color/black"
-
-
+        android:textColor="?attr/colorOnBackground"
         android:layout_marginBottom="8dp" />
 
     <androidx.recyclerview.widget.RecyclerView

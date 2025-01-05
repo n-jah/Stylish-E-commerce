@@ -124,6 +124,7 @@ class CartViewModel(private val cartRepository: CartRepository) : ViewModel() {
                     ?: throw IllegalArgumentException("No address found for the user")
 
                 val order = Order(
+                    "",
                     cartItems,
                     userId,
                     formattedDate,
@@ -138,7 +139,7 @@ class CartViewModel(private val cartRepository: CartRepository) : ViewModel() {
                     formattedDate,
                     order.totalPrice,
                     address,
-                    "Confirmed"
+                    "pending"
                 ) { success ->
                     if (success) {
                         try {

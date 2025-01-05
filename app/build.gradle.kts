@@ -75,6 +75,8 @@ dependencies {
     implementation ("com.stripe:stripe-android:20.53.0")
     implementation("com.android.volley:volley:1.2.1")
     implementation (libs.material.v190)
+    //swiprefresh
+    implementation("androidx.swiperefreshlayout:swiperefreshlayout:1.2.0-alpha01")
 
 
 
