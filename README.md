@@ -1,7 +1,5 @@
 
-
 # Stylish Client App 🛍️📱<div align="left"> <img src="https://raw.githubusercontent.com/n-jah/Stylish-E-commerce/testBrand/media/stylishlogo.jpg" width="100" alt="Stylish Logo" /> </div>
----
 
 **Stylish** is a modern, client-side mobile application designed to provide users with a **seamless and secure shopping experience**. Built using **Kotlin** and following the **MVVM architecture**, the app integrates features like **multi-provider authentication**, **secure payment processing**, **custom navigation bar with animations**, and more. Whether you're a developer or a user, Stylish offers a **reliable and enjoyable shopping experience**. ✨
 
@@ -10,17 +8,17 @@
 
 ### Authentication , Home and Navigation  🔒
 <div align="center">
-  <img src="https://raw.githubusercontent.com/n-jah/Stylish-E-commerce/testBrand/media/auth.gif" width="250" alt="Authentication" />
-  <img src="https://raw.githubusercontent.com/n-jah/Stylish-E-commerce/testBrand/media/home.gif" width="250" alt="Home Screen" />
-  <img src="https://raw.githubusercontent.com/n-jah/Stylish-E-commerce/testBrand/media/home2.gif" width="250" alt="Home Navigation" />
+  <img src="https://raw.githubusercontent.com/n-jah/Stylish-E-commerce/testBrand/media/auth.gif" width="200" alt="Authentication" />
+  <img src="https://raw.githubusercontent.com/n-jah/Stylish-E-commerce/testBrand/media/home.gif" width="200" alt="Home Screen" />
+  <img src="https://raw.githubusercontent.com/n-jah/Stylish-E-commerce/testBrand/media/home2.gif" width="200" alt="Home Navigation" />
 </div>
 
 ### Cart, Payment, item , orders and search 💳 💖
 <div align="center">
-  <img src="https://raw.githubusercontent.com/n-jah/Stylish-E-commerce/testBrand/media/cartandpy.gif" width="250" alt="Cart and Payment" />
-  <img src="https://raw.githubusercontent.com/n-jah/Stylish-E-commerce/testBrand/media/item%20screen.gif" width="250" alt="Item Screen" />
-  <img src="https://raw.githubusercontent.com/n-jah/Stylish-E-commerce/testBrand/media/orders.gif" width="250" alt="Orders Screen" />
-   <img src="https://raw.githubusercontent.com/n-jah/Stylish-E-commerce/testBrand/media/searchVoice.gif" width="250" alt="Voice Search" />
+  <img src="https://raw.githubusercontent.com/n-jah/Stylish-E-commerce/testBrand/media/cartandpy.gif" width="200" alt="Cart and Payment" />
+  <img src="https://raw.githubusercontent.com/n-jah/Stylish-E-commerce/testBrand/media/item%20screen.gif" width="200" alt="Item Screen" />
+  <img src="https://raw.githubusercontent.com/n-jah/Stylish-E-commerce/testBrand/media/orders.gif" width="200" alt="Orders Screen" />
+   <img src="https://raw.githubusercontent.com/n-jah/Stylish-E-commerce/testBrand/media/searchVoice.gif" width="200" alt="Voice Search" />
 
 </div>
 
