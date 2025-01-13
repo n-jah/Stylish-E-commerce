@@ -67,51 +67,62 @@ class FirebaseCartRepositoryImpl : CartRepository {
         val cartItemsRef = database.getReference("users/$userId/cart")
         val snapshot = cartItemsRef.get().await()
         val cartItemsList = mutableListOf<CartItemDetail>()
+        var isOutOfStock = false
 
         for (cartItemSnapshot in snapshot.children) {
-            val cartItemKey = cartItemSnapshot.key.toString() // Get the Firebase key
-            val itemId = cartItemSnapshot.child("itemId").value.toString()
-            var quantity = cartItemSnapshot.child("quantity").value.toString().toInt()
-            val size = cartItemSnapshot.child("size").value.toString()
+            val cartItemKey = cartItemSnapshot.key.toString()
+            val itemId = cartItemSnapshot.child("itemId").value?.toString() ?: ""
+            val quantityString = cartItemSnapshot.child("quantity").value?.toString() ?: "0"
+            var quantity = quantityString.toIntOrNull() ?: 0
+            val sizeName = cartItemSnapshot.child("size").value?.toString() ?: ""
+            // Retrieve sizes for the item
+            val sizesList = mutableListOf<Size>()
+            val sizesInItem = database.getReference("items/$itemId/sizes").get().await()
             var isOutOfStock = false
 
-            val sizesInItem = database.getReference("items/$itemId/sizes").get().await()
-            if(sizesInItem.exists()){
-                sizesInItem.children.forEach {
+            if (sizesInItem.exists()) {
+                Log.d("CartRepository", "Sizes retrieved successfully for item $itemId.")
+                // Fetch sizes as Size objects
+                sizesList.addAll(sizesInItem.children.mapNotNull { sizeSnapshot ->
+                    sizeSnapshot.getValue(Size::class.java) // This line uses your original approach.
+                })
+                // Check if the specified size is available
+                val matchedSize = sizesList.find { it.size == sizeName }
 
-                    val sizeOfItem = it.child("size").value.toString()
-                    val quantityOfItem = it.child("quantity").value.toString().toInt()
-
-                    if (sizeOfItem == size){
-
-                        quantity = if (quantityOfItem == 0){
-                            isOutOfStock = true
-                            quantityOfItem
-                        }else if (quantityOfItem < quantity){
-                            quantityOfItem
-                        }else{
-                            cartItemSnapshot.child("quantity").value.toString().toInt()
-                        }
+                if (matchedSize != null) {
+                    // Check the stock against the requested quantity
+                    if (matchedSize.stock < quantity) {
+                        isOutOfStock = true
+                        quantity = matchedSize.stock // Adjust quantity to available stock.
                     }
-
+                } else {
+                    isOutOfStock = true // Item size not found.
+                    Log.d("CartRepository", "No matching size found for $sizeName in item $itemId.")
                 }
+            } else {
+                Log.d("CartRepository", "Item not found in 'sizes' reference for item $itemId.")
             }
 
-
-            // Retrieve item details from the 'items' reference
+            // Retrieve other item details from the 'items' reference
             val itemSnapshot = database.getReference("items").child(itemId).get().await()
             if (itemSnapshot.exists()) {
-                val title = itemSnapshot.child("title").value.toString()
-                val price = itemSnapshot.child("price").value.toString().toFloat()
+                val title = itemSnapshot.child("title").value?.toString() ?: "Unknown Title"
+                val priceString = itemSnapshot.child("price").value?.toString() ?: "0.0"
+                val price = priceString.toFloatOrNull() ?: 0.0f
                 val imageUrl = itemSnapshot.child("imgUrl").value as? List<String> ?: emptyList()
 
-                // Pass the Firebase key to CartItemDetail
-                cartItemsList.add(CartItemDetail(cartItemKey, itemId, title, price, imageUrl, quantity, size,isOutOfStock))
+                Log.d("CartRepository", "Item retrieved successfully: $title, $price, $imageUrl")
+
+                // Create CartItemDetail and add it to the list
+                cartItemsList.add(CartItemDetail(cartItemKey, itemId, title, price, imageUrl, quantity, sizeName, isOutOfStock))
+            } else {
+                Log.d("CartRepository", "Item not found in 'items' reference for item $itemId.")
             }
         }
+
+        Log.d("CartRepository", "Cart items retrieved successfully: $cartItemsList")
         return@withContext cartItemsList
     }
-
     override suspend fun updateCartItem(userId: String, cartItemId: String, updatedItem: CartItemDetail) {
 
         try {
@@ -164,7 +175,8 @@ class FirebaseCartRepositoryImpl : CartRepository {
 
             // Fetch the current order ID counter
             val currentOrderIdSnapshot = counterRef.get().await()
-            val currentOrderId = currentOrderIdSnapshot.value as? Long ?: 0L
+
+            val currentOrderId = (currentOrderIdSnapshot.value as? String)?.toLongOrNull() ?: 0L
 
             // Increment the order ID counter for the next order
             val newOrderId = currentOrderId + 1
@@ -229,7 +241,8 @@ class FirebaseCartRepositoryImpl : CartRepository {
                 val sizesList = itemSnapshot.child("sizes").children
                 for (sizeSnapshot in sizesList) {
                     val availableSize = sizeSnapshot.child("size").value.toString()
-                    val availableQuantity = sizeSnapshot.child("quantity").value.toString().toInt()
+                    val availableQuantityString = sizeSnapshot.child("quantity").value?.toString() ?: "0"
+                    val availableQuantity = availableQuantityString.toIntOrNull() ?: 0
                     if (availableSize == size && availableQuantity >= quantity) {
 
                         return@withContext true // Stock is sufficient
@@ -261,7 +274,7 @@ class FirebaseCartRepositoryImpl : CartRepository {
                 sizeMap?.let {
                     val size = it["size"] as? String ?: ""
                     val stock = it["quantity"] as? Long ?: 0L
-                    Size(size, stock.toInt())
+                     Size(size, stock.toInt())
                 }
             }
             // Find the size object that matches the given selectedSize

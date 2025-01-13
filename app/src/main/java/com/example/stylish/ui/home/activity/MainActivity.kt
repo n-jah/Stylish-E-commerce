@@ -283,7 +283,7 @@ class MainActivity : AppCompatActivity() {
             }
         })
 // Initialize switch state based on current them
-        val checkTheme = UserUtils.getThemePreference(this)
+        val checkTheme = UserUtils.getThemePreference(applicationContext)
         if (checkTheme) {
             switchView.isChecked = true
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
@@ -297,7 +297,7 @@ class MainActivity : AppCompatActivity() {
             // Determine theme mode
             val mode = if (isChecked) AppCompatDelegate.MODE_NIGHT_YES else AppCompatDelegate.MODE_NIGHT_NO
             // Save preference
-            UserUtils.saveThemePreference(this, isChecked)
+            UserUtils.saveThemePreference(applicationContext, isChecked)
             // Apply the selected theme
             AppCompatDelegate.setDefaultNightMode(mode)
             // Recreate activity to apply the theme
