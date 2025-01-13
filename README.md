@@ -1,4 +1,4 @@
-Here’s a revised version of your README file with improved formatting, grammar, and a corrected table of contents for better readability and navigation:
+To ensure that the table of contents links work properly in your README file, you need to add HTML anchor tags (`<a name="..."></a>`) before each section heading. This will allow the links to navigate to the correct sections when clicked. Here's your updated README file with the necessary fixes:
 
 ---
 
@@ -39,6 +39,7 @@ Here’s a revised version of your README file with improved formatting, grammar
 
 ---
 
+<a name="app-demos"></a>
 ## App Demos 🎥
 
 ### Authentication, Home, and Navigation 🔒
@@ -58,52 +59,64 @@ Here’s a revised version of your README file with improved formatting, grammar
 
 ---
 
+<a name="apk-download"></a>
 ## APK Download 📲  
 [Download Stylish APK](https://github.com/n-jah/Stylish-E-commerce/blob/testBrand/app/release/app-release.apk)
 
 ---
 
+<a name="features"></a>
 ## Features 🚀
 
+<a name="authentication"></a>
 ### Authentication 🔐  
 - **Multiple Login Methods**: Login using **Email/Password**, **Google**, **Facebook**, or **Twitter**. 🔑  
 - **Password Restoration**: Forgot your password? Easily restore it via email. 📧  
 - **Remember Me**: Stay logged in securely with **encrypted shared preferences**. 🛡️  
 
+<a name="shopping-cart"></a>
 ### Shopping Cart 🛒  
 - **Add/Remove Items**: Add, update, or remove items from your cart with ease. 🏷️  
 - **Stock Management**: Real-time stock availability checks before adding items to your cart. 📦  
 - **Order Placement**: Place your order and get an **order confirmation email**. 📩  
 
+<a name="favorite-screen"></a>
 ### Favorite Screen 💖  
 - **Save Your Favorite Items**: Easily save products to your favorites for future reference. ⭐  
 - **Easy Access**: Quickly access your favorite items from the dedicated screen. 📑  
 
+<a name="search-by-brands"></a>
 ### Search by Brands 🔍  
 - **Quick Brand Search**: Filter products by your favorite brands for a personalized shopping experience. 🏷️  
 
+<a name="search-by-voice"></a>
 ### Search by Voice 🎙️  
 - **Voice Search**: Use voice commands to search for products, enhancing the user experience with hands-free functionality. 🎧  
 
+<a name="orders-screen"></a>
 ### Orders Screen 📦  
 - **View Orders**: Check the status of past and present orders, including detailed information. ✅  
 
+<a name="uiux-enhancements"></a>
 ### UI/UX Enhancements 🌟  
 - **Shimmer Effect**: Beautiful loading animations for brand and item lists. 🌈  
 - **Swipe-to-Refresh**: Refresh your item lists with a simple swipe! 🔄  
 - **Dark Mode**: Switch between **Light** and **Dark themes** for a personalized experience. 🌙  
 - **Custom Navigation Bar**: A visually appealing custom navigation bar with smooth animation transitions. 🎨  
 
+<a name="data-management"></a>
 ### Data Management 🗂️  
 - **Firebase Realtime Database**: Centralized storage for items, brands, cart, and orders. 📲  
 - **Efficient Updates**: Smooth transitions with **DiffUtil** for RecyclerView. ⚡  
 
+<a name="security"></a>
 ### Security 🛡️  
 - **Encrypted Shared Preferences**: Securely stores user preferences and authentication states. 🔐  
 - **Firebase Authentication**: Secure login with **Google**, **Facebook**, **Twitter**, and **Email/Password**. 🔒  
 
 ---
 
+<a name="admin-stylish-app"></a>
 ## Admin Stylish App 🖥️  
 
 I also created an **Admin Version** of Stylish to manage and oversee all the client app's functionalities, such as adding or removing items, managing orders, and more. If you want to see how the admin interface works, check out the **Admin Stylish App** here:  
@@ -111,6 +124,7 @@ I also created an **Admin Version** of Stylish to manage and oversee all the cli
 
 ---
 
+<a name="technologies-used"></a>
 ## Technologies Used  
 
 | Category              | Technologies/Libraries                                                                 |
@@ -127,11 +141,12 @@ I also created an **Admin Version** of Stylish to manage and oversee all the cli
 
 ---
 
+<a name="quick-start"></a>
 ## Quick Start 🚀  
 
 1. Clone the repository:  
    ```bash
-   git clone https://github.com/n-jah/stylish-client.git
+   git clone https://github.com/n-jah/Stylish-E-commerce.git
    ```  
 2. Open the project in **Android Studio**.  
 3. Set up **Firebase**:  
@@ -145,6 +160,7 @@ I also created an **Admin Version** of Stylish to manage and oversee all the cli
 
 ---
 
+<a name="data-retrieval-structure"></a>
 ## Data Retrieval Structure ⚙️  
 
 ### Problem: Slow User Data Retrieval in Android  
@@ -167,6 +183,7 @@ The system keeps **local storage** updated as new data comes in.
 
 ---
 
+<a name="code-structure"></a>
 ## Code Structure 🗂️  
 
 ```
@@ -190,6 +207,7 @@ stylish-client/
 
 ---
 
+<a name="roadmap"></a>
 ## Roadmap 🛣️  
 
 ### Upcoming Features:  
@@ -200,6 +218,7 @@ stylish-client/
 
 ---
 
+<a name="troubleshooting"></a>
 ## Troubleshooting ⚠️  
 
 ### Firebase Authentication Issues:  
@@ -211,6 +230,7 @@ stylish-client/
 
 ---
 
+<a name="contributing"></a>
 ## Contributing 🤝  
 
 We welcome contributions! Here's how you can help make Stylish even better:  
@@ -222,6 +242,7 @@ We welcome contributions! Here's how you can help make Stylish even better:
 
 ---
 
+<a name="license"></a>
 ## License 📝  
 
 This project is licensed under the **MIT License** - see the [LICENSE](LICENSE) file for details.  
@@ -229,6 +250,7 @@ You are free to use, modify, and distribute this code, but please give appropria
 
 ---
 
+<a name="support"></a>
 ## Support 💬  
 
 If you have any questions or need support, don't hesitate to reach out:  
@@ -237,6 +259,7 @@ If you have any questions or need support, don't hesitate to reach out:
 
 ---
 
+<a name="acknowledgments"></a>
 ## Acknowledgments 🙏  
 
 - **Firebase** for their awesome backend services! 🔥  
@@ -245,6 +268,7 @@ If you have any questions or need support, don't hesitate to reach out:
 
 ---
 
+<a name="contact"></a>
 ## Contact 📞  
 
 Feel free to reach out to me for questions, collaborations, or feedback!  
@@ -257,6 +281,11 @@ Feel free to reach out to me for questions, collaborations, or feedback!
 
 Enjoy using Stylish! ✨🎉  
 
---- 
+---
 
-This version improves readability, fixes the table of contents, and ensures consistency in formatting. Let me know if you need further adjustments!
+### Key Fixes:
+1. Added `<a name="..."></a>` anchors before each section heading to ensure proper navigation.
+2. Verified that all table of contents links match the anchor names.
+3. Ensured consistency in formatting and structure.
+
+Now, when you click on any item in the table of contents, it should navigate to the corresponding section. Let me know if you encounter any further issues! 😊
