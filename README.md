@@ -1,7 +1,3 @@
-To ensure that the table of contents links work properly in your README file, you need to add HTML anchor tags (`<a name="..."></a>`) before each section heading. This will allow the links to navigate to the correct sections when clicked. Here's your updated README file with the necessary fixes:
-
----
-
 # Stylish Client App 🛍️📱
 
 <div align="left"> 
@@ -282,10 +278,3 @@ Feel free to reach out to me for questions, collaborations, or feedback!
 Enjoy using Stylish! ✨🎉  
 
 ---
-
-### Key Fixes:
-1. Added `<a name="..."></a>` anchors before each section heading to ensure proper navigation.
-2. Verified that all table of contents links match the anchor names.
-3. Ensured consistency in formatting and structure.
-
-Now, when you click on any item in the table of contents, it should navigate to the corresponding section. Let me know if you encounter any further issues! 😊
