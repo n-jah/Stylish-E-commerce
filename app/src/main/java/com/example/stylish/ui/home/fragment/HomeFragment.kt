@@ -125,6 +125,7 @@ class HomeFragment : Fragment() {
                 brandAdapter.updateBrands(brands)
                 brandAdapter = BrandAdapter(brands, isLoading = false){selectedBrand ->
                     filterItemsByBrand(selectedBrand)
+                    Log.d("HomeFragment", "Selected brand: ${selectedBrand.brandName}")
                 }
                 binding.brandsRecyclerView.adapter = brandAdapter
              }else{
@@ -147,21 +148,25 @@ class HomeFragment : Fragment() {
     }
 
     private fun filterItemsByBrand(selectedBrand: Brand) {
+        Log.d("HomeFragment", "items: ${viewModel.items.value.toString()}")
+        val items = viewModel.items.value ?: emptyList()
+
         if (selectedBrand.brandName != "All") {
-            val filteredList = viewModel.items.value?.filter { item ->
-                item.brand == selectedBrand.brandName.lowercase()
+            Log.d("HomeFragment", "Selected brand before filtering: ${selectedBrand.brandName}")
+
+            val filteredList = items.filter { item ->
+                item.brand.lowercase() == selectedBrand.brandName.lowercase()
             }
+
             Log.d("HomeFragment", "Filtered items: $filteredList")
-            Log.d("HomeFragment", "Selected brand: ${selectedBrand.brandName}")
 
-            filteredList?.let {
-             itemAdapter.updateItems(it) // Update the items in the adapter based on the selected brand
-
-            }
-        }else{
-            val items = viewModel.items.value
-            itemAdapter.updateItems(items?: emptyList())
+            itemAdapter.updateItems(filteredList)
+        } else {
+            itemAdapter.updateItems(items)
         }
+
+        itemAdapter.isLoading = false
+        binding.newArrivalRecyclerView.scrollToPosition(0) // Scroll to top if needed
     }
 
     private fun addingNameToUi(binding: FragmentHomeBinding) {
