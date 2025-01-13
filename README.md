@@ -22,36 +22,36 @@
 
 </div>
 
-### Search Features 🔎
-<div align="center">
-</div>
-
 ---
+## Table of Contents 📑  
+1. [App Demos 🎥](#app-demos-🎥)  
+2. [Features 🚀](#features-🚀)  
+   - [Authentication 🔐](#authentication-🔐)  
+   - [Shopping Cart 🛒](#shopping-cart-🛒)  
+   - [Favorite Screen 💖](#favorite-screen-💖)  
+   - [Search by Brands 🔍](#search-by-brands-🔍)  
+   - [Search by Voice 🎙️](#search-by-voice-🎙️)  
+   - [Orders Screen 📦](#orders-screen-📦)  
+   - [UI/UX Enhancements 🌟](#uiux-enhancements-🌟)  
+   - [Data Management 🗂️](#data-management-🗂️)  
+   - [Security 🛡️](#security-🛡️)  
+3. [Admin Stylish App 🖥️](#admin-stylish-app-🖥️)  
+4. [Technologies Used](#technologies-used)  
+5. [Quick Start 🚀](#quick-start-🚀)  
+6. [Data Retrieval Structure ⚙️](#data-retrieval-structure-⚙️)  
+7. [Code Structure 🗂️](#code-structure-🗂️)  
+8. [Roadmap 🛣️](#roadmap-🛣️)  
+9. [Troubleshooting ⚠️](#troubleshooting-⚠️)  
+10. [Contributing 🤝](#contributing-🤝)  
+11. [License 📝](#license-📝)  
+12. [Support 💬](#support-💬)  
+13. [Acknowledgments 🙏](#acknowledgments-🙏)  
+14. [Contact 📞](#contact-📞)  
+--- 
+## APK Download 📲 
+  [Download Stylish APK](https://github.com/n-jah/Stylish-E-commerce/blob/testBrand/app/release/app-release.apk)
 
-## Table of Contents 📑
-
-1. [Features](#features)
-   - [Authentication](#authentication)
-   - [Shopping Cart](#shopping-cart)
-   - [Favorite Screen](#favorite-screen)
-   - [Search by Brands](#search-by-brands)
-   - [Search by Voice](#search-by-voice)
-   - [Orders Screen](#orders-screen)
-2. [Admin Stylish App](#admin-stylish-app)
-3. [Technologies Used](#technologies-used)
-4. [Quick Start](#quick-start)
-5. [Code Structure](#code-structure)
-6. [Data Retrieval Structure](#data-retrieval-structure)
-7. [Roadmap](#roadmap)
-8. [Troubleshooting](#troubleshooting)
-9. [Contributing](#contributing)
-10. [License](#license)
-11. [Support](#support)
-12. [Acknowledgments](#acknowledgments)
-13. [Contact](#contact)
-
----
-
+--- 
 ## Features 🚀
 
 ### Authentication 🔐
