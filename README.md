@@ -35,10 +35,11 @@
 
 ---
 
-<a name="app-demos"></a>
+
 ## App Demos 🎥
 
 ### Authentication, Home, and Navigation 🔒
+<a name="app-demos"></a>
 <div align="center">
   <img src="https://raw.githubusercontent.com/n-jah/Stylish-E-commerce/testBrand/media/auth.gif" width="200" alt="Authentication" />
   <img src="https://raw.githubusercontent.com/n-jah/Stylish-E-commerce/testBrand/media/home.gif" width="200" alt="Home Screen" />
