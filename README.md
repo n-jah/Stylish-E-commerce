@@ -58,7 +58,7 @@
 
 <a name="apk-download"></a>
 ## APK Download 📲  
-[Download Stylish APK](https://github.com/n-jah/Stylish-E-commerce/blob/testBrand/app/release/app-release.apk)
+[Download Stylish APK](https://raw.githubusercontent.com/n-jah/Stylish-E-commerce//testBrand/app/release/app-release.apk)
 
 ---
 
