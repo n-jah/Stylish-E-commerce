@@ -117,7 +117,7 @@
 ## Admin Stylish App 🖥️  
 
 I also created an **Admin Version** of Stylish to manage and oversee all the client app's functionalities, such as adding or removing items, managing orders, and more. If you want to see how the admin interface works, check out the **Admin Stylish App** here:  
-[Admin Stylish App](https://github.com/n-jah/stylish-admin)  
+[Admin Stylish App](https://github.com/n-jah/StylishAdmin)  
 
 ---
 
