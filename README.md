@@ -4,7 +4,7 @@
   <img src="https://raw.githubusercontent.com/n-jah/Stylish-E-commerce/testBrand/media/stylishlogo.jpg" width="100" alt="Stylish Logo" /> 
 </div>
 
-**Stylish** is a modern, client-side mobile application designed to provide users with a **seamless and secure shopping experience**. Built using **Kotlin** and following the **MVVM architecture**, the app integrates features like **multi-provider authentication**, **secure payment processing**, **custom navigation bar with animations**, and more. Whether you're a developer or a user, Stylish offers a **reliable and enjoyable shopping experience**. ✨
+**Stylish** is a modern, client-side mobile application designed to provide users with a **seamless and secure shopping experience**. Built by **Ahmed Nagah** — Software Engineer (Android/Kotlin), including a companion Admin app ([StylishAdmin](https://github.com/n-jah/StylishAdmin)). Built using **Kotlin** and following the **MVVM architecture**, the app integrates features like **multi-provider authentication**, **secure payment processing**, **custom navigation bar with animations**, and more. Whether you're a developer or a user, Stylish offers a **reliable and enjoyable shopping experience**. ✨
 
 ---
 
@@ -251,7 +251,7 @@ You are free to use, modify, and distribute this code, but please give appropria
 ## Support 💬  
 
 If you have any questions or need support, don't hesitate to reach out:  
-- **Email**: Be-ngah@outlook.com 📧  
+- **Email**: Ahmed.N.Elhag@outlook.com 📧  
 - **GitHub Issues**: [Report an issue](https://github.com/n-jah/stylish-client/issues) 🐞  
 
 ---
@@ -269,9 +269,9 @@ If you have any questions or need support, don't hesitate to reach out:
 ## Contact 📞  
 
 Feel free to reach out to me for questions, collaborations, or feedback!  
-- **Email**: Be-ngah@outlook.com ✉️  
+- **Email**: Ahmed.N.Elhag@outlook.com ✉️  
 - **GitHub**: [n-jah](https://github.com/n-jah) 💻  
-- **LinkedIn**: [NJ 7](https://www.linkedin.com/in/nj-7/) 🌐  
+- **LinkedIn**: [Ahmed Nagah](https://www.linkedin.com/in/a-nagah/) 🌐  
 - **Phone**: +201097406914 📱  
 
 ---
